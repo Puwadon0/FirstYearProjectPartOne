@@ -1,155 +1,198 @@
 # UBU Science Engage System
 
-##  Project Description
-This project is a RESTful Web API developed as a team assignment.
-The system demonstrates route structure according to framework standards.
-Each team member is responsible for maintaining at least 2 routes.
+## 📌 Project Description
+UBU Science Engage System is a web-based activity and volunteer management system.
+
+The system consists of a Backend API developed with Flask and a Frontend developed using HTML, CSS, and JavaScript with Tailwind CSS and Bootstrap frameworks.
+
+The system includes:
+- Authentication
+- Activity management
+- Document review
+- Volunteer registration
+- Finance tracking
+- Reporting system
+- Dashboard overview
+- Q&A system
+
+Each team member maintains at least 2 routes as required.
 
 ---
 
-##  Tech Stack
+# Tech Stack
 
 ## Frontend
-- Language: HTML, CSS, JavaScript
-- CSS Framework: Tailwind CSS, Bootstrap 5
+- HTML5
+- CSS3
+- JavaScript (Vanilla JS)
+- Tailwind CSS
+- Bootstrap 5
 
 ## Backend
-- Language: Python (Flask Framework)
-
-## Database
-- SQLite
-- SQLAlchemy (ORM)
-
-## Version Control
-- Git
-- GitHub
+- Language: Python
+- Framework: Flask
+- Database: SQLite, SQLAlchemy (ORM)
+- Version Control: Git & GitHub
 
 ---
 
-##  Installation Guide
+# ⚙ Installation Guide
 
-### 1️ Clone Repository
+## 1️⃣ Clone Repository
 ```bash
-git clone https://github.com/your-username/your-repository.git
-cd your-repository
+git clone https://github.com/your-username/ubu-engage.git
+cd ubu-engage
 ```
 
-### 2️ Create Virtual Environment
+---
+
+## 2️⃣ Backend Setup
+
+### Create Virtual Environment
 ```bash
 python -m venv venv
 ```
 
-### 3️ Activate Virtual Environment
+### Activate Environment
 
-**Windows**
+Windows:
 ```bash
 venv\Scripts\activate
 ```
 
-**Mac / Linux**
+Mac / Linux:
 ```bash
 source venv/bin/activate
 ```
 
-### 4️ Install Required Packages
+### Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5️ Run Application
+### Run Backend Server
 ```bash
 python app.py
 ```
 
-Server will run at:
+Backend runs at:
 ```
 http://127.0.0.1:5000/
 ```
 
 ---
 
-##  Project Structure
+## 3️⃣ Frontend Setup
+
+Frontend is static-based.
+
+Just open:
+```
+frontend/index.html
+```
+
+Or use Live Server (VS Code recommended).
+
+---
+
+# 📂 Project Structure
 
 ```
-project-name/
+ubu-engage/
 │
 ├── app.py
 ├── routes/
 │   ├── auth_routes.py
-│   ├── user_routes.py
-│   ├── product_routes.py
-│   ├── order_routes.py
+│   ├── activity_routes.py
+│   ├── document_routes.py
+│   ├── volunteer_routes.py
+│   ├── finance_routes.py
+│   ├── upload_routes.py
+│   ├── dashboard_routes.py
+│   ├── report_routes.py
+│   ├── resource_routes.py
+│   ├── pr_routes.py
+│   ├── calendar_routes.py
+│   ├── qa_routes.py
+│
+├── frontend/
+│   ├── index.html
+│   ├── login.html
+│   ├── dashboard.html
+│   ├── css/
+│   ├── js/
 │
 ├── models/
-│   └── user_model.py
-│
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-##  API Routes & Maintainers
+# 🚀 API Routes & Maintainers
 
-| Route | Method | Description | Maintainer |
-|-------|--------|------------|------------|
-| /login | POST | User login | นาย A |
-| /register | POST | User registration | นาย A |
-| /users | GET | Get all users | นาย B |
-| /profile | GET | Get user profile | นาย B |
-| /products | GET | Get product list | นาย C |
-| /products | POST | Create product | นาย C |
-| /orders | GET | Get order list | นาย D |
-| /checkout | POST | Create order | นาย D |
+| No | Route | Method | Description | Maintainer |
+|----|--------|--------|------------|------------|
+| 1 | /login | POST | User login | นาย A |
+| 2 | /register | POST | User register | นาย A |
+| 3 | /activities | POST | Create activity | นาย B |
+| 4 | /activities/check | GET | Check activity | นาย B |
+| 5 | /documents | POST | Manage documents | นาย C |
+| 6 | /documents/review | PUT | Review documents | นาย C |
+| 7 | /volunteer/apply | POST | Volunteer registration | นาย D |
+| 8 | /activities/register | POST | Register activity (attach evaluation link) | นาย D |
+| 9 | /finance | POST | Record expense | นาย E |
+| 10 | /upload | POST | Upload files | นาย E |
+| 11 | /dashboard | GET | Dashboard overview | นาย F |
+| 12 | /reports/upload | POST | Upload project report | นาย F |
+| 13 | /resources | GET | Location & equipment aggregation | นาย G |
+| 14 | /announcements | POST | Public relations | นาย G |
+| 15 | /calendar | GET | Activity calendar | นาย H |
+| 16 | /qa | GET/POST | Q&A club & students | นาย H |
 
->  Each team member maintains at least 2 routes.
+> ✅ Each team member is responsible for at least 2 routes.
 
 ---
 
-##  Framework Route Standard Example
+# 🖥 Frontend Pages Overview
 
-Example (Flask Blueprint):
+| Page | Description |
+|------|------------|
+| login.html | Login / Register |
+| dashboard.html | Dashboard overview |
+| activity.html | Create & check activity |
+| document.html | Document management |
+| volunteer.html | Volunteer registration |
+| finance.html | Expense recording |
+| calendar.html | Activity calendar |
+| qa.html | Q&A page |
+
+---
+
+# Example Flask Route (Standard Blueprint)
 
 ```python
-from flask import Blueprint
+from flask import Blueprint, request
 
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
+    data = request.json
     return {"message": "Login successful"}
 ```
 
-In `app.py`:
+---
 
-```python
-from flask import Flask
-from routes.auth_routes import auth_bp
+# Notes
 
-app = Flask(__name__)
-app.register_blueprint(auth_bp)
-
-if __name__ == "__main__":
-    app.run(debug=True)
-```
+- Backend follows Flask Blueprint routing standard.
+- Frontend uses Tailwind CSS for utility styling and Bootstrap for components.
+- RESTful API structure.
+- All routes are separated inside the `/routes` folder.
+- Developed for academic purposes.
 
 ---
 
-
-
-
-
-##  Notes
-
-- All routes are structured under `/routes` directory.
-- The project follows standard Flask routing conventions.
-- GitHub is used for version control and collaboration.
-- Every member contributes to at least 2 routes as required.
-
----
-
-## License
-
-This project is developed for educational purposes.
-
-
+# License
+Educational Project – Science Faculty
