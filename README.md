@@ -10,15 +10,21 @@ Each team member is responsible for maintaining at least 2 routes.
 ##  Tech Stack
 
 ## Frontend
-- HTML5
-- CSS3
+- HTML
+- CSS
 - JavaScript
 - Tailwind CSS
 
 ## Backend
 - Python
-- Flask
 
+## Database
+- SQLite
+- SQLAlchemy
+
+## Version Control
+- Git
+- GitHub
 ---
 
 ##  Installation Guide
