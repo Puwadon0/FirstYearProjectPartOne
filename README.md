@@ -1,13 +1,13 @@
 # UBU Science Engage System
 
-## 📌 Project Description
+##  Project Description
 This project is a RESTful Web API developed as a team assignment.
 The system demonstrates route structure according to framework standards.
 Each team member is responsible for maintaining at least 2 routes.
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 - Backend: Python
 - Framework: Flask
@@ -17,20 +17,20 @@ Each team member is responsible for maintaining at least 2 routes.
 
 ---
 
-## ⚙ Installation Guide
+##  Installation Guide
 
-### 1️⃣ Clone Repository
+### 1️ Clone Repository
 ```bash
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
 ```
 
-### 2️⃣ Create Virtual Environment
+### 2️ Create Virtual Environment
 ```bash
 python -m venv venv
 ```
 
-### 3️⃣ Activate Virtual Environment
+### 3️ Activate Virtual Environment
 
 **Windows**
 ```bash
@@ -42,12 +42,12 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### 4️⃣ Install Required Packages
+### 4️ Install Required Packages
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5️⃣ Run Application
+### 5️ Run Application
 ```bash
 python app.py
 ```
@@ -59,7 +59,7 @@ http://127.0.0.1:5000/
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 project-name/
@@ -80,7 +80,7 @@ project-name/
 
 ---
 
-## 🚀 API Routes & Maintainers
+##  API Routes & Maintainers
 
 | Route | Method | Description | Maintainer |
 |-------|--------|------------|------------|
@@ -93,11 +93,11 @@ project-name/
 | /orders | GET | Get order list | นาย D |
 | /checkout | POST | Create order | นาย D |
 
-> ✅ Each team member maintains at least 2 routes.
+>  Each team member maintains at least 2 routes.
 
 ---
 
-## 🧩 Framework Route Standard Example
+##  Framework Route Standard Example
 
 Example (Flask Blueprint):
 
@@ -126,16 +126,11 @@ if __name__ == "__main__":
 
 ---
 
-## 👥 Team Members
 
-- นาย A – Authentication Routes
-- นาย B – User Routes
-- นาย C – Product Routes
-- นาย D – Order Routes
 
----
 
-## 📌 Notes
+
+##  Notes
 
 - All routes are structured under `/routes` directory.
 - The project follows standard Flask routing conventions.
@@ -144,7 +139,7 @@ if __name__ == "__main__":
 
 ---
 
-## 📜 License
+## License
 
 This project is developed for educational purposes.
 
