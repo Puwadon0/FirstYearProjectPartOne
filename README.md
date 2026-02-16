@@ -10,17 +10,15 @@ Each team member is responsible for maintaining at least 2 routes.
 ##  Tech Stack
 
 ## Frontend
-- HTML
-- CSS
-- JavaScript
-- Tailwind CSS
+- Language: HTML, CSS, JavaScript
+- CSS Framework: Tailwind CSS, Bootstrap 5
 
 ## Backend
-- Python
+- Language: Python (Flask Framework)
 
 ## Database
 - SQLite
-- SQLAlchemy
+- SQLAlchemy (ORM)
 
 ## Version Control
 - Git
