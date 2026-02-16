@@ -1,6 +1,6 @@
 # UBU Science Engage System
 
-## 📌 Project Description
+## Project Description
 UBU Science Engage System is a web-based activity and volunteer management system.
 
 The system consists of a Backend API developed with Flask and a Frontend developed using HTML, CSS, and JavaScript with Tailwind CSS and Bootstrap frameworks.
@@ -36,9 +36,9 @@ Each team member maintains at least 2 routes as required.
 
 ---
 
-# ⚙ Installation Guide
+# Installation Guide
 
-## 1️⃣ Clone Repository
+## Clone Repository
 ```bash
 git clone https://github.com/your-username/ubu-engage.git
 cd ubu-engage
@@ -46,7 +46,7 @@ cd ubu-engage
 
 ---
 
-## 2️⃣ Backend Setup
+## Backend Setup
 
 ### Create Virtual Environment
 ```bash
@@ -82,7 +82,7 @@ http://127.0.0.1:5000/
 
 ---
 
-## 3️⃣ Frontend Setup
+## Frontend Setup
 
 Frontend is static-based.
 
@@ -95,10 +95,10 @@ Or use Live Server (VS Code recommended).
 
 ---
 
-# 📂 Project Structure
+# Project Structure
 
 ```
-ubu-engage/
+ubu_sci_engage/
 │
 ├── app.py
 ├── routes/
@@ -129,7 +129,7 @@ ubu-engage/
 
 ---
 
-# 🚀 API Routes & Maintainers
+# API Routes & Maintainers
 
 | No | Route | Method | Description | Maintainer |
 |----|--------|--------|------------|------------|
@@ -150,11 +150,11 @@ ubu-engage/
 | 15 | /calendar | GET | Activity calendar | นาย H |
 | 16 | /qa | GET/POST | Q&A club & students | นาย H |
 
-> ✅ Each team member is responsible for at least 2 routes.
+> Each team member is responsible for at least 2 routes.
 
 ---
 
-# 🖥 Frontend Pages Overview
+# Frontend Pages Overview
 
 | Page | Description |
 |------|------------|
