@@ -42,7 +42,7 @@ Each team member maintains at least 2 routes as required.
 
 # Installation Guide
 
-## 1️Clone Repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/your-username/ubu-engage.git
@@ -110,7 +110,7 @@ Or use Live Server (VS Code recommended).
 # Project Structure
 
 ```
-ubu-engage/
+ubu_sci_engage/
 │
 ├── app.py
 ├── routes/
