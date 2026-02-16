@@ -1,6 +1,6 @@
 # UBU Science Engage System
 
-## 📌 Project Description
+## Project Description
 UBU Science Engage System is a web-based activity and volunteer management system.
 
 The system consists of a Backend API developed with Flask and a Frontend developed using HTML, CSS, and JavaScript with Tailwind CSS and Bootstrap frameworks.
