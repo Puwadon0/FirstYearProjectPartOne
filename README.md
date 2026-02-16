@@ -9,11 +9,15 @@ Each team member is responsible for maintaining at least 2 routes.
 
 ##  Tech Stack
 
-- Backend: Python
-- Framework: Flask
-- Database: SQLite
-- Version Control: Git + GitHub
-- Environment: Python Virtual Environment (venv)
+## Frontend
+- HTML5
+- CSS3
+- JavaScript
+- Tailwind CSS
+
+## Backend
+- Python
+- Flask
 
 ---
 
