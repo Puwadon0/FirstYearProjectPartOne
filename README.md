@@ -36,7 +36,7 @@ Each team member maintains at least 2 routes as required.
 
 ---
 
-# ⚙ Installation Guide
+# Installation Guide
 
 ## Clone Repository
 ```bash
