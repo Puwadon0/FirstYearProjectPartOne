@@ -1,41 +1,51 @@
 // Sample Events Data
 let events = [
-    
+
 ];
 
 let calendar;
 let selectedEventId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    const calendarEl = document.getElementById('calendar');
-    
-    calendar = new FullCalendar.Calendar(calendarEl, {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'th',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,listWeek'
+            right: 'dayGridMonth,listMonth'
         },
-        events: events,
-        selectable: true,
-        eventClick: (info) => showEventDetail(info.event),
-        select: (info) => openAddModal(info.start, info.end),
-        eventDidMount: function(info) {
-            const type = info.event.extendedProps.type;
-            if (type === 'activity') info.el.classList.add('badge-activity');
-            else if (type === 'meeting') info.el.classList.add('badge-meeting');
-            else if (type === 'deadline') info.el.classList.add('badge-deadline');
+        events: '/api/get_events', // ดึงข้อมูลจากฐานข้อมูล
+        
+        // แก้ไขส่วนนี้ครับ
+        eventClick: function(info) {
+            const event = info.event;
+            const props = event.extendedProps;
+
+            // นำข้อมูลจาก FullCalendar ไปใส่ใน Modal
+            document.getElementById('viewTitle').innerText = event.title;
+            document.getElementById('viewStart').innerText = event.start.toLocaleDateString('th-TH');
+            
+            if (event.end) {
+                document.getElementById('viewEnd').innerText = event.end.toLocaleDateString('th-TH');
+            } else {
+                document.getElementById('viewEnd').innerText = event.start.toLocaleDateString('th-TH');
+            }
+
+            document.getElementById('viewLocation').innerText = props.location || '-';
+            document.getElementById('viewDesc').innerText = props.description || '-';
+
+            // สั่งเปิด Modal รายละเอียด
+            var detailModal = new bootstrap.Modal(document.getElementById('eventDetailModal'));
+            detailModal.show();
         }
     });
-    
     calendar.render();
-    updateUpcomingEvents();
 });
-
 function openAddModal(start, end) {
     document.getElementById('eventStartDate').value = start.toISOString().split('T')[0];
-    if(end) document.getElementById('eventEndDate').value = end.toISOString().split('T')[0];
+    if (end) document.getElementById('eventEndDate').value = end.toISOString().split('T')[0];
     new bootstrap.Modal(document.getElementById('addEventModal')).show();
 }
 
@@ -43,7 +53,7 @@ function showEventDetail(event) {
     selectedEventId = event.id;
     const props = event.extendedProps;
     const badgeClass = props.type === 'activity' ? 'badge-activity' : (props.type === 'meeting' ? 'badge-meeting' : 'badge-deadline');
-    
+
     document.getElementById('eventDetailContent').innerHTML = `
         <div class="mb-3 text-center">
             <h4 class="fw-bold text-primary">${event.title}</h4>
@@ -93,4 +103,31 @@ function updateUpcomingEvents() {
             <span class="badge badge-${ev.type}">${ev.type}</span>
         </div>
     `).join('') || '<p class="text-center py-3 text-muted">ไม่มีกิจกรรม</p>';
-}   
+}
+function saveData() {
+    // 1. ดึงค่าจากหน้าเว็บตาม ID ที่ตั้งไว้ข้างบน
+    const eventData = {
+        title: document.getElementById('title').value,
+        start_date: document.getElementById('start').value,
+        end_date: document.getElementById('end').value,
+        type: document.getElementById('type').value,
+        location: document.getElementById('location').value,
+        description: document.getElementById('desc').value
+    };
+
+    // 2. ส่งข้อมูลไปที่ Backend (Flask)
+    fetch('/api/save_event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventData)
+    })
+        .then(response => response.json())
+        .then(result => {
+            alert('บันทึกสำเร็จ!'); // ถ้าสำเร็จจะขึ้นข้อความแจ้งเตือน
+            location.reload();    // รีโหลดหน้าเพื่ออัปเดตข้อมูล
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('เกิดข้อผิดพลาดในการบันทึก');
+        });
+}
