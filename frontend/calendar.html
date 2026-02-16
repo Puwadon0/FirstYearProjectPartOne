@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="image_893788.png">
+    <title>ปฏิทินกิจกรรม</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <link href="css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #112592;">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <img src="image_893788.png" alt="UBU Logo" height="30" class="me-2">UBU Science Engage
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html">แดชบอร์ด</a></li>
+                    <li class="nav-item"><a class="nav-link" href="activity.html">กิจกรรม</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="calendar.html">ปฏิทิน</a></li>
+                    <li class="nav-item"><a class="nav-link" href="qa.html">ถาม-ตอบ</a></li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link text-danger" href="login.html text-white">ออกจากระบบ</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-6">
+                <!-- <img src="image_893788.png" alt="Logo" height="40" class="me-2"> -->
+                <h3 class="fw-bold text-dark">ปฏิทินกิจกรรม</h3>
+                <p class="text-muted mb-0">ติดตามและจัดการแผนงานโครงการทั้งหมด</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-primary shadow-sm px-4" data-bs-toggle="modal" data-bs-target="#addEventModal">
+                    <i class="bi bi-plus-lg me-2"></i>เพิ่มกิจกรรมใหม่
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="calendar-container h-100">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="mb-0 fw-bold">กิจกรรมเร็วๆ นี้</h6>
+                    </div>
+                    <div class="card-body p-0" id="upcomingEvents"></div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">คำอธิบายสี</h6>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge badge-activity me-3 px-3">กิจกรรม</span>
+                            <small class="text-muted">โครงการทั่วไป</small>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge badge-meeting me-3 px-3">ประชุม</span>
+                            <small class="text-muted">นัดหมายทางการ</small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-deadline me-3 px-3">กำหนดส่ง</span>
+                            <small class="text-muted">วันสุดท้าย/เดดไลน์</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addEventModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold">เพิ่มกิจกรรม</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="eventForm">
+                        <div class="mb-3"><label class="form-label">ชื่อกิจกรรม</label><input type="text"
+                                class="form-control" id="eventTitle"></div>
+                        <div class="row">
+                            <div class="col-6 mb-3"><label class="form-label">วันที่เริ่ม</label><input type="date"
+                                    class="form-control" id="eventStartDate"></div>
+                            <div class="col-6 mb-3"><label class="form-label">วันที่สิ้นสุด</label><input type="date"
+                                    class="form-control" id="eventEndDate"></div>
+                        </div>
+                        <div class="mb-3"><label class="form-label">ประเภท</label>
+                            <select class="form-select" id="eventType">
+                                <option value="activity">กิจกรรม</option>
+                                <option value="meeting">ประชุม</option>
+                                <option value="deadline">กำหนดส่ง</option>
+                            </select>
+                        </div>
+                        <div class="mb-3"><label class="form-label">สถานที่</label><input type="text"
+                                class="form-control" id="eventLocation"></div>
+                        <div class="mb-3"><label class="form-label">รายละเอียด</label><textarea class="form-control"
+                                id="eventDescription"></textarea></div>
+                    </form>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-primary w-100"
+                        onclick="saveEvent()">บันทึกกิจกรรม</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="eventDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body" id="eventDetailContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/calendar.js"></script>
+    <script>
+        flatpickr("#eventStartDate, #eventEndDate", {
+            dateFormat: "d/m/Y", // บังคับรูปแบบเป็น วัน/เดือน/ปี
+            locale: "th" // สามารถเพิ่มไฟล์ภาษาไทยได้ถ้าต้องการ
+        });
+    </script>
+</body>
+
+</html>
