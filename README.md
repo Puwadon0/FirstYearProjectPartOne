@@ -142,7 +142,9 @@ FirstYearProjectPartOne/
 │   │   ├── document.js
 │   │   └── dashboard.js
 │   └── uploads/
-│
+│   │
+│   └── images/
+│     
 ├── models/
 │   ├── __init__.py
 │   ├── user.py
