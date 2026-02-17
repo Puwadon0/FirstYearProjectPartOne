@@ -20,7 +20,7 @@
 | ------------------ | -------------------------------------------------- |
 | 🌐 Frontend        | HTML5, CSS3, JavaScript, Tailwind CSS, Bootstrap 5 |
 | ⚙️ Backend         | Python, Flask (Web Framework)                      |
-| 🗄 ฐานข้อมูล       | SQLite, SQLAlchemy (ORM)                           |
+| 🗄 Database       | SQLite, SQLAlchemy (ORM)                           |
 | 🔧 Version Control | Git, GitHub                                        |
 
 ---
