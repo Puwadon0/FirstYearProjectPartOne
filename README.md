@@ -69,7 +69,7 @@ pip install -r requirements.txt
 หากไม่มีไฟล์ requirements.txt สามารถติดตั้งด้วยคำสั่ง:
 
 ```bash
-pip install flask flask-sqlalchemy flask-login
+pip install flask flask-sqlalchemy flask-bcrypt
 ```
 
 ### รันเซิร์ฟเวอร์
