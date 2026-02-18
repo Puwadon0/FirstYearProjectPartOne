@@ -34,7 +34,7 @@ cd FirstYearProjectPartOne
 
 ---
 
-## 2. Backend Setup
+## 2. การตั้งค่า Backend
 
 ### สร้าง Virtual Environment
 
@@ -86,7 +86,7 @@ http://127.0.0.1:5000/
 
 ---
 
-## 3. Frontend Setup
+## 3. การตั้งค่า Frontend
 
 Frontend ของโปรเจคนี้ทำงานผ่าน Flask โดยใช้ Template Engine ในการแสดงผลหน้าเว็บ
 
@@ -354,22 +354,5 @@ FirstYearProjectPartOne/
 | `/qa/questions/<id>/answer` | POST   | ตอบคำถาม         |
 
 > สมาชิกแต่ละคนในทีมรับผิดชอบพัฒนาอย่างน้อย 2 เส้นทางการทำงานของระบบ ตามที่ได้รับมอบหมาย
-
----
-
-# ตัวอย่างโครงสร้าง Route ด้วย Flask Blueprint
-
-ตัวอย่างการกำหนดเส้นทาง (Route) มาตรฐานโดยใช้ Flask Blueprint
-
-```python
-from flask import Blueprint, request
-
-auth_bp = Blueprint('auth', __name__)
-
-@auth_bp.route('/login', methods=['POST'])
-def login():
-    data = request.json
-    return {"message": "Login successful"}
-```
 
 ---
