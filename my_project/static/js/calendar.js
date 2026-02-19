@@ -3,7 +3,6 @@ let currentEventId = null;
 let userMode = localStorage.getItem('userMode') || 'staff';
 
 document.addEventListener('DOMContentLoaded', function () {
-    // แสดงวันที่ปัจจุบัน
     const today = new Date();
     const dateDisplay = document.getElementById('currentDateDisplay');
     if (dateDisplay) {
@@ -25,8 +24,25 @@ document.addEventListener('DOMContentLoaded', function () {
             eventClick: function (info) {
                 currentEventId = info.event.id;
                 document.getElementById('viewTitle').innerText = info.event.title;
+                
+                // แก้ไข: แสดงวันเริ่มและวันจบให้ถูกต้อง
                 document.getElementById('viewStart').innerText = info.event.start.toLocaleDateString('th-TH');
-                document.getElementById('viewEnd').innerText = info.event.end ? info.event.end.toLocaleDateString('th-TH') : info.event.start.toLocaleDateString('th-TH');
+                
+                const viewEndEl = document.getElementById('viewEnd');
+                if (viewEndEl) {
+                    // สำหรับ FullCalendar All-day event วันจบจะเป็นวันถัดไป จึงต้องลบออก 1 วันเพื่อแสดงผลจริง
+                    if (info.event.allDay && info.event.end) {
+                        let displayEnd = new Date(info.event.end);
+                        displayEnd.setDate(displayEnd.getDate() - 1);
+                        viewEndEl.innerText = displayEnd.toLocaleDateString('th-TH');
+                    } else if (info.event.end) {
+                        viewEndEl.innerText = info.event.end.toLocaleDateString('th-TH');
+                    } else {
+                        // หากไม่มีวันจบ ให้แสดงวันเดียวกันกับวันเริ่ม
+                        viewEndEl.innerText = info.event.start.toLocaleDateString('th-TH');
+                    }
+                }
+
                 document.getElementById('viewLocation').innerText = info.event.extendedProps.location || '-';
                 document.getElementById('viewDesc').innerText = info.event.extendedProps.description || '-';
                 
@@ -54,8 +70,6 @@ function applyModeSettings() {
     const addNewsBtn = document.getElementById('addNewsBtn');
     const roleProfileText = document.getElementById('userRoleProfile');
     const modeText = document.getElementById('currentModeText');
-    
-    // จัดการทั้ง Hamburger (Grid) และ Horizontal (Mega Menu)
     const expandedContainer = document.getElementById('expandedFunctions');
     const megaMenu = document.getElementById('megaMenuContent');
 
@@ -71,34 +85,17 @@ function applyModeSettings() {
 
     const path = window.location.pathname;
     let menuItems = `
-        <a class="nav-link ${path === '/news' ? 'active' : ''}" href="/news"><i class="bi bi-megaphone me-2"></i>ข่าวประชาสัมพันธ์</a>
-        <a class="nav-link ${path === '/calendar' ? 'active' : ''}" href="/calendar"><i class="bi bi-calendar3 me-2"></i>ปฏิทินกิจกรรม</a>
+        <a class="nav-link ${path==='/news'?'active':''}" href="/news"><i class="bi bi-megaphone me-2"></i>ข่าวประชาสัมพันธ์</a>
+        <a class="nav-link ${path==='/calendar'?'active':''}" href="/calendar"><i class="bi bi-calendar3 me-2"></i>ปฏิทินกิจกรรม</a>
     `;
 
     let roleLinks = "";
     if (userMode === 'staff') {
-        roleLinks = `
-            <a class="dropdown-item" href="#"><i class="bi bi-file-earmark-check me-2"></i>ตรวจทานเอกสาร</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-clipboard-check me-2"></i>ตรวจโครงการ</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
-        `;
+        roleLinks = `<a class="dropdown-item" href="#"><i class="bi bi-file-earmark-check me-2"></i>ตรวจทานเอกสาร</a><a class="dropdown-item" href="#"><i class="bi bi-clipboard-check me-2"></i>ตรวจโครงการ</a><a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>`;
     } else if (userMode === 'club') {
-        roleLinks = `
-            <a class="dropdown-item" href="#"><i class="bi bi-plus-circle me-2"></i>สร้างกิจกรรม</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-cash-stack me-2"></i>บันทึกค่าใช้จ่าย</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-file-earmark-text me-2"></i>สร้างฟอร์ม</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-person-plus me-2"></i>รับสมัครอาสา</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-tools me-2"></i>ข้อมูลอุปกรณ์</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
-        `;
+        roleLinks = `<a class="dropdown-item" href="#"><i class="bi bi-plus-circle me-2"></i>สร้างกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-cash-stack me-2"></i>บันทึกค่าใช้จ่าย</a><a class="dropdown-item" href="#"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a><a class="dropdown-item" href="#"><i class="bi bi-file-earmark-text me-2"></i>สร้างฟอร์ม</a><a class="dropdown-item" href="#"><i class="bi bi-person-plus me-2"></i>รับสมัครอาสา</a><a class="dropdown-item" href="#"><i class="bi bi-tools me-2"></i>ข้อมูลอุปกรณ์</a><a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>`;
     } else {
-        roleLinks = `
-            <a class="dropdown-item" href="#"><i class="bi bi-list-ul me-2"></i>รายชื่อกิจกรรม</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-images me-2"></i>ภาพกิจกรรม</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>
-        `;
+        roleLinks = `<a class="dropdown-item" href="#"><i class="bi bi-list-ul me-2"></i>รายชื่อกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-images me-2"></i>ภาพกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>`;
     }
 
     if (megaMenu) megaMenu.innerHTML = roleLinks;
@@ -114,8 +111,15 @@ function updateSidebarList() {
     });
 }
 
-function deleteEvent() { bootstrap.Modal.getInstance(document.getElementById('eventDetailModal')).hide(); new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show(); }
-function executeDelete() { fetch(`/api/delete_event_json/${currentEventId}`, { method: 'DELETE' }).then(() => location.reload()); }
+function deleteEvent() { 
+    bootstrap.Modal.getInstance(document.getElementById('eventDetailModal')).hide(); 
+    new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show(); 
+}
+
+function executeDelete() { 
+    fetch(`/api/delete_event_json/${currentEventId}`, { method: 'DELETE' }).then(() => location.reload()); 
+}
+
 function saveEventData() {
     const data = {
         title: document.getElementById('eventTitleInput').value,

@@ -11,13 +11,10 @@
         :root { --ubu-blue: #112592; --ubu-yellow: #fff9c4; }
         body { font-family: 'Prompt', sans-serif; background-color: #f8f9fa; }
         .bg-ubu { background-color: var(--ubu-blue) !important; }
-        .navbar-brand .fw-bold { font-weight: 600; font-size: 1.1rem; }
         .navbar-toggler { display: block !important; border: none !important; }
-        .navbar-collapse { background-color: rgba(17, 37, 146, 0.98); border-radius: 0 0 25px 25px; padding: 25px; position: absolute; width: 100%; left: 0; top: 100%; z-index: 1000; backdrop-filter: blur(15px); }
+        .navbar-collapse { background-color: rgba(17, 37, 146, 0.98); border-radius: 0 0 25px 25px; padding: 25px; position: absolute; width: 100%; left: 0; top: 100%; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(15px); }
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .nav-link { color: white !important; font-size: 0.95rem; padding: 16px !important; border-radius: 12px; background: rgba(255, 255, 255, 0.04); border: none !important; display: flex; align-items: center; }
-        .nav-link:hover { background: rgba(255, 255, 255, 0.12); color: #ffc107 !important; }
-        .nav-link.active { background: rgba(255, 255, 255, 0.18); color: #ffc107 !important; border-left: 4px solid #ffc107 !important; }
         .news-container { background-color: var(--ubu-yellow); padding: 50px 0; border-radius: 40px; min-height: 400px; }
         .main-slider { height: 450px; border-radius: 30px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); position: relative; }
         .carousel-item { height: 450px; }
@@ -42,7 +39,12 @@
 
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold mb-0" style="color: var(--ubu-blue);">ประชาสัมพันธ์กิจกรรม</h3><button id="addNewsBtn" class="btn bg-ubu text-white px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addNewsModal"><i class="bi bi-plus-lg me-2"></i>เพิ่มข่าวใหม่</button></div>
-        <div id="newsCarousel" class="carousel slide main-slider d-none" data-bs-ride="carousel"><div class="carousel-indicators" id="carouselIndicators"></div><div class="carousel-inner" id="carouselInner"></div><button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button><button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button></div>
+        <div id="newsCarousel" class="carousel slide main-slider d-none" data-bs-ride="carousel">
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+            <div class="carousel-inner" id="carouselInner"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+        </div>
         <div class="news-container px-4"><div id="newsList" class="row justify-content-center"></div></div>
     </div>
 
@@ -58,8 +60,8 @@
         document.addEventListener('DOMContentLoaded', fetchNews);
         function fetchNews() {
             fetch('/api/get_news').then(res => res.json()).then(data => {
-                const carouselInner = document.getElementById('carouselInner');
                 const carouselArea = document.getElementById('newsCarousel');
+                const carouselInner = document.getElementById('carouselInner');
                 const list = document.getElementById('newsList');
                 const pinnedItems = data.filter(n => n.is_pinned);
                 const regularItems = data.filter(n => !n.is_pinned);
@@ -68,8 +70,9 @@
                     carouselArea.classList.remove('d-none');
                     carouselInner.innerHTML = pinnedItems.map((n, i) => {
                         const unpinBtn = (userMode !== 'student') ? `<button class="btn btn-warning btn-sm btn-unpin-banner" onclick="togglePin(${n.id})"><i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด</button>` : '';
-                        return `<div class="carousel-item ${i===0?'active':''}"> ${unpinBtn} <img src="${n.image_url}" class="carousel-img"> <div class="carousel-caption-custom"> <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span> <h2 class="fw-bold">${n.title}</h2> <p class="text-truncate" style="max-width: 80%">${n.content}</p> </div> </div>`;
+                        return `<div class="carousel-item ${i===0?'active':''}"> ${unpinBtn} <img src="${n.image_url}" class="carousel-img"> <div class="carousel-caption-custom"> <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span> <h2 class="fw-bold display-6">${n.title}</h2> <p class="lead text-truncate" style="max-width: 90%">${n.content}</p> </div> </div>`;
                     }).join('');
+                    new bootstrap.Carousel(carouselArea, { interval: 5000, ride: 'carousel' });
                 } else { carouselArea.classList.add('d-none'); }
 
                 list.innerHTML = regularItems.map(news => {

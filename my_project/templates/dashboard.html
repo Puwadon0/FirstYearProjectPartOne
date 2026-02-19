@@ -12,41 +12,19 @@
         :root { --ubu-blue: #112592; --ubu-yellow: #fff9c4; }
         body { font-family: 'Prompt', sans-serif; background-color: #f8f9fa; }
         .bg-ubu { background-color: var(--ubu-blue) !important; }
-        
-        /* Navbar Horizontal Style */
         .nav-link { color: white !important; font-size: 0.95rem; padding: 0 15px !important; transition: 0.3s; }
         .nav-link:hover { color: #ffc107 !important; }
-        
-        /* Mega Menu styling for "เพิ่มเติม" */
-        .custom-mega-menu { 
-            position: absolute !important; top: 100% !important; left: 50% !important; 
-            transform: translateX(-50%) !important; width: 600px !important; 
-            background-color: rgba(17, 37, 146, 0.95) !important; 
-            backdrop-filter: blur(10px); border-radius: 20px !important; 
-            padding: 20px !important; border: none !important; 
-        }
+        .custom-mega-menu { position: absolute !important; top: 100% !important; left: 50% !important; transform: translateX(-50%) !important; width: 600px !important; background-color: rgba(17, 37, 146, 0.95) !important; backdrop-filter: blur(10px); border-radius: 20px !important; padding: 20px !important; border: none !important; }
         .mega-menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .mega-menu-grid .dropdown-item { 
-            color: white !important; padding: 10px 15px; border-radius: 12px; 
-            background: rgba(255, 255, 255, 0.05); transition: 0.2s; 
-        }
+        .mega-menu-grid .dropdown-item { color: white !important; padding: 10px 15px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); transition: 0.2s; }
         .mega-menu-grid .dropdown-item:hover { background: rgba(255, 255, 255, 0.15); color: #ffc107 !important; }
-
-        /* Banner Slider */
         .main-slider { height: 400px; border-radius: 30px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .carousel-img { width: 100%; height: 400px; object-fit: cover; }
-        .carousel-caption-custom { 
-            position: absolute; bottom: 0; left: 0; right: 0; 
-            background: linear-gradient(transparent, rgba(0,0,0,0.85)); 
-            color: white; padding: 30px 50px; text-align: left; 
-        }
-
-        /* Dashboard Content */
+        .carousel-caption-custom { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: white; padding: 30px 50px; text-align: left; }
         .section-title { font-weight: 600; color: var(--ubu-blue); margin-bottom: 20px; border-left: 5px solid var(--ubu-blue); padding-left: 15px; }
         .calendar-card { border: none; border-radius: 25px; box-shadow: 0 5px 25px rgba(0,0,0,0.06); background: white; padding: 25px; }
         .activity-card { background: #f4f6ff; border-radius: 20px; padding: 15px; margin-bottom: 12px; transition: 0.3s; cursor: pointer; }
         .activity-card:hover { transform: translateX(10px); background: #e8ebff; }
-
         #userRoleProfile { font-size: 0.9rem; color: var(--ubu-blue); font-weight: 600; display: block; padding: 5px 15px; }
     </style>
 </head>
@@ -55,26 +33,18 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/">
                 <img src="{{ url_for('static', filename='sci_atomic.png') }}" height="45" class="me-2">
-                <div style="line-height: 1.1;">
-                    <span class="fw-light" style="font-size:0.85rem">คณะวิทยาศาสตร์</span><br>
-                    <span class="fw-bold">Faculty of Science</span>
-                </div>
+                <div style="line-height: 1.1;"><span class="fw-light" style="font-size:0.85rem">คณะวิทยาศาสตร์</span><br><span class="fw-bold">Faculty of Science</span></div>
             </a>
-
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto align-items-center">
                     <li class="nav-item"><a class="nav-link" href="/news">ข่าวประชาสัมพันธ์กิจกรรม</a></li>
                     <li class="nav-item"><a class="nav-link" href="/calendar">ปฏิทินกิจกรรมรวม</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" data-bs-toggle="dropdown">เพิ่มเติม</a>
-                        <div class="dropdown-menu custom-mega-menu shadow-lg">
-                            <div class="mega-menu-grid" id="megaMenuContent">
-                                </div>
-                        </div>
+                        <div class="dropdown-menu custom-mega-menu shadow-lg"><div class="mega-menu-grid" id="megaMenuContent"></div></div>
                     </li>
                 </ul>
             </div>
-            
             <div class="dropdown">
                 <button class="btn text-white p-0" data-bs-toggle="dropdown"><i class="bi bi-person-circle" style="font-size: 1.8rem;"></i></button>
                 <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
@@ -91,19 +61,9 @@
             <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
             <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
         </div>
-
         <div class="row">
-            <div class="col-lg-8 mb-4">
-                <h4 class="section-title">ปฏิทินกิจกรรมคณะ</h4>
-                <div class="calendar-card">
-                    <div id="calendar"></div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <h4 class="section-title">กิจกรรมเร็วๆ นี้</h4>
-                <div id="dashboardActivities"></div>
-            </div>
+            <div class="col-lg-8 mb-4"><h4 class="section-title">ปฏิทินกิจกรรมคณะ</h4><div class="calendar-card"><div id="calendar"></div></div></div>
+            <div class="col-lg-4"><h4 class="section-title">กิจกรรมเร็วๆ นี้</h4><div id="dashboardActivities"></div></div>
         </div>
     </div>
 
@@ -113,7 +73,7 @@
                 <div class="modal-header bg-ubu text-white border-0"><h5 class="modal-title fw-bold">ข้อมูลกิจกรรม</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body p-4">
                     <h4 id="viewTitle" class="fw-bold text-dark mb-3"></h4>
-                    <p><i class="bi bi-calendar3 me-2 text-primary"></i> <span id="viewStart"></span></p>
+                    <p><i class="bi bi-calendar3 me-2 text-primary"></i> <span id="viewStart"></span> - <span id="viewEnd"></span></p>
                     <p><i class="bi bi-geo-alt me-2 text-primary"></i> <span id="viewLocation"></span></p>
                     <hr><p id="viewDesc" class="text-muted mb-0"></p>
                 </div>
@@ -126,68 +86,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initDashboard();
-        });
-
+        document.addEventListener('DOMContentLoaded', initDashboard);
         async function initDashboard() {
-            // Load pinned news
             const newsRes = await fetch('/api/get_news');
             const newsData = await newsRes.json();
             const pinned = newsData.filter(n => n.is_pinned);
-            
             if (pinned.length > 0) {
                 const carouselArea = document.getElementById('newsCarousel');
                 const carouselInner = document.getElementById('carouselInner');
                 carouselArea.classList.remove('d-none');
-                carouselInner.innerHTML = pinned.map((n, i) => `
-                    <div class="carousel-item ${i===0?'active':''}">
-                        <img src="${n.image_url}" class="carousel-img">
-                        <div class="carousel-caption-custom">
-                            <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span>
-                            <h2 class="fw-bold">${n.title}</h2>
-                            <p class="text-truncate" style="max-width: 80%">${n.content}</p>
-                        </div>
-                    </div>`).join('');
+                carouselInner.innerHTML = pinned.map((n, i) => `<div class="carousel-item ${i===0?'active':''}"> <img src="${n.image_url}" class="carousel-img"> <div class="carousel-caption-custom"> <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span> <h2 class="fw-bold">${n.title}</h2> <p class="text-truncate" style="max-width: 80%">${n.content}</p> </div> </div>`).join('');
+                new bootstrap.Carousel(carouselArea, { interval: 5000, ride: 'carousel' });
             }
-
-            // Load Activities for right side list
             const eventRes = await fetch('/api/get_events');
             const eventData = await eventRes.json();
             const upcoming = eventData.sort((a,b) => new Date(a.start) - new Date(b.start)).slice(0, 4);
-            document.getElementById('dashboardActivities').innerHTML = upcoming.map(ev => `
-                <div class="activity-card d-flex align-items-center" onclick="openDashboardEvent(${ev.id})">
-                    <div class="bg-primary text-white rounded-3 px-3 py-2 me-3 text-center">
-                        <small>${new Date(ev.start).toLocaleDateString('th-TH', {month:'short'})}</small><br>
-                        <span class="fw-bold">${new Date(ev.start).getDate()}</span>
-                    </div>
-                    <div>
-                        <div class="fw-bold text-dark" style="font-size:0.95rem">${ev.title}</div>
-                        <small class="text-muted"><i class="bi bi-geo-alt"></i> ${ev.extendedProps.location || 'คณะวิทยาศาสตร์'}</small>
-                    </div>
-                </div>`).join('');
+            document.getElementById('dashboardActivities').innerHTML = upcoming.map(ev => `<div class="activity-card d-flex align-items-center" onclick="openDashboardEvent(${ev.id})"> <div class="bg-primary text-white rounded-3 px-3 py-2 me-3 text-center"> <small>${new Date(ev.start).toLocaleDateString('th-TH', {month:'short'})}</small><br><span class="fw-bold">${new Date(ev.start).getDate()}</span> </div> <div> <div class="fw-bold text-dark" style="font-size:0.95rem">${ev.title}</div> <small class="text-muted"><i class="bi bi-geo-alt"></i> ${ev.extendedProps.location || 'คณะวิทยาศาสตร์'}</small> </div> </div>`).join('');
         }
-
-        function showEventPopup(event) {
-            document.getElementById('viewTitle').innerText = event.title;
-            document.getElementById('viewStart').innerText = event.start.toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'});
-            document.getElementById('viewLocation').innerText = event.extendedProps.location || '-';
-            document.getElementById('viewDesc').innerText = event.extendedProps.description || '-';
-            new bootstrap.Modal(document.getElementById('eventDetailModal')).show();
-        }
-
-        async function openDashboardEvent(id) {
-            const res = await fetch('/api/get_events');
-            const data = await res.json();
-            const ev = data.find(e => e.id === id);
-            if(ev) {
-                document.getElementById('viewTitle').innerText = ev.title;
-                document.getElementById('viewStart').innerText = new Date(ev.start).toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'});
-                document.getElementById('viewLocation').innerText = ev.extendedProps.location || '-';
-                document.getElementById('viewDesc').innerText = ev.extendedProps.description || '-';
-                new bootstrap.Modal(document.getElementById('eventDetailModal')).show();
-            }
-        }
+        function openDashboardEvent(id) { fetch('/api/get_events').then(res => res.json()).then(data => { const ev = data.find(e => e.id === id); if(ev) { document.getElementById('viewTitle').innerText = ev.title; document.getElementById('viewStart').innerText = new Date(ev.start).toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'}); document.getElementById('viewEnd').innerText = ev.end ? new Date(ev.end).toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'}) : new Date(ev.start).toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'}); document.getElementById('viewLocation').innerText = ev.extendedProps.location || '-'; document.getElementById('viewDesc').innerText = ev.extendedProps.description || '-'; new bootstrap.Modal(document.getElementById('eventDetailModal')).show(); } }); }
     </script>
 </body>
 </html>

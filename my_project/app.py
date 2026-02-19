@@ -52,7 +52,7 @@ def calendar_page():
 def news_page():
     return render_template('news.html')
 
-# --- APIs ---
+# --- API สำหรับกิจกรรม ---
 @app.route('/api/get_events')
 def get_events():
     events = Event.query.all()
@@ -79,7 +79,7 @@ def save_event():
         new_event = Event(
             title=data['title'],
             start_date=data['start_date'],
-            end_date=data['end_date'] if data['end_date'] else data['start_date'],
+            end_date=data['end_date'] if data.get('end_date') else data['start_date'],
             event_type=data['type'],
             location=data['location'],
             description=data['description']
@@ -99,6 +99,7 @@ def delete_event_json(id):
         return jsonify({"status": "success"})
     return jsonify({"status": "error"}, 404)
 
+# --- API สำหรับข่าวประชาสัมพันธ์ ---
 @app.route('/api/get_news')
 def get_news():
     news_items = News.query.order_by(News.created_at.desc()).all()
@@ -136,10 +137,14 @@ def toggle_pin(id):
 def delete_news(id):
     news_item = News.query.get(id)
     if news_item:
+        if news_item.image_filename != 'default_news.png':
+            try: os.remove(os.path.join(app.config['UPLOAD_FOLDER'], news_item.image_filename))
+            except: pass
         db.session.delete(news_item)
         db.session.commit()
         return jsonify({"status": "success"})
     return jsonify({"status": "error"}, 404)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # เปิด host 0.0.0.0 เพื่อให้โทรศัพท์เข้าถึงได้
+    app.run(debug=True, host='0.0.0.0', port=5000)
