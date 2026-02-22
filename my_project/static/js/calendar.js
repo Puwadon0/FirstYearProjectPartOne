@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         dateDisplay.innerText = "วันนี้: " + today.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     }
 
-    // แก้ไข: โหลดปฏิทินทันทีที่มี element #calendar โดยไม่สนเส้นทาง
+    // โหลดปฏิทินทันทีที่มี element #calendar (รองรับทั้ง Dashboard และหน้าปฏิทินหลัก)
     var calendarEl = document.getElementById('calendar');
     if (calendarEl) {
         calendar = new FullCalendar.Calendar(calendarEl, {
@@ -25,12 +25,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 currentEventId = info.event.id;
                 document.getElementById('viewTitle').innerText = info.event.title;
                 
-                // แก้ไข: แสดงวันเริ่มและวันจบให้ถูกต้อง
+                // จัดการแสดงผลวันเริ่มและวันจบให้ถูกต้อง
                 document.getElementById('viewStart').innerText = info.event.start.toLocaleDateString('th-TH');
-                
                 const viewEndEl = document.getElementById('viewEnd');
                 if (viewEndEl) {
-                    // สำหรับ FullCalendar All-day event วันจบจะเป็นวันถัดไป จึงต้องลบออก 1 วันเพื่อแสดงผลจริง
                     if (info.event.allDay && info.event.end) {
                         let displayEnd = new Date(info.event.end);
                         displayEnd.setDate(displayEnd.getDate() - 1);
@@ -38,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     } else if (info.event.end) {
                         viewEndEl.innerText = info.event.end.toLocaleDateString('th-TH');
                     } else {
-                        // หากไม่มีวันจบ ให้แสดงวันเดียวกันกับวันเริ่ม
                         viewEndEl.innerText = info.event.start.toLocaleDateString('th-TH');
                     }
                 }
@@ -80,26 +77,47 @@ function applyModeSettings() {
     }
 
     if (modeText) modeText.innerText = (userMode === 'staff') ? "Staff Mode" : (userMode === 'club' ? "Club Mode" : "Student Mode");
+    
     if (addBtn) addBtn.style.display = (userMode === 'student') ? 'none' : 'block';
     if (addNewsBtn) addNewsBtn.style.display = (userMode === 'student') ? 'none' : 'block';
 
     const path = window.location.pathname;
-    let menuItems = `
+    let commonLinks = `
         <a class="nav-link ${path==='/news'?'active':''}" href="/news"><i class="bi bi-megaphone me-2"></i>ข่าวประชาสัมพันธ์</a>
         <a class="nav-link ${path==='/calendar'?'active':''}" href="/calendar"><i class="bi bi-calendar3 me-2"></i>ปฏิทินกิจกรรม</a>
     `;
 
     let roleLinks = "";
     if (userMode === 'staff') {
-        roleLinks = `<a class="dropdown-item" href="#"><i class="bi bi-file-earmark-check me-2"></i>ตรวจทานเอกสาร</a><a class="dropdown-item" href="#"><i class="bi bi-clipboard-check me-2"></i>ตรวจโครงการ</a><a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>`;
+        // เพิ่มตัวเลือก 1. รายชื่อผู้เข้าร่วมจิตอาสา 2. คำขอสร้างกิจกรรม ตามที่ขอครับ
+        roleLinks = `
+            <a class="dropdown-item" href="#"><i class="bi bi-file-earmark-check me-2"></i>ตรวจทานเอกสาร</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-clipboard-check me-2"></i>ตรวจโครงการ</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-people me-2"></i>รายชื่อผู้เข้าร่วมจิตอาสา</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-journal-plus me-2"></i>คำขอสร้างกิจกรรม</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
+        `;
     } else if (userMode === 'club') {
-        roleLinks = `<a class="dropdown-item" href="#"><i class="bi bi-plus-circle me-2"></i>สร้างกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-cash-stack me-2"></i>บันทึกค่าใช้จ่าย</a><a class="dropdown-item" href="#"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a><a class="dropdown-item" href="#"><i class="bi bi-file-earmark-text me-2"></i>สร้างฟอร์ม</a><a class="dropdown-item" href="#"><i class="bi bi-person-plus me-2"></i>รับสมัครอาสา</a><a class="dropdown-item" href="#"><i class="bi bi-tools me-2"></i>ข้อมูลอุปกรณ์</a><a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>`;
+        roleLinks = `
+            <a class="dropdown-item" href="#"><i class="bi bi-plus-circle me-2"></i>สร้างกิจกรรม</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-cash-stack me-2"></i>บันทึกค่าใช้จ่าย</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-file-earmark-text me-2"></i>สร้างฟอร์ม</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-person-plus me-2"></i>รับสมัครอาสา</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-tools me-2"></i>ข้อมูลอุปกรณ์</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
+        `;
     } else {
-        roleLinks = `<a class="dropdown-item" href="#"><i class="bi bi-list-ul me-2"></i>รายชื่อกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-images me-2"></i>ภาพกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>`;
+        roleLinks = `
+            <a class="dropdown-item" href="#"><i class="bi bi-list-ul me-2"></i>รายชื่อกิจกรรม</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-images me-2"></i>ภาพกิจกรรม</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a>
+            <a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>
+        `;
     }
 
     if (megaMenu) megaMenu.innerHTML = roleLinks;
-    if (expandedContainer) expandedContainer.innerHTML = menuItems + roleLinks.replaceAll('dropdown-item', 'nav-link');
+    if (expandedContainer) expandedContainer.innerHTML = commonLinks + roleLinks.replaceAll('dropdown-item', 'nav-link');
 }
 
 function updateSidebarList() {

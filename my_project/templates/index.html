@@ -21,6 +21,19 @@
         .fc-toolbar-title { color: var(--ubu-blue); font-weight: 600; }
         .badge-guide { width: 100px; display: inline-block; text-align: center; padding: 8px 0; border-radius: 6px; }
         #userRoleProfile { font-size: 0.9rem; color: var(--ubu-blue); font-weight: 600; display: block; padding: 5px 15px; }
+
+        /* Custom Calendar Styles */
+        .fc .fc-day-today {
+            background-color: rgba(255, 193, 7, 0.3) !important; /* พื้นหลังสีเหลืองเข้มขึ้นสำหรับวันนี้ */
+            font-weight: bold;
+        }
+        .fc .fc-day-today .fc-daygrid-day-number {
+            color: var(--ubu-blue) !important; /* ตัวเลขวันที่สีน้ำเงินเข้มสำหรับวันนี้ */
+            font-size: 1.1em;
+        }
+        .fc .fc-day-other .fc-daygrid-day-number {
+            color: #adb5bd !important; /* ตัวเลขวันที่สีเทาอ่อนสำหรับเดือนอื่น */
+        }
     </style>
 </head>
 <body>
