@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ระบบจัดการกิจกรรม{% endblock %} - คณะวิทยาศาสตร์</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f3f4f6; }
+        .form-section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; }
+        input, select, textarea { border: 1px solid #d1d5db; border-radius: 6px; padding: 10px; width: 100%; background: #ffffff; transition: all 0.2s; }
+        input:focus, textarea:focus { border-color: #1d4ed8; ring: 2px; outline: none; background: #fff; }
+        label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; color: #374151; }
+        .table-input { border: none; background: transparent; width: 100%; padding: 4px; }
+        .table-input:focus { background: #f0f7ff; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <nav class="bg-[#002d72] text-white shadow-md">
+        <!-- <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> -->
+            <div class="flex justify-between items-center h-20 px-8">
+                <div class="flex flex-col justify-center">
+                    <span class="text-xl font-bold leading-tight tracking-wide">คณะวิทยาศาสตร์</span>
+                    <span class="text-lg font-medium leading-tight opacity-90">Faculty of Science</span>
+                </div>
+
+                <div class="flex items-center">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md hover:text-white hover:bg-blue-800 focus:outline-none transition">
+                        <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        <!-- </div> -->
+    </nav>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <!-- <footer class="bg-gray-200 text-center p-8 mt-12 text-gray-600">
+        <p>© 2026 คณะวิทยาศาสตร์ มหาวิทยาลัยอุบลราชธานี</p>
+    </footer> -->
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
