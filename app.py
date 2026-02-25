@@ -190,12 +190,32 @@ def delete_activity(act_id):
 
     return redirect(url_for('club_status_activity'))
 
+
+# เพิ่ม Route สำหรับจัดการกิจกรรมที่สำเร็จ (Optional)
+@app.route('/finish/<act_id>')
+def finish_activity(act_id):
+    with get_db() as conn:
+        conn.execute(
+            'UPDATE activities SET act_status = "finished" WHERE act_id = ?', (act_id,)
+        )
+    return redirect(url_for('officer_status_activity'))
+
+# ปรับ Route หลักของ Officer ให้ดึงข้อมูลมาทั้งหมดเพื่อรอ JS กรอง
 @app.route('/officer')
 def officer_status_activity():
     with get_db() as conn:
-        activities = conn.execute(
-            'SELECT * FROM activities ORDER BY act_status ASC, act_id DESC'
-        ).fetchall()
+        # ดึงมาทั้งหมด โดยเรียงลำดับความสำคัญ (Pending ขึ้นก่อน)
+        activities = conn.execute('''
+            SELECT * FROM activities 
+            ORDER BY 
+                CASE act_status 
+                    WHEN 'pending' THEN 1 
+                    WHEN 'approved' THEN 2 
+                    WHEN 'finished' THEN 3
+                    WHEN 'rejected' THEN 4
+                    ELSE 5 
+                END, act_id DESC
+        ''').fetchall()
     return render_template('officer_status_activity.html', activities=activities)
 
 @app.route('/approve/<act_id>')

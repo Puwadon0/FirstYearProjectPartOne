@@ -20,7 +20,7 @@ function openViewModal(btn) {
   const fileContainer = document.getElementById("v_file_container");
   if (d.file && d.file.trim() !== "") {
     fileContainer.innerHTML =
-      `<a href="${d.file}" target="_blank"
+      `<a href="/static/uploads/${d.file}" target="_blank" 
          class="inline-flex items-center gap-1 text-blue-600 underline hover:text-blue-800 text-sm">
          📎 ดูไฟล์โครงการ
        </a>`;
@@ -43,11 +43,47 @@ function openViewModal(btn) {
 function closeViewModal() {
   document.getElementById("viewModal").classList.add("hidden");
 }
+// ฟังก์ชันสำหรับกรองข้อมูลในตาราง
+function filterStatus(status) {
+    const rows = document.querySelectorAll('.activity-row');
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    // 1. จัดการเรื่องสีของปุ่ม (Active State)
+    buttons.forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'bg-yellow-500', 'bg-green-500', 'bg-red-500', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-700');
+    });
+
+    // ใส่สีให้ปุ่มที่ถูกกด (ตัวอย่างสีตามสถานะ)
+    const activeBtn = document.getElementById('btn-' + status);
+    activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+    if(status === 'all') activeBtn.classList.add('bg-blue-600', 'text-white');
+    if(status === 'pending') activeBtn.classList.add('bg-yellow-500', 'text-white');
+    if(status === 'approved') activeBtn.classList.add('bg-green-500', 'text-white');
+    if(status === 'rejected') activeBtn.classList.add('bg-red-500', 'text-white');
+
+    // 2. กรองแถวในตาราง
+    rows.forEach(row => {
+        if (status === 'all') {
+            row.style.display = ''; // แสดงทั้งหมด
+        } else {
+            if (row.getAttribute('data-status') === status) {
+                row.style.display = ''; // ตรงกับสถานะ ให้แสดง
+            } else {
+                row.style.display = 'none'; // ไม่ตรง ให้ซ่อน
+            }
+        }
+    });
+}
+
+// โค้ดเดิมของคุณ (openViewModal, closeViewModal) ให้คงไว้ด้านล่าง...
 
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("viewModal").addEventListener("click", function (e) {
     if (e.target === this) closeViewModal();
   });
+
+  
 
   document.querySelectorAll(".view-btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -55,3 +91,4 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+

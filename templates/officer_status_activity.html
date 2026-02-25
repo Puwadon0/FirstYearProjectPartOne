@@ -1,204 +1,176 @@
-<script src="{{ url_for('static', filename='js/offical_status.js') }}"></script>
 {% extends "navbar.html" %}
-{% block title %}ระบบคณะวิทยาศาสตร์{% endblock %}
+{% block title %}ระบบคณะวิทยาศาสตร์ - ตรวจสอบคำขอ{% endblock %}
+
 {% block content %}
-    <div class="max-w-7xl mx-auto p-4">
-        <div class="flex items-center gap-2 mb-4">
-            <span class="text-2xl"></span>
-            <div>
-                <h1 class="text-xl font-bold text-gray-700">ตรวจสอบคำขอกิจกรรม (เจ้าหน้าที่)</h1>
-                <p class="text-sm text-gray-400">ตรวจสอบและอนุมัติคำขอจากสโมสร</p>
-            </div>
+<div class="max-w-7xl mx-auto p-4">
+    <div class="flex items-center gap-2 mb-4">
+        <div>
+            <h1 class="text-xl font-bold text-gray-700">ตรวจสอบคำขอกิจกรรม (เจ้าหน้าที่)</h1>
+            <p class="text-sm text-gray-400">ตรวจสอบและอนุมัติคำขอจากสโมสร</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow p-4 text-center border-l-4 border-yellow-400">
+            <div class="text-2xl font-bold text-yellow-600">{{ activities | selectattr('act_status', 'equalto', 'pending') | list | length }}</div>
+            <div class="text-sm text-gray-500">รออนุมัติ</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 text-center border-l-4 border-green-400">
+            <div class="text-2xl font-bold text-green-600">{{ activities | selectattr('act_status', 'equalto', 'approved') | list | length }}</div>
+            <div class="text-sm text-gray-500">อนุมัติแล้ว</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 text-center border-l-4 border-blue-400">
+            <div class="text-2xl font-bold text-blue-600">{{ activities | length }}</div>
+            <div class="text-sm text-gray-500">ทั้งหมด</div>
+        </div>
+    </div>
+
+    <div class="flex justify-between items-center mb-2">
+        <div class="text-gray-700 font-bold text-lg">
+            <i class="fas fa-list-ul mr-2"></i>รายการกิจกรรม
         </div>
         
-        <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="bg-white rounded-xl shadow p-4 text-center border-l-4 border-yellow-400">
-                <div class="text-2xl font-bold text-yellow-600">{{ activities | selectattr('act_status', 'equalto', 'pending') | list | length }}</div>
-                <div class="text-sm text-gray-500">รออนุมัติ</div>
-            </div>
-            <div class="bg-white rounded-xl shadow p-4 text-center border-l-4 border-green-400">
-                <div class="text-2xl font-bold text-green-600">{{ activities | selectattr('act_status', 'equalto', 'approved') | list | length }}</div>
-                <div class="text-sm text-gray-500">อนุมัติแล้ว</div>
-            </div>
-            <div class="bg-white rounded-xl shadow p-4 text-center border-l-4 border-blue-400">
-                <div class="text-2xl font-bold text-blue-600">{{ activities | list | length }}</div>
-                <div class="text-sm text-gray-500">ทั้งหมด</div>
-            </div>
-        </div>
-
-        <div class="bg-white shadow-md rounded-lg overflow-x-auto">
-            <table class="w-full text-sm text-left border-collapse">
-                <thead class="bg-[#1e3a5f] text-white text-center font-bold">
-                    <tr>
-                        <th class="border border-blue-900 p-3">ชื่อกิจกรรม</th>
-                        <th class="border border-blue-900 p-3">วัน/เวลา</th>
-                        <th class="border border-blue-900 p-3">สถานที่</th>
-                        <th class="border border-blue-900 p-3">งบประมาณ</th>
-                        <th class="border border-blue-900 p-3">ผู้รับผิดชอบ</th>
-                        <th class="border border-blue-900 p-3">สถานะ</th>
-                        <th class="border border-blue-900 p-3">ดูเพิ่มเติม</th>
-                        <th class="border border-blue-900 p-3">การดำเนินการ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for act in activities %}
-                    <tr class="text-center border-b hover:bg-blue-50 transition">
-                        <td class="border p-3 text-left font-medium">{{ act['act_name'] }}</td>
-                        <td class="border p-3 text-xs">{{ act['act_datetime'] }}</td>
-                        <td class="border p-3">{{ act['act_location'] }}</td>
-                        <td class="border p-3 font-bold text-blue-800">
-                            {{ "{:,.0f}".format(act['act_cost'] if act['act_cost'] else 0) }} บาท
-                        </td>
-                        <td class="border p-3">{{ act['act_created_by'] or '-' }}</td>
-                        <td class="border p-3">
-                            {% if act['act_status'] == 'pending' %}
-                                <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-700 font-bold">รออนุมัติ</span>
-                            {% elif act['act_status'] == 'approved' %}
-                                <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-bold">อนุมัติแล้ว</span>
-                            {% else %}
-                                <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700 font-bold">ไม่อนุมัติ</span>
-                            {% endif %}
-                        </td>
-                        <td class="border p-3 text-center">
-                            <button class="view-btn bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold transition"
-                                data-id="{{ act['act_id'] }}"
-                                data-name="{{ act['act_name'] }}"
-                                data-datetime="{{ act['act_datetime'] }}"
-                                data-location="{{ act['act_location'] }}"
-                                data-address="{{ act['act_address'] or '' }}"
-                                data-cost="{{ act['act_cost'] or 0 }}"
-                                data-status="{{ act['act_status'] }}"
-                                data-file="{{ act['act_file'] or '' }}"
-                                data-detail="{{ act['act_detail'] or '' }}"
-                                data-steps="{{ act['act_steps'] or '' }}"
-                                data-qa="{{ act['act_QA'] or '' }}"
-                                data-createdby="{{ act['act_created_by'] or '' }}"
-                                data-phone="{{ act['act_phone'] or '' }}"
-                                data-department="{{ act['act_department'] or '' }}"
-                                data-fiscalyear="{{ act['act_fiscal_year'] or '' }}"
-                                data-std="{{ act['act_std'] or 0 }}"
-                                data-other="{{ act['act_other'] or 0 }}">
-                                👁 ดูเพิ่มเติม
-                            </button>
-                        </td>
-
-                        <td class="border p-3 text-center">
-                            {% if act['act_status'] == 'pending' %}
-                                <div class="flex gap-2 justify-center">
-                                    <a href="/approve/{{ act['act_id'] }}"
-                                       onclick="return confirm('อนุมัติกิจกรรมนี้?')"
-                                       class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-                                        ✔ อนุมัติ
-                                    </a>
-                                    <a href="/reject/{{ act['act_id'] }}"
-                                       onclick="return confirm('ไม่อนุมัติกิจกรรมนี้?')"
-                                       class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-                                        ✖ ไม่อนุมัติ
-                                    </a>
-                                </div>
-                            {% else %}
-                                <span class="text-gray-400 text-xs">ดำเนินการแล้ว</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="flex items-center gap-2">
+            <!-- <label for="statusFilter" class="text-sm font-medium text-gray-600">กรองตามสถานะ:</label> -->
+            <select id="statusFilter" onchange="filterStatus(this.value)" 
+                    class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 shadow-sm outline-none">
+                <option value="all">แสดงทั้งหมด ({{ activities | length }})</option>
+                <option value="pending">รออนุมัติ ({{ activities | selectattr('act_status', 'equalto', 'pending') | list | length }})</option>
+                <option value="approved">อนุมัติแล้ว ({{ activities | selectattr('act_status', 'equalto', 'approved') | list | length }})</option>
+                <option value="rejected">ปฏิเสธ ({{ activities | selectattr('act_status', 'equalto', 'rejected') | list | length }})</option>
+            </select>
         </div>
     </div>
 
-    <div id="viewModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div class="bg-[#1e3a5f] text-white px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
-                <h2 class="font-bold text-lg">👁 รายละเอียดกิจกรรม</h2>
-                <button onclick="closeViewModal()" class="text-white hover:text-gray-300 text-2xl leading-none">&times;</button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">1. ข้อมูลทั่วไป</div>
-                    <div class="grid grid-cols-2 divide-x divide-y divide-gray-100">
-                        <div class="p-3"><p class="text-xs text-gray-400">ชื่อหน่วยงาน / โครงการ</p><p class="font-medium" id="v_department"></p></div>
-                        <div class="p-3"><p class="text-xs text-gray-400">ปีงบประมาณ</p><p class="font-medium" id="v_fiscalyear"></p></div>
-                        <div class="p-3"><p class="text-xs text-gray-400">ผู้รับผิดชอบ</p><p class="font-medium" id="v_createdby"></p></div>
-                        <div class="p-3"><p class="text-xs text-gray-400">เบอร์ติดต่อ</p><p class="font-medium" id="v_phone"></p></div>
-                    </div>
-                </div>
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">2. ชื่อกิจกรรม</div>
-                    <div class="p-3">
-                        <p class="text-lg font-bold text-indigo-900" id="v_name"></p>
-                    </div>
-                </div>
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">3. วัน เวลา ที่จัดกิจกรรม</div>
-                    <div class="p-3">
-                        <p class="text-xs text-gray-400">วันที่และเวลา</p>
-                        <p class="font-medium" id="v_datetime"></p>
-                    </div>
-                </div>
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">4. สถานที่จัดกิจกรรม</div>
-                    <div class="divide-y divide-gray-100">
-                        <div class="p-3"><p class="text-xs text-gray-400">ชื่อสถานที่</p><p class="font-medium" id="v_location"></p></div>
-                        <div class="p-3"><p class="text-xs text-gray-400">รายละเอียดที่อยู่ / แผนที่</p><p class="font-medium" id="v_address"></p></div>
-                    </div>
-                </div>
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">5. จำนวนผู้เข้าร่วม</div>
-                    <div class="grid grid-cols-2 divide-x divide-gray-100">
-                        <div class="p-3 text-center">
-                            <p class="text-xs text-gray-400">นักศึกษา</p>
-                            <p class="text-2xl font-bold text-blue-700" id="v_std"></p>
-                            <p class="text-xs text-gray-400">คน</p>
-                        </div>
-                        <div class="p-3 text-center">
-                            <p class="text-xs text-gray-400">บุคลากร / อื่นๆ</p>
-                            <p class="text-2xl font-bold text-blue-700" id="v_other"></p>
-                            <p class="text-xs text-gray-400">คน</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">6. วัตถุประสงค์ / รายละเอียด</div>
-                    <div class="divide-y divide-gray-100">
-                        <div class="p-3"><p class="text-xs text-gray-400">วัตถุประสงค์</p><p class="text-gray-700 whitespace-pre-line" id="v_detail"></p></div>
-                        <div class="p-3"><p class="text-xs text-gray-400">ขั้นตอนการจัดกิจกรรม</p><p class="text-gray-700 whitespace-pre-line" id="v_steps"></p></div>
-                    </div>
-                </div>
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">7. งบประมาณ</div>
-                    <div class="p-3 text-center">
-                        <p class="text-xs text-gray-400">งบประมาณรวม</p>
-                        <p class="text-2xl font-bold text-green-700" id="v_cost"></p>
-                    </div>
-                </div>
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">8. ไฟล์แนบ / หมายเหตุ</div>
-                    <div class="divide-y divide-gray-100">
-                        <div class="p-3">
-                            <p class="text-xs text-gray-400 mb-2">ไฟล์โครงการ</p>
-                            <div id="v_file_container"></div>
-                        </div>
-                        <div class="p-3">
-                            <p class="text-xs text-gray-400">หมายเหตุ</p>
-                            <p class="text-gray-700 whitespace-pre-line" id="v_qa"></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-3 text-center">
-                    <p class="text-xs text-gray-400 mb-1">สถานะคำขอ</p>
-                    <p id="v_status"></p>
-                </div>
-            </div>
-            <div class="px-6 pb-6 flex justify-end">
-                <button onclick="closeViewModal()"
-                        class="px-6 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 font-bold">
-                    ปิด
-                </button>
-            </div>
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto border border-gray-200">
+        <table class="w-full text-sm text-left border-collapse">
+            <thead class="bg-[#1e3a5f] text-white text-center font-bold">
+                <tr>
+                    <th class="p-3 border-r border-blue-900">ชื่อกิจกรรม</th>
+                    <th class="p-3 border-r border-blue-900">วัน/เวลา</th>
+                    <th class="p-3 border-r border-blue-900">สถานที่</th>
+                    <th class="p-3 border-r border-blue-900">งบประมาณ</th>
+                    <th class="p-3 border-r border-blue-900">ผู้รับผิดชอบ</th>
+                    <th class="p-3 border-r border-blue-900">สถานะ</th>
+                    <th class="p-3 border-r border-blue-900">รายละเอียด</th>
+                    <th class="p-3">การดำเนินการ</th>
+                </tr>
+            </thead>
+            <tbody id="activityTableBody">
+                {% for act in activities %}
+                <tr class="activity-row text-center border-b hover:bg-gray-50 transition" data-status="{{ act['act_status'] }}">
+                    <td class="p-3 text-left font-medium text-gray-800">{{ act['act_name'] }}</td>
+                    <td class="p-3 text-xs text-gray-600">{{ act['act_datetime'] }}</td>
+                    <td class="p-3">{{ act['act_location'] }}</td>
+                    <td class="p-3 font-bold text-blue-700">
+                        {{ "{:,.0f}".format(act['act_cost'] or 0) }} บาท
+                    </td>
+                    <td class="p-3">{{ act['act_created_by'] or '-' }}</td>
+                    <td class="p-3">
+                        {% if act['act_status'] == 'pending' %}
+                            <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-700 font-bold border border-yellow-200">รออนุมัติ</span>
+                        {% elif act['act_status'] == 'approved' %}
+                            <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-bold border border-green-200">อนุมัติแล้ว</span>
+                        {% else %}
+                            <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700 font-bold border border-red-200">ไม่อนุมัติ</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-3 text-center">
+                        <button class="view-btn bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold transition-colors"
+                            data-name="{{ act['act_name'] }}"
+                            data-department="{{ act['act_department'] or '-' }}"
+                            data-datetime="{{ act['act_datetime'] }}"
+                            data-location="{{ act['act_location'] }}"
+                            data-cost="{{ act['act_cost'] or 0 }}"
+                            data-file="{{ act['act_file'] or '' }}">
+                            👁 ดูเพิ่ม
+                        </button>
+                    </td>
+                    <td class="p-3 text-center">
+                        {% if act['act_status'] == 'pending' %}
+                            <div class="flex gap-2 justify-center">
+                                <a href="/approve/{{ act['act_id'] }}" onclick="return confirm('อนุมัติกิจกรรมนี้?')"
+                                   class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold transition shadow-sm">
+                                     ✔ อนุมัติ
+                                </a>
+                                <a href="/reject/{{ act['act_id'] }}" onclick="return confirm('ปฏิเสธกิจกรรมนี้?')"
+                                   class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold transition shadow-sm">
+                                     ✖ ปฏิเสธ
+                                </a>
+                            </div>
+                        {% else %}
+                            <span class="text-gray-400 text-xs italic">จัดการแล้ว</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="viewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
+        <div class="bg-[#1e3a5f] text-white px-6 py-4 flex justify-between items-center">
+            <h2 class="font-bold">รายละเอียดกิจกรรม</h2>
+            <button onclick="closeViewModal()" class="text-2xl hover:text-gray-300">&times;</button>
+        </div>
+        <div class="p-6 space-y-3">
+            <p><strong>ชื่อโครงการ:</strong> <span id="v_name"></span></p>
+            <p><strong>หน่วยงาน:</strong> <span id="v_department"></span></p>
+            <p><strong>วันเวลา:</strong> <span id="v_datetime"></span></p>
+            <p><strong>สถานที่:</strong> <span id="v_location"></span></p>
+            <p><strong>งบประมาณ:</strong> <span id="v_cost"></span></p>
+            <div id="v_file_container" class="mt-4"></div>
+        </div>
+        <div class="bg-gray-50 px-6 py-4 flex justify-end">
+            <button onclick="closeViewModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300">ปิด</button>
         </div>
     </div>
+</div>
 {% endblock %}
+
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/offical_status.js') }}"></script>
+<script>
+// ฟังก์ชันกรองข้อมูลจาก Dropdown
+function filterStatus(selectedStatus) {
+    const rows = document.querySelectorAll('.activity-row');
+    
+    rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        if (selectedStatus === 'all' || rowStatus === selectedStatus) {
+            row.style.display = ''; // แสดงแถว
+        } else {
+            row.style.display = 'none'; // ซ่อนแถว
+        }
+    });
+}
+
+// ฟังก์ชัน Modal
+function openViewModal(btn) {
+    const d = btn.dataset;
+    document.getElementById("v_name").innerText = d.name;
+    document.getElementById("v_department").innerText = d.department;
+    document.getElementById("v_datetime").innerText = d.datetime;
+    document.getElementById("v_location").innerText = d.location;
+    document.getElementById("v_cost").innerText = parseFloat(d.cost).toLocaleString() + " บาท";
+
+    const fileBox = document.getElementById("v_file_container");
+    fileBox.innerHTML = d.file 
+        ? `<a href="/static/uploads/${d.file}" target="_blank" class="text-blue-600 font-bold underline">📎 เปิดดูไฟล์แนบ</a>` 
+        : `<span class="text-gray-400 italic">ไม่มีไฟล์แนบ</span>`;
+
+    document.getElementById("viewModal").classList.remove("hidden");
+}
+
+function closeViewModal() {
+    document.getElementById("viewModal").classList.add("hidden");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".view-btn").forEach(btn => {
+        btn.addEventListener("click", function() { openViewModal(this); });
+    });
+});
+</script>
 {% endblock %}
