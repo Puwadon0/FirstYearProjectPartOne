@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}
+รายชื่อผู้ลงทะเบียน
+{% endblock %}
+
+{% block content %}
+
+<div class="title">
+รายชื่อผู้ลงทะเบียน
+</div>
+
+<div class="card">
+
+<div class="card-title">
+รายการทั้งหมด
+</div>
+
+<table border="1" width="100%" cellpadding="10">
+<tr>
+<th>ID</th>
+<th>ชื่อ</th>
+<th>รหัสนักศึกษา</th>
+</tr>
+
+{% for person in registrations %}
+
+<tr>
+<td>{{ person.id }}</td>
+<td>{{ person.fullname }}</td>
+<td>{{ person.student_id }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="{{ url_for('activity_register') }}">
+<button class="btn">กลับ</button>
+</a>
+
+</div>
+
+{% endblock %}

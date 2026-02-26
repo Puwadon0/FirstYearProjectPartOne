@@ -1,149 +1,162 @@
-from flask import Flask, request, render_template
-
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+import sqlite3
+import os
 app = Flask(__name__)
 
-# -------------------------
-# 1. Auth (Login / Register)
-# -------------------------
-@app.route("/auth/register", methods=["GET", "POST"])
-def register():
-    pass
-@app.route("/auth/login", methods=["GET", "POST"])
-def login():
-    pass
-@app.route("/auth/logout", methods=["POST"])
-def logout():
-    pass
-# -------------------------
-# 2-3. Activities
-# -------------------------
-@app.route("/activities", methods=["GET"])
-def list_activities():
-    pass
-@app.route("/activities", methods=["POST"])
-def create_activity():
-    pass
-@app.route("/activities/<int:id>", methods=["GET"])
-def activity_detail(id):
-    pass
-@app.route("/activities/<int:id>", methods=["PUT"])
-def update_activity(id):
-    pass
-@app.route("/activities/<int:id>/approve", methods=["PATCH"])
-def approve_activity(id):
-    pass
-# -------------------------
-# 4-5. Documents
-# -------------------------
-@app.route("/documents", methods=["GET"])
-def list_documents():
-    pass
+UPLOAD_FOLDER = "uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+DATABASE = "database.db"
 
-@app.route("/documents", methods=["POST"])
-def create_document():
-    pass
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-@app.route("/documents/<int:id>", methods=["GET"])
-def document_detail(id):
-    pass
 
-@app.route("/documents/<int:id>/approve", methods=["PATCH"])
-def approve_document(id):
-    pass
-# -------------------------
-# 6. Volunteers
-# -------------------------
-@app.route("/volunteers", methods=["GET"])
-def list_volunteers():
-    pass
+def init_db():
+    conn = get_db_connection()
 
-@app.route("/volunteers", methods=["POST"])
-def apply_volunteer():
-    pass
-# -------------------------
-# 7. Registrations
-# -------------------------
-@app.route("/registrations", methods=["POST"])
-def register_activity():
-    pass
+    # table expenses
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS expenses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item TEXT NOT NULL,
+            amount REAL NOT NULL,
+            filename TEXT
+        )
+    """)
 
-@app.route("/registrations/<int:id>", methods=["GET"])
-def registration_detail(id):
-    pass
-# -------------------------
-# 8. Expenses
-# -------------------------
-@app.route("/expenses", methods=["POST"])
-def create_expense():
-    pass
+    # table registrations
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS registrations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fullname TEXT NOT NULL,
+            student_id TEXT NOT NULL
+        )
+    """)
 
-@app.route("/expenses", methods=["GET"])
-def list_expenses():
-    pass
-# -------------------------
-# 9. Upload
-# -------------------------
-@app.route("/uploads", methods=["POST"])
-def upload_file():
-    pass
-# -------------------------
-# 10. Dashboard
-# -------------------------
-@app.route("/dashboard", methods=["GET"])
-def dashboard():
-    pass
-# -------------------------
-# 11. Project Reports
-# -------------------------
-@app.route("/reports", methods=["POST"])
-def upload_report():
-    pass
-@app.route("/reports/<int:id>", methods=["GET"])
-def report_detail(id):
-    pass
-# -------------------------
-# 12. Resources (สถานที่ / อุปกรณ์)
-# -------------------------
-@app.route("/resources", methods=["GET"])
-def list_resources():
-    pass
+    conn.commit()
+    conn.close()
 
-@app.route("/resources", methods=["POST"])
-def create_resource():
-    pass
-# -------------------------
-# 13. Announcements
-# -------------------------
-@app.route("/announcements", methods=["GET"])
-def list_announcements():
-    pass
 
-@app.route("/announcements", methods=["POST"])
-def create_announcement():
-    pass
-# -------------------------
-# 14. Calendar
-# -------------------------
-@app.route("/calendar", methods=["GET"])
-def view_calendar():
-    pass
-@app.route("/calendar/events", methods=["POST"])
-def create_calendar_event():
-    pass
-# -------------------------
-# 15. Q&A
-# -------------------------
-@app.route("/qa/questions", methods=["GET"])
-def list_questions():
-    pass
-@app.route("/qa/questions", methods=["POST"])
-def create_question():
-    pass
-@app.route("/qa/questions/<int:id>/answer", methods=["POST"])
-def answer_question(id):
-    pass
-# -------------------------
-# Run Server
-# -------------------------
+# สร้าง database ตอนเริ่มโปรแกรม
+init_db()
+
+
+@app.route("/")
+def home():
+    return render_template("activity_create.html")
+
+@app.route("/activity/create")
+def activity_create():
+    return render_template("activity_create.html")
+
+@app.route("/activity/register", methods=["GET", "POST"])
+def activity_register():
+
+    conn = get_db_connection()
+
+    if request.method == "POST":
+
+        fullname = request.form.get("fullname")
+        student_id = request.form.get("student_id")
+
+        conn.execute(
+            "INSERT INTO registrations (fullname, student_id) VALUES (?, ?)",
+            (fullname, student_id)
+        )
+
+        conn.commit()
+
+    # นับจำนวนทั้งหมด
+    result = conn.execute(
+        "SELECT COUNT(*) as count FROM registrations"
+    ).fetchone()
+
+    conn.close()
+
+    count = result["count"]
+
+    return render_template(
+        "activity_register.html",
+        count=count
+    )
+@app.route("/activity/list")
+def activity_list():
+
+    conn = get_db_connection()
+
+    registrations = conn.execute(
+        "SELECT * FROM registrations ORDER BY id DESC"
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "activity_list.html",
+        registrations=registrations
+    )
+
+
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
+@app.route("/expense/create", methods=["GET", "POST"])
+def expense_create():
+
+    if request.method == "POST":
+
+        item = request.form.get("item")
+        amount = request.form.get("amount")
+
+        receipt = request.files.get("receipt")
+
+        filename = None
+
+        if receipt and receipt.filename != "":
+            filename = receipt.filename
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            receipt.save(filepath)
+
+        # INSERT DATABASE
+        conn = get_db_connection()
+
+        conn.execute(
+            "INSERT INTO expenses (item, amount, filename) VALUES (?, ?, ?)",
+            (item, amount, filename)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for("expense_list"))
+
+    return render_template("expense_create.html")
+# หน้าแสดงผล
+@app.route("/expense/list")
+def expense_list():
+
+    conn = get_db_connection()
+
+    expenses = conn.execute(
+        "SELECT * FROM expenses ORDER BY id DESC"
+    ).fetchall()
+
+    result = conn.execute(
+        "SELECT SUM(amount) as total FROM expenses"
+    ).fetchone()
+
+    conn.close()
+
+    total = result["total"] if result["total"] else 0
+
+    return render_template(
+        "expense_list.html",
+        expenses=expenses,
+        total=total
+    )
+
 if __name__ == "__main__":
     app.run(debug=True)

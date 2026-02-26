@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+ผลรวมรายจ่าย
+{% endblock %}
+
+{% block content %}
+
+<div class="title">
+ผลรวมรายจ่าย
+</div>
+
+<div class="card">
+
+<div class="card-title">
+บันทึกสำเร็จ
+</div>
+
+<p>รายการ: {{ item }}</p>
+
+<p>รวมทั้งหมด: {{ total }} บาท</p>
+
+{% if filename %}
+<p>ไฟล์แนบ:</p>
+
+<img src="{{ url_for('uploaded_file', filename=filename) }}"
+     width="300">
+
+{% endif %}
+
+<a href="{{ url_for('expense_create') }}">
+    <button class="btn">กลับ</button>
+</a>
+
+<div style="clear:both;"></div>
+
+</div>
+
+{% endblock %}

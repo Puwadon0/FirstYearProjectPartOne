@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+บันทึกรายจ่ายกิจกรรม
+{% endblock %}
+
+{% block content %}
+
+<div class="title">
+บันทึกรายจ่ายกิจกรรม
+</div>
+
+<div class="card">
+
+<div class="card-title">
+แบบฟอร์มบันทึกรายจ่าย
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+
+<label>รายการ</label>
+<input type="text" name="item" required>
+
+<label>จำนวนเงิน</label>
+<input type="number" name="amount" required>
+
+<label>หลักฐานการใช้จ่าย</label>
+<input type="file" name="receipt">
+
+<div class="total">
+รวมทั้งหมด: 0 บาท
+</div>
+
+<button class="btn" type="submit">
+บันทึก
+</button>
+
+</form>
+
+<div style="clear:both;"></div>
+
+</div>
+
+{% endblock %}
