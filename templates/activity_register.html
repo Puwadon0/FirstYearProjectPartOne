@@ -1,3 +1,4 @@
+#activity_register.html
 {% extends "base.html" %}
 
 {% block title %}
@@ -38,9 +39,19 @@
 ผู้ลงทะเบียนทั้งหมด : {{ count }} คน
 </div>
 
-<button type="submit" class="btn">
-บันทึก
-</button>
+<div style="margin-top:20px; display:flex; gap:10px;">
+
+    <button type="submit" class="btn">
+        บันทึก
+    </button>
+
+    <a href="{{ url_for('activity_list') }}">
+        <button type="button" class="btn">
+            ดูรายชื่อผู้สมัคร
+        </button>
+    </a>
+
+</div>
 
 </form>
 

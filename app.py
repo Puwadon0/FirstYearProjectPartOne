@@ -46,11 +46,8 @@ init_db()
 
 @app.route("/")
 def home():
-    return render_template("activity_create.html")
+    pass
 
-@app.route("/activity/create")
-def activity_create():
-    return render_template("activity_create.html")
 
 @app.route("/activity/register", methods=["GET", "POST"])
 def activity_register():
@@ -82,6 +79,9 @@ def activity_register():
         "activity_register.html",
         count=count
     )
+
+
+
 @app.route("/activity/list")
 def activity_list():
 
