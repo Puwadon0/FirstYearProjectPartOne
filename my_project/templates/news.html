@@ -31,16 +31,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-ubu sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/"><img src="{{ url_for('static', filename='sci_atomic.png') }}" height="45" class="me-2"><div style="line-height: 1.1;"><span class="fw-light" style="font-size:0.85rem">คณะวิทยาศาสตร์</span><br><span class="fw-bold">Faculty of Science</span></div></a>
-            <div class="d-flex align-items-center">
-                <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#newsNav"><span class="navbar-toggler-icon"></span></button>
-                <div class="dropdown"><button class="btn text-white p-0" data-bs-toggle="dropdown"><i class="bi bi-person-circle" style="font-size: 1.8rem;"></i></button><ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2"><li><span id="userRoleProfile" class="dropdown-item-text border-bottom mb-1">บทบาท</span></li><li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>ออกจากระบบ</a></li></ul></div>
-            </div>
-            <div class="collapse navbar-collapse mt-2" id="newsNav"><div id="expandedFunctions" class="menu-grid"></div></div>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
 
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold mb-0" style="color: var(--ubu-blue);">ประชาสัมพันธ์กิจกรรม</h3><button id="addNewsBtn" class="btn bg-ubu text-white px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addNewsModal"><i class="bi bi-plus-lg me-2"></i>เพิ่มข่าวใหม่</button></div>

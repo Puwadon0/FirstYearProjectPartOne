@@ -54,3 +54,23 @@ body {
 }
 .upcoming-item:last-child { border-bottom: none; }
 .upcoming-item:hover { background-color: #f1f5f9; }
+/* เพิ่มในส่วน <style> ของไฟล์หลัก */
+.bg-ubu { background-color: #112592 !important; }
+.nav-link { 
+    color: white !important; 
+    padding: 5px 10px !important; 
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.nav-link:hover { background: rgba(255,255,255,0.1); color: #ffc107 !important; }
+
+/* ปรับขนาด Mega Menu ให้เล็กลง */
+.custom-mega-menu { 
+    width: 500px !important; 
+    background-color: rgba(17, 37, 146, 0.98) !important;
+    border-radius: 12px !important;
+}
+.mega-menu-grid .dropdown-item {
+    font-size: 0.8rem !important;
+    padding: 6px 10px !important;
+}
