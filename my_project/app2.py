@@ -177,6 +177,16 @@ def get_news():
         'is_pinned': n.is_pinned, 'date': n.created_at.strftime('%d/%m/%Y')
     } for n in news_items])
 
+@app.route('/api/toggle_pin/<int:id>', methods=['POST'])
+def toggle_pin(id):
+    news = News.query.get(id)
+    if not news:
+        return jsonify({"status": "error"}), 404
+
+    news.is_pinned = not news.is_pinned
+    db.session.commit()
+
+    return jsonify({"status": "success"})
 # --- 6. ระบบ API สำหรับการจัดการคำขอ (sqlite3) ---
 
 @app.route('/api/save-activity', methods=['POST'])
@@ -222,7 +232,7 @@ def reject_activity(act_id):
         conn.execute('UPDATE activities SET act_status = "rejected" WHERE act_id = ?', (act_id,))
     return redirect(url_for('officer_status_activity'))
 
-@app.route('/delete-news/<int:id>', methods=['DELETE'])
+@app.route('/api/delete_news/<int:id>', methods=['DELETE'])
 def delete_news(id):
     item = News.query.get(id)
     if item:

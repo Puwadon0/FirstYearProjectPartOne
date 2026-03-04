@@ -31,7 +31,19 @@
     </style>
 </head>
 <body>
-    {% include 'navbar.html' %}
+    <nav class="navbar navbar-dark bg-ubu sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{{ url_for('static', filename='sci_atomic.png') }}" height="45" class="me-2">
+                <div style="line-height: 1.1;"><span class="fw-light" style="font-size:0.85rem">คณะวิทยาศาสตร์</span><br><span class="fw-bold">Faculty of Science</span></div>
+            </a>
+            <div class="d-flex align-items-center">
+                <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navContent"><span class="navbar-toggler-icon"></span></button>
+                <div class="dropdown"><button class="btn text-white p-0" data-bs-toggle="dropdown"><i class="bi bi-person-circle" style="font-size: 1.8rem;"></i></button><ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2"><li><span id="userRoleProfile" class="dropdown-item-text border-bottom mb-1">บทบาท</span></li><li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>ออกจากระบบ</a></li></ul></div>
+            </div>
+            <div class="collapse navbar-collapse mt-2" id="navContent"><div id="expandedFunctions" class="menu-grid"></div></div>
+        </div>
+    </nav>
 
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold mb-0" style="color: var(--ubu-blue);">ประชาสัมพันธ์กิจกรรม</h3><button id="addNewsBtn" class="btn bg-ubu text-white px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addNewsModal"><i class="bi bi-plus-lg me-2"></i>เพิ่มข่าวใหม่</button></div>
@@ -55,29 +67,122 @@
         let newsIdToDelete = null;
         document.addEventListener('DOMContentLoaded', fetchNews);
         function fetchNews() {
-            fetch('/api/get_news').then(res => res.json()).then(data => {
-                const carouselArea = document.getElementById('newsCarousel');
-                const carouselInner = document.getElementById('carouselInner');
-                const list = document.getElementById('newsList');
-                const pinnedItems = data.filter(n => n.is_pinned);
-                const regularItems = data.filter(n => !n.is_pinned);
+    fetch('/api/get_news')
+    .then(res => res.json())
+    .then(data => {
 
-                if (pinnedItems.length > 0) {
-                    carouselArea.classList.remove('d-none');
-                    carouselInner.innerHTML = pinnedItems.map((n, i) => {
-                        const unpinBtn = (userMode !== 'student') ? `<button class="btn btn-warning btn-sm btn-unpin-banner" onclick="togglePin(${n.id})"><i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด</button>` : '';
-                        return `<div class="carousel-item ${i===0?'active':''}"> ${unpinBtn} <img src="${n.image_url}" class="carousel-img"> <div class="carousel-caption-custom"> <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span> <h2 class="fw-bold display-6">${n.title}</h2> <p class="lead text-truncate" style="max-width: 90%">${n.content}</p> </div> </div>`;
-                    }).join('');
-                    new bootstrap.Carousel(carouselArea, { interval: 5000, ride: 'carousel' });
-                } else { carouselArea.classList.add('d-none'); }
+        const carouselArea = document.getElementById('newsCarousel');
+        const carouselInner = document.getElementById('carouselInner');
+        const indicators = document.getElementById('carouselIndicators');
+        const list = document.getElementById('newsList');
 
-                list.innerHTML = regularItems.map(news => {
-                    const isPrivileged = (userMode !== 'student');
-                    return `<div class="col-md-4 mb-4"> <div class="news-card position-relative"> ${isPrivileged ? `<div class="position-absolute top-0 end-0 p-2 d-flex gap-2"> <button class="btn btn-sm btn-light shadow-sm" onclick="togglePin(${news.id})"><i class="bi bi-pin-angle"></i></button> <button class="btn btn-sm btn-danger shadow-sm" onclick="deleteNewsItem(${news.id})"><i class="bi bi-trash3"></i></button> </div>` : ''} <img src="${news.image_url}" class="news-img" onerror="this.src='https://placehold.co/600x400?text=No+Image'"> <div class="card-body"> <h5 class="fw-bold mb-2" style="color:var(--ubu-blue)">${news.title}</h5> <p class="small text-muted mb-3" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${news.content}</p> <div class="text-primary small fw-bold mt-auto"><i class="bi bi-calendar-event me-1"></i>${news.date}</div> </div> </div> </div>`;
-                }).join('');
-                applyModeSettings();
+        const pinnedItems = data.filter(n => n.is_pinned);
+        const regularItems = data.filter(n => !n.is_pinned);
+
+        // ====== PINNED BANNER ======
+        if (pinnedItems.length > 0) {
+
+            carouselArea.classList.remove('d-none');
+            carouselInner.innerHTML = '';
+            indicators.innerHTML = '';
+
+            pinnedItems.forEach((n, i) => {
+
+                // slide
+                carouselInner.innerHTML += `
+                    <div class="carousel-item ${i===0?'active':''}">
+                        ${userMode !== 'student' ? 
+                        `<button class="btn btn-warning btn-sm btn-unpin-banner"
+                            onclick="togglePin(${n.id})">
+                            <i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด
+                        </button>` : ''}
+
+                        <img src="${n.image_url}" class="carousel-img">
+                        <div class="carousel-caption-custom">
+                            <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span>
+                            <h2 class="fw-bold display-6">${n.title}</h2>
+                            <p class="lead text-truncate" style="max-width: 90%">
+                                ${n.content}
+                            </p>
+                        </div>
+                    </div>
+                `;
+
+                // indicators
+                indicators.innerHTML += `
+                    <button type="button"
+                        data-bs-target="#newsCarousel"
+                        data-bs-slide-to="${i}"
+                        class="${i===0?'active':''}">
+                    </button>
+                `;
             });
+
+            // 🔥 destroy instance เก่าก่อน
+            const oldInstance = bootstrap.Carousel.getInstance(carouselArea);
+            if (oldInstance) oldInstance.dispose();
+
+            // 🔥 สร้างใหม่
+            new bootstrap.Carousel(carouselArea, {
+                interval: 4000,
+                ride: 'carousel',
+                pause: false,
+                wrap: true
+            });
+
+        } else {
+            carouselArea.classList.add('d-none');
         }
+
+        // ====== REGULAR NEWS ======
+        list.innerHTML = regularItems.map(news => {
+            const isPrivileged = (userMode !== 'student');
+            return `
+            <div class="col-md-4 mb-4">
+                <div class="news-card position-relative">
+                    ${isPrivileged ? `
+                    <div class="position-absolute top-0 end-0 p-2 d-flex gap-2">
+                        <button class="btn btn-sm btn-light shadow-sm"
+                            onclick="togglePin(${news.id})">
+                            <i class="bi bi-pin-angle"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger shadow-sm"
+                            onclick="deleteNewsItem(${news.id})">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>` : ''}
+
+                    <img src="${news.image_url}"
+                        class="news-img"
+                        onerror="this.src='https://placehold.co/600x400?text=No+Image'">
+
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-2"
+                            style="color:var(--ubu-blue)">
+                            ${news.title}
+                        </h5>
+
+                        <p class="small text-muted mb-3"
+                            style="display:-webkit-box;
+                            -webkit-line-clamp:3;
+                            -webkit-box-orient:vertical;
+                            overflow:hidden;">
+                            ${news.content}
+                        </p>
+
+                        <div class="text-primary small fw-bold mt-auto">
+                            <i class="bi bi-calendar-event me-1"></i>
+                            ${news.date}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+
+        applyModeSettings();
+    });
+}
         async function togglePin(id) { await fetch(`/api/toggle_pin/${id}`, { method: 'POST' }); fetchNews(); }
         async function saveNewsData() {
             const formData = new FormData();

@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 {% block title %}ระบบคณะวิทยาศาสตร์{% endblock %}
 {% block content %}
     <main class="max-w-4xl mx-auto p-6">
@@ -175,7 +175,7 @@
             const row = btn.closest('tr');
             row.remove();
             calculateTotal();
-        }
+}
 
         function calculateTotal() {
             let total = 0;
