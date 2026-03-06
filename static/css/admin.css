@@ -1,0 +1,187 @@
+body {
+  font-family: "Prompt", sans-serif;
+  background: #f4f6f9;
+}
+
+.card {
+  border: none;
+  border-radius: 16px;
+}
+
+.table thead {
+  background: #1e3c72;
+  color: white;
+}
+
+.btn-pill {
+  border-radius: 50px;
+}
+
+.btn-edit-modern {
+  background-color: #ffc107;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-edit-modern:hover {
+  background-color: #e0a800;
+  box-shadow: 0 4px 10px rgba(255, 193, 7, 0.4);
+}
+
+.btn-delete-modern {
+  background-color: #dc3545;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-modern:hover {
+  background-color: #bb2d3b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+}
+
+.btn-delete-modern:active {
+  transform: scale(0.95);
+}
+
+.table-wrapper {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.table-wrapper thead {
+  background-color: #112592;
+  color: #fff;
+}
+
+.table-wrapper thead th {
+  border: none;
+}
+
+.table-wrapper td {
+  border: none;
+}
+
+.table-wrapper tbody tr:hover {
+  background-color: rgba(17, 37, 146, 0.05);
+}
+
+#dynamicFields .border {
+  border-color: #e3e6f0 !important;
+}
+
+#dynamicFields label {
+  font-size: 14px;
+}
+
+#dynamicFields .form-control,
+#dynamicFields .form-select {
+  border-radius: 8px;
+}
+
+#dynamicFields .form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.15rem rgba(78, 115, 223, 0.15);
+}
+
+.modern-select {
+  height: 80px !important;
+  padding: 14px 40px 14px 14px !important;
+  border-radius: 12px;
+  font-size: 16px;
+  background: linear-gradient(to right, #f8f9ff, #ffffff);
+}
+
+.modern-select:focus {
+  border-color: #112592;
+  box-shadow: 0 0 0 3px rgba(17, 37, 146, 0.15);
+}
+
+.select-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #112592;
+  font-size: 14px;
+}
+
+/* Position Input */
+.modern-input {
+  border-radius: 12px;
+  padding: 10px 40px 10px 14px;
+  border: 1.5px solid #d0d7ff;
+  transition: all 0.25s ease;
+  font-weight: 500;
+  height: 50px !important;
+  font-size: 16px;
+  background: linear-gradient(to right, #f8f9ff, #ffffff);
+}
+
+.modern-input:focus {
+  border-color: #112592;
+  box-shadow: 0 0 0 3px rgba(17, 37, 146, 0.15);
+}
+
+.input-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #112592;
+  font-size: 14px;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #0b1e63, #112592);
+  height: 76px;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.card {
+  border-radius: 15px;
+  border: none;
+}
+
+.btn-pill {
+  border-radius: 50px;
+}
+
+.role-btn.active {
+  color: white !important;
+}
+
+.table thead {
+  background-color: #2a5298;
+  color: white;
+}
+
+.table-wrapper {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 40px;
+  z-index: 10;
+}
+
+.form-control {
+  padding-right: 45px;
+}

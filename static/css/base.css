@@ -1,0 +1,101 @@
+:root {
+  --ubu-blue: #112592;
+  --ubu-yellow: #fff9c4;
+}
+
+body {
+  font-family: "Prompt", sans-serif;
+  background-color: #f8f9fa;
+}
+
+.bg-ubu {
+  background: linear-gradient(135deg, #0b1e63, #112592);
+}
+
+#userRoleProfile {
+  font-size: 0.9rem;
+  color: var(--ubu-blue);
+  font-weight: 600;
+}
+
+.custom-dropdown {
+  background-color: rgba(17, 37, 146, 0.9) !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+
+  width: 800px;
+  padding: 20px;
+
+  background: rgba(17, 37, 146, 0.85);
+  backdrop-filter: blur(12px);
+
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.custom-dropdown.show {
+  display: grid !important;
+}
+
+.dropdown-item:empty {
+  display: none;
+}
+
+.custom-dropdown .dropdown-item {
+  position: relative;
+  text-align: center;
+  padding: 14px 0;
+  color: white !important;
+  background: transparent !important;
+}
+
+.custom-dropdown .dropdown-item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ffcc00, #ffea00);
+  transition: 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.custom-dropdown .dropdown-item:hover::after {
+  width: 60%;
+}
+
+.navbar .nav-link:not(.dropdown-toggle) {
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+.navbar .nav-link:not(.dropdown-toggle)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 0%;
+  height: 2px;
+  background-color: #ffc107;
+  transition: width 0.25s ease;
+}
+
+.navbar .nav-link:not(.dropdown-toggle):hover::after {
+  width: 100%;
+}
+
+.navbar .nav-link:not(.dropdown-toggle):hover {
+  color: #ffc107 !important;
+}
+
+@media (min-width: 992px) {
+  #navbarNav .navbar-nav {
+    margin-left: auto !important;
+    margin-right: -9rem !important; /* ปรับเลขตรงนี้ */
+  }
+
+  .custom-dropdown {
+    display: none !important;
+  }
+}

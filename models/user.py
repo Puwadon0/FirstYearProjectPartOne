@@ -9,7 +9,7 @@ class Student(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    student_id = db.Column(db.String(20), unique=True, nullable=False)  # รหัสนักศึกษา
+    student_id = db.Column(db.String(20), primary_key=True)  # รหัสนักศึกษา
     first_name = db.Column(db.String(100), nullable=False)  # ชื่อจริง
     faculty = db.Column(db.String(100), nullable=False)
     major = db.Column(db.String(100), nullable=False)  # สาขา

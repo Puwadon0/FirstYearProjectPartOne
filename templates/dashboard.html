@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - UBU Science Engage{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Carousel ข่าว -->
+    <div id="newsCarousel" class="carousel slide main-slider d-none" data-bs-ride="carousel">
+        <div class="carousel-inner" id="carouselInner"></div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <h4 class="section-title">ปฏิทินกิจกรรมคณะ</h4>
+            <div class="calendar-card">
+                <div id="calendar"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <h4 class="section-title">กิจกรรมเร็วๆ นี้</h4>
+            <div id="dashboardActivities"></div>
+        </div>
+    </div>
+</div>
+
+<div class="calendar-card p-3" style="max-height: 500px; overflow-y: auto;">
+    <div id="dashboardActivities"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="eventDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+            <div class="modal-header bg-ubu text-white border-0">
+                <h5 class="modal-title fw-bold">ข้อมูลกิจกรรม</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <h4 id="viewTitle" class="fw-bold text-dark mb-3"></h4>
+                <p><i class="bi bi-calendar3 me-2 text-primary"></i>
+                    <span id="viewStart"></span> - <span id="viewEnd"></span>
+                </p>
+                <p><i class="bi bi-geo-alt me-2 text-primary"></i>
+                    <span id="viewLocation"></span>
+                </p>
+                <hr>
+                <p id="viewDesc" class="text-muted mb-0"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', initDashboard);
+
+    async function initDashboard() {
+
+        const newsRes = await fetch('/api/get_news');
+        const newsData = await newsRes.json();
+        const pinned = newsData.filter(n => n.is_pinned);
+
+        if (pinned.length > 0) {
+            const carouselArea = document.getElementById('newsCarousel');
+            const carouselInner = document.getElementById('carouselInner');
+
+            carouselArea.classList.remove('d-none');
+
+            carouselInner.innerHTML = pinned.map((n, i) => `
+            <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                <img src="${n.image_url}" class="carousel-img">
+                <div class="carousel-caption-custom">
+                    <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span>
+                    <h2 class="fw-bold">${n.title}</h2>
+                    <p class="text-truncate" style="max-width: 80%">
+                        ${n.content}
+                    </p>
+                </div>
+            </div>
+        `).join('');
+
+            new bootstrap.Carousel(carouselArea, {
+                interval: 5000,
+                ride: 'carousel'
+            });
+        }
+
+        const eventRes = await fetch('/api/get_events');
+        const eventData = await eventRes.json();
+
+        const upcoming = eventData
+            .sort((a, b) => new Date(a.start) - new Date(b.start))
+            .slice(0, 4);
+
+        document.getElementById('dashboardActivities').innerHTML =
+            upcoming.map(ev => `
+            <div class="activity-card d-flex align-items-center"
+                 onclick="openDashboardEvent(${ev.id})">
+                <div class="bg-primary text-white rounded-3 px-3 py-2 me-3 text-center">
+                    <small>
+                        ${new Date(ev.start).toLocaleDateString('th-TH', { month: 'short' })}
+                    </small><br>
+                    <span class="fw-bold">
+                        ${new Date(ev.start).getDate()}
+                    </span>
+                </div>
+                <div>
+                    <div class="fw-bold text-dark" style="font-size:0.95rem">
+                        ${ev.title}
+                    </div>
+                    <small class="text-muted">
+                        <i class="bi bi-geo-alt"></i>
+                        ${ev.extendedProps?.location || 'คณะวิทยาศาสตร์'}
+                    </small>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openDashboardEvent(id) {
+        fetch('/api/get_events')
+            .then(res => res.json())
+            .then(data => {
+
+                const ev = data.find(e => e.id === id);
+                if (!ev) return;
+
+                document.getElementById('viewTitle').innerText = ev.title;
+                document.getElementById('viewStart').innerText =
+                    new Date(ev.start).toLocaleDateString('th-TH');
+                document.getElementById('viewEnd').innerText =
+                    ev.end ? new Date(ev.end).toLocaleDateString('th-TH')
+                        : new Date(ev.start).toLocaleDateString('th-TH');
+                document.getElementById('viewLocation').innerText =
+                    ev.extendedProps?.location || '-';
+                document.getElementById('viewDesc').innerText =
+                    ev.extendedProps?.description || '-';
+
+                new bootstrap.Modal(
+                    document.getElementById('eventDetailModal')
+                ).show();
+            });
+    }
+</script>
+{% endblock %}
