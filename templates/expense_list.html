@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}รายการรายจ่ายทั้งหมด - UBU Science Engage{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto p-6">
+
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">รายการรายจ่ายทั้งหมด</h1>
+            <p class="text-sm text-gray-400 mt-1">บันทึกค่าใช้จ่ายกิจกรรม</p>
+        </div>
+        <a href="{{ url_for('expense_create') }}">
+            <button class="bg-[#112592] hover:bg-blue-900 text-white font-bold px-5 py-2.5 rounded-lg transition shadow-sm text-sm">
+                + เพิ่มรายการใหม่
+            </button>
+        </a>
+    </div>
+
+    <!-- ===== สรุปงบประมาณแยกตามกิจกรรม ===== -->
+    {% if summary %}
+    <div class="mb-8">
+        <h2 class="text-lg font-bold text-gray-700 mb-3 border-l-4 border-[#112592] pl-3">
+            สรุปงบประมาณแยกตามกิจกรรม
+        </h2>
+        <div class="space-y-4">
+            {% for s in summary %}
+            <div class="bg-white rounded-xl shadow p-5 border border-gray-100">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <p class="font-bold text-gray-800">{{ s.act_name }}</p>
+                        <p class="text-xs text-gray-400">{{ s.act_id }}</p>
+                    </div>
+                    {% if s.remaining >= 0 %}
+                        <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-bold">
+                            ยังมีงบเหลือ
+                        </span>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700 font-bold">
+                            งบเกิน!
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Progress Bar -->
+                {% set percent = [((s.used / s.budget * 100) if s.budget > 0 else 0), 100] | min %}
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-3">
+                    <div class="h-3 rounded-full transition-all {{ 'bg-red-500' if s.remaining < 0 else 'bg-blue-500' }}"
+                         style="width: {{ percent }}%"></div>
+                </div>
+
+                <!-- ตัวเลข 3 ช่อง -->
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-blue-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-1">งบที่ขออนุมัติ</p>
+                        <p class="font-bold text-blue-700 text-lg">
+                            {{ "{:,.2f}".format(s.budget) }}
+                        </p>
+                        <p class="text-xs text-gray-400">บาท</p>
+                    </div>
+                    <div class="bg-yellow-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-1">ใช้จริง</p>
+                        <p class="font-bold text-yellow-700 text-lg">
+                            {{ "{:,.2f}".format(s.used) }}
+                        </p>
+                        <p class="text-xs text-gray-400">บาท</p>
+                    </div>
+                    <div class="{% if s.remaining < 0 %}bg-red-50{% else %}bg-green-50{% endif %} rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-1">คงเหลือ</p>
+                        <p class="font-bold {% if s.remaining < 0 %}text-red-600{% else %}text-green-600{% endif %} text-lg">
+                            {{ "{:,.2f}".format(s.remaining) }}
+                        </p>
+                        <p class="text-xs text-gray-400">บาท</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ===== ยอดรวมทั้งหมด ===== -->
+    <div class="bg-white rounded-xl shadow p-5 mb-6 border-l-4 border-yellow-400 flex items-center justify-between">
+        <div>
+            <div class="text-sm text-gray-500 mb-1">รวมค่าใช้จ่ายทั้งหมด</div>
+            <div class="text-3xl font-bold text-yellow-600">
+                {{ "{:,.2f}".format(total_all) }}
+                <span class="text-lg font-normal text-gray-500">บาท</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ตารางรายการทั้งหมด ===== -->
+    <h2 class="text-lg font-bold text-gray-700 mb-3 border-l-4 border-gray-400 pl-3">
+        รายการทั้งหมด
+    </h2>
+    <div class="bg-white shadow-md rounded-xl overflow-hidden">
+        <table class="w-full text-sm text-left border-collapse">
+            <thead class="bg-[#1e3a5f] text-white text-center font-bold">
+                <tr>
+                    <th class="p-3 border-r border-blue-900">ID</th>
+                    <th class="p-3 border-r border-blue-900 text-left">กิจกรรม</th>
+                    <th class="p-3 border-r border-blue-900 text-left">รายการ</th>
+                    <th class="p-3 border-r border-blue-900">จำนวนเงิน</th>
+                    <th class="p-3">หลักฐาน</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr class="text-center border-b hover:bg-gray-50 transition">
+                    <td class="p-3 text-gray-500">{{ expense.id }}</td>
+                    <td class="p-3 text-left text-xs text-gray-500">
+                        {{ act_map.get(expense.act_ref_id, {}).get('name', '-') if expense.act_ref_id else '-' }}
+                    </td>
+                    <td class="p-3 text-left font-medium text-gray-800">{{ expense.item }}</td>
+                    <td class="p-3 font-bold text-blue-700">
+                        {{ "{:,.2f}".format(expense.amount) }} บาท
+                    </td>
+                    <td class="p-3">
+                        {% if expense.filename %}
+                            <a href="{{ url_for('static', filename='uploads/' + expense.filename) }}" target="_blank">
+                                <img
+                                    src="{{ url_for('static', filename='uploads/' + expense.filename) }}"
+                                    class="w-16 h-16 object-cover rounded-lg mx-auto border border-gray-200 hover:scale-105 transition cursor-pointer"
+                                    onerror="this.style.display='none'"
+                                >
+                            </a>
+                        {% else %}
+                            <span class="text-gray-400 text-xs italic">ไม่มีไฟล์</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center p-8 text-gray-400">ยังไม่มีรายการบันทึก</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}บันทึกรายจ่ายกิจกรรม - UBU Science Engage{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-6">
+
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">บันทึกรายจ่ายกิจกรรม</h1>
+        <p class="text-sm text-gray-400 mt-1">กรอกข้อมูลรายจ่ายพร้อมแนบหลักฐาน</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-[#1e3a5f] text-white px-6 py-4">
+            <h2 class="font-bold text-lg">แบบฟอร์มบันทึกรายจ่าย</h2>
+        </div>
+        <form method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">กิจกรรม</label>
+                <select
+                    name="act_ref_id"
+                    id="actSelect"
+                    required
+                    onchange="updateBudgetInfo()"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm bg-white"
+                >
+                    <option value="" disabled selected>-- เลือกกิจกรรม --</option>
+                    {% for act in activities %}
+                    <option value="{{ act.act_id }}" data-budget="{{ act.act_cost or 0 }}">
+                        {{ act.act_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if not activities %}
+                <p class="text-red-400 text-xs mt-1">ยังไม่มีกิจกรรมที่ได้รับการอนุมัติ</p>
+                {% endif %}
+            </div>
+
+            <!-- แสดงงบประมาณที่ได้รับอนุมัติ -->
+            <div id="budgetInfo" class="hidden bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+                <p class="text-sm text-blue-700">
+                    งบประมาณที่ได้รับอนุมัติ:
+                    <span id="budgetDisplay" class="font-bold text-blue-900 text-base"></span> บาท
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">รายการ</label>
+                <input
+                    type="text"
+                    name="item"
+                    placeholder="ระบุรายการค่าใช้จ่าย"
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                >
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">จำนวนเงิน (บาท)</label>
+                <input
+                    type="number"
+                    name="amount"
+                    placeholder="ระบุจำนวนเงิน"
+                    required
+                    min="0"
+                    step="0.01"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                >
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">หลักฐานการใช้จ่าย (รูปภาพ)</label>
+                <input
+                    type="file"
+                    name="receipt"
+                    accept="image/*"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-white cursor-pointer"
+                >
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="bg-[#112592] hover:bg-blue-900 text-white font-bold px-6 py-2.5 rounded-lg transition shadow-sm">
+                    บันทึก
+                </button>
+                <a href="{{ url_for('expense_list') }}">
+                    <button type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-6 py-2.5 rounded-lg transition">
+                        ดูรายการทั้งหมด
+                    </button>
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateBudgetInfo() {
+    const select = document.getElementById('actSelect');
+    const selected = select.options[select.selectedIndex];
+    const budget = parseFloat(selected.dataset.budget) || 0;
+    const infoBox = document.getElementById('budgetInfo');
+    document.getElementById('budgetDisplay').textContent =
+        budget.toLocaleString('th-TH', {minimumFractionDigits: 2});
+    infoBox.classList.toggle('hidden', !select.value);
+}
+</script>
+{% endblock %}

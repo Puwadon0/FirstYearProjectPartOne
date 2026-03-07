@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ประชาสัมพันธ์กิจกรรม - UBU Science Engage</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='sci_atomic.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root { --ubu-blue: #112592; --ubu-yellow: #fff9c4; }
+        body { font-family: 'Prompt', sans-serif; background-color: #f8f9fa; }
+        .bg-ubu { background-color: var(--ubu-blue) !important; }
+        .navbar-toggler { display: block !important; border: none !important; }
+        .navbar-collapse { background-color: rgba(17, 37, 146, 0.98); border-radius: 0 0 25px 25px; padding: 25px; position: absolute; width: 100%; left: 0; top: 100%; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(15px); }
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .nav-link { color: white !important; font-size: 0.95rem; padding: 16px !important; border-radius: 12px; background: rgba(255, 255, 255, 0.04); border: none !important; display: flex; align-items: center; }
+        
+        .news-container { background-color: var(--ubu-yellow); padding: 50px 0; border-radius: 40px; min-height: 400px; }
+        .main-slider { height: 450px; border-radius: 30px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); position: relative; }
+        .carousel-item { height: 450px; }
+        .carousel-img { width: 100%; height: 450px; object-fit: cover; }
+        .carousel-caption-custom { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: white; padding: 40px 60px; text-align: left; }
+        
+        /* กำหนดขนาดรูปภาพข่าวให้เท่ากัน */
+        .news-card { border: none; border-radius: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); overflow: hidden; height: 100%; display: flex; flex-direction: column; background: white; transition: 0.3s; }
+        .news-img { width: 100%; height: 220px; object-fit: cover; background: #eee; border-bottom: 1px solid #f0f0f0; }
+        
+        .btn-unpin-banner { position: absolute; top: 20px; right: 20px; z-index: 100; border-radius: 50px; padding: 8px 20px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        #userRoleProfile { font-size: 0.9rem; color: var(--ubu-blue); font-weight: 600; display: block; padding: 5px 15px; }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold mb-0" style="color: var(--ubu-blue);">ประชาสัมพันธ์กิจกรรม</h3><button id="addNewsBtn" class="btn bg-ubu text-white px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addNewsModal"><i class="bi bi-plus-lg me-2"></i>เพิ่มข่าวใหม่</button></div>
+        <div id="newsCarousel" class="carousel slide main-slider d-none" data-bs-ride="carousel">
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+            <div class="carousel-inner" id="carouselInner"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+        </div>
+        <div class="news-container px-4"><div id="newsList" class="row justify-content-center"></div></div>
+    </div>
+
+    <div class="modal fade" id="addNewsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 p-4 shadow-lg rounded-4"><h5 class="fw-bold mb-4" style="color: var(--ubu-blue);"><i class="bi bi-megaphone-fill me-2"></i>จัดการข่าวประชาสัมพันธ์</h5><form id="newsForm"><div class="mb-3"><label class="small fw-bold">หัวข้อข่าว</label><input type="text" id="newsTitleInput" class="form-control" required></div><div class="mb-3"><label class="small fw-bold">แนบรูปภาพ</label><input type="file" id="newsImageInput" class="form-control" accept="image/*"></div><div class="mb-3"><label class="small fw-bold">เนื้อหา</label><textarea id="newsContentInput" class="form-control" rows="4" required></textarea></div><div class="d-flex gap-2"><button type="button" class="btn btn-light w-100 fw-bold" data-bs-dismiss="modal">ยกเลิก</button><button type="button" id="submitNewsBtn" class="btn bg-ubu text-white w-100 fw-bold" onclick="saveNewsData()">บันทึกข้อมูล</button></div></form></div></div></div>
+    <div class="modal fade" id="deleteNewsConfirmModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered text-center"><div class="modal-content border-0 p-4 shadow-lg rounded-4"><div class="text-danger mb-3"><i class="bi bi-exclamation-triangle-fill" style="font-size: 3.5rem;"></i></div><h5 class="fw-bold">ยืนยันการลบ?</h5><p class="text-muted small mb-4">ข่าวประชาสัมพันธ์นี้จะถูกลบออกอย่างถาวร</p><div class="d-flex gap-2"><button class="btn btn-light w-100 py-2 rounded-3" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-danger w-100 py-2 fw-bold rounded-3 shadow-sm" onclick="confirmDeleteNews()">ตกลง</button></div></div></div></div>
+
+    <div class="fixed-bottom p-4" style="width: fit-content; z-index: 2100;"><div class="dropup"><button class="btn bg-dark text-white rounded-pill px-4 py-2 shadow-lg d-flex align-items-center" data-bs-toggle="dropdown"><i class="bi bi-person-badge me-2"></i> <span id="currentModeText">Staff Mode</span></button><ul class="dropdown-menu shadow border-0 mb-2 p-2" style="min-width: 230px; border-radius: 12px;"><li><a class="dropdown-item py-2 rounded-3" onclick="changeMode('staff')">เจ้าหน้าที่</a></li><li><a class="dropdown-item py-2 rounded-3" onclick="changeMode('club')">นักศึกษาสโมสร</a></li><li><a class="dropdown-item py-2 rounded-3" onclick="changeMode('student')">นักศึกษา</a></li></ul></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+    <script>
+        let newsIdToDelete = null;
+        document.addEventListener('DOMContentLoaded', fetchNews);
+        function fetchNews() {
+            fetch('/api/get_news').then(res => res.json()).then(data => {
+                const carouselArea = document.getElementById('newsCarousel');
+                const carouselInner = document.getElementById('carouselInner');
+                const list = document.getElementById('newsList');
+                const pinnedItems = data.filter(n => n.is_pinned);
+                const regularItems = data.filter(n => !n.is_pinned);
+
+                if (pinnedItems.length > 0) {
+                    carouselArea.classList.remove('d-none');
+                    carouselInner.innerHTML = pinnedItems.map((n, i) => {
+                        const unpinBtn = (userMode !== 'student') ? `<button class="btn btn-warning btn-sm btn-unpin-banner" onclick="togglePin(${n.id})"><i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด</button>` : '';
+                        return `<div class="carousel-item ${i===0?'active':''}"> ${unpinBtn} <img src="${n.image_url}" class="carousel-img"> <div class="carousel-caption-custom"> <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span> <h2 class="fw-bold display-6">${n.title}</h2> <p class="lead text-truncate" style="max-width: 90%">${n.content}</p> </div> </div>`;
+                    }).join('');
+                    new bootstrap.Carousel(carouselArea, { interval: 5000, ride: 'carousel' });
+                } else { carouselArea.classList.add('d-none'); }
+
+                list.innerHTML = regularItems.map(news => {
+                    const isPrivileged = (userMode !== 'student');
+                    return `<div class="col-md-4 mb-4"> <div class="news-card position-relative"> ${isPrivileged ? `<div class="position-absolute top-0 end-0 p-2 d-flex gap-2"> <button class="btn btn-sm btn-light shadow-sm" onclick="togglePin(${news.id})"><i class="bi bi-pin-angle"></i></button> <button class="btn btn-sm btn-danger shadow-sm" onclick="deleteNewsItem(${news.id})"><i class="bi bi-trash3"></i></button> </div>` : ''} <img src="${news.image_url}" class="news-img" onerror="this.src='https://placehold.co/600x400?text=No+Image'"> <div class="card-body"> <h5 class="fw-bold mb-2" style="color:var(--ubu-blue)">${news.title}</h5> <p class="small text-muted mb-3" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${news.content}</p> <div class="text-primary small fw-bold mt-auto"><i class="bi bi-calendar-event me-1"></i>${news.date}</div> </div> </div> </div>`;
+                }).join('');
+                applyModeSettings();
+            });
+        }
+        async function togglePin(id) { await fetch(`/api/toggle_pin/${id}`, { method: 'POST' }); fetchNews(); }
+        async function saveNewsData() {
+            const formData = new FormData();
+            formData.append('title', document.getElementById('newsTitleInput').value);
+            formData.append('content', document.getElementById('newsContentInput').value);
+            const file = document.getElementById('newsImageInput').files[0];
+            if(file) formData.append('image', file);
+            try { await fetch('/api/save_news', { method: 'POST', body: formData }); location.reload(); } catch (e) { console.error(e); }
+        }
+        function deleteNewsItem(id) { newsIdToDelete = id; new bootstrap.Modal(document.getElementById('deleteNewsConfirmModal')).show(); }
+        function confirmDeleteNews() { fetch('/api/delete_news/'+newsIdToDelete, { method: 'DELETE' }).then(() => { bootstrap.Modal.getInstance(document.getElementById('deleteNewsConfirmModal')).hide(); fetchNews(); }); }
+    </script>
+</body>
+</html>
