@@ -163,6 +163,26 @@ def news_page():
 def create_activity_page():
     return render_template('create_activity.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    error = None
+    identifier = ''
+    if request.method == 'POST':
+        identifier = request.form.get('identifier', '')
+        password = request.form.get('password', '')
+        # จำลองการตรวจสอบ users (ปรับได้ภายหลัง)
+        users = [
+            {'id': '68123456', 'password': '123456', 'role': 'student'},
+            {'id': 'club@ubu.ac.th', 'password': '123456', 'role': 'club'},
+            {'id': 'admin@ubu.ac.th', 'password': '123456', 'role': 'staff'},
+        ]
+        found = next((u for u in users if u['id'] == identifier and u['password'] == password), None)
+        if found:
+            return redirect('/')
+        else:
+            error = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
+    return render_template('login.html', error=error, identifier=identifier)
+
 @app.route('/club_status_activity')
 def club_status_activity():
     with get_activity_db() as conn:

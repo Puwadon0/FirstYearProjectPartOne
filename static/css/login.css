@@ -1,0 +1,61 @@
+body {
+  /*background: linear-gradient(135deg, #251688, #3a2bbd);*/
+  background-color: #f5f6f8;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "prompt";
+}
+
+.login-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  border-bottom: 8px solid #f9d746;
+  border-top: 8px solid #112592;
+}
+
+.system-title {
+  color: #251688;
+  font-weight: bold;
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.faculty-title {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.btn-primary {
+  background-color: #112592;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0d1a67;
+}
+
+.form-control:focus {
+  border-color: #251688;
+  box-shadow: 0 0 0 0.2rem rgba(37, 22, 136, 0.25);
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 13px;
+  color: #777;
+  margin-top: 15px;
+}
+
+#togglePassword {
+  font-size: 10px;
+  color: #6c757d;
+}

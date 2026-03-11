@@ -72,11 +72,11 @@ function applyModeSettings() {
 
     if (roleProfileText) {
         if (userMode === 'staff') roleProfileText.innerText = "เจ้าหน้าที่";
-        else if (userMode === 'club') roleProfileText.innerText = "นักศึกษาสโมสร";
+        else if (userMode === 'club') roleProfileText.innerText = "ลงชื่อเข้าใช้";
         else roleProfileText.innerText = "นักศึกษา";
     }
 
-    if (modeText) modeText.innerText = (userMode === 'staff') ? "Staff Mode" : (userMode === 'club' ? "Club Mode" : "Student Mode");
+    if (modeText) modeText.innerText = "ลงชื่อเข้าใช้";
     
     if (addBtn) addBtn.style.display = (userMode === 'student') ? 'none' : 'block';
     if (addNewsBtn) addNewsBtn.style.display = (userMode === 'student') ? 'none' : 'block';

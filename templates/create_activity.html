@@ -1,11 +1,13 @@
 {% extends "layout.html" %}
 {% block title %}ระบบคณะวิทยาศาสตร์{% endblock %}
+{% block head %}<style>main { min-height: 0 !important; padding-bottom: 0 !important; }</style>{% endblock %}
 {% block content %}
-    <main class="max-w-4xl mx-auto p-6">
-        <div class="mb-8 text-center">
-            <h1 class="text-2xl font-bold text-gray-800 italic underline decoration-blue-500 decoration-4">แบบฟอร์มขอสร้างกิจกรรม</h1>
-            <p class="text-gray-500 mt-2">กรุณากรอกรายละเอียดให้ครบถ้วนเพื่อดำเนินการขออนุมัติ</p>
-        </div>
+    <div class="container pt-3 pb-4">
+        <div class="bg-white rounded-4 shadow-sm p-4 w-100 mx-auto" style="max-width: 900px;">
+            <div class="mb-5 text-center">
+                <h1 class="text-2xl font-bold text-gray-800 italic underline decoration-blue-500 decoration-4">แบบฟอร์มขอสร้างกิจกรรม</h1>
+                <p class="text-gray-500 mt-2">กรุณากรอกรายละเอียดให้ครบถ้วนเพื่อดำเนินการขออนุมัติ</p>
+            </div>
 
             <form action="/api/save-activity" method="POST" enctype="multipart/form-data">
             
@@ -145,13 +147,14 @@
                 </div>
             </div>
 
-            <div class="pb-12">
+            <div class="pb-6">
                 <button type="submit" class="w-full bg-blue-700 text-white font-bold py-4 rounded-xl hover:bg-blue-800 transition-all shadow-xl hover:-translate-y-1">
                     ส่งแบบฟอร์มข้อมูลกิจกรรม
                 </button>
             </div>
         </form>
-    </main>
+        </div>
+    </div>
     {% endblock %}
 
     {% block scripts %}
