@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, url_for, redirect, send_from_directory
+from flask import Flask, render_template, request, jsonify, url_for, redirect, send_from_directory, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -9,6 +9,7 @@ import uuid
 app = Flask(__name__)
 
 # ===== CONFIGURATION =====
+app.secret_key = 'ubu-science-secret-key-2026'
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
@@ -145,6 +146,15 @@ with app.app_context():
     init_main_db()
 
 
+# ===== CONTEXT PROCESSOR =====
+# inject current_role and current_user to all templates automatically
+@app.context_processor
+def inject_user():
+    return {
+        'current_role': session.get('role', None),
+        'current_user': session.get('identifier', None),
+    }
+
 # ===== FRONTEND ROUTES =====
 
 @app.route('/')
@@ -165,12 +175,13 @@ def create_activity_page():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
+    if session.get('role'):
+        return redirect('/')  # ถ้า login แล้วให้ redirect ไป dashboard
     error = None
     identifier = ''
     if request.method == 'POST':
         identifier = request.form.get('identifier', '')
         password = request.form.get('password', '')
-        # จำลองการตรวจสอบ users (ปรับได้ภายหลัง)
         users = [
             {'id': '68123456', 'password': '123456', 'role': 'student'},
             {'id': 'club@ubu.ac.th', 'password': '123456', 'role': 'club'},
@@ -178,10 +189,17 @@ def login_page():
         ]
         found = next((u for u in users if u['id'] == identifier and u['password'] == password), None)
         if found:
+            session['role'] = found['role']
+            session['identifier'] = identifier
             return redirect('/')
         else:
             error = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'
     return render_template('login.html', error=error, identifier=identifier)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
 
 @app.route('/club_status_activity')
 def club_status_activity():

@@ -13,11 +13,6 @@
         :root { --ubu-blue: #112592; }
         body { font-family: 'Prompt', sans-serif; background-color: #f8f9fa; }
         .bg-ubu { background-color: var(--ubu-blue) !important; }
-        .navbar-toggler { display: block !important; border: none !important; outline: none !important; }
-        .navbar-collapse { background-color: rgba(17, 37, 146, 0.98); border-radius: 0 0 25px 25px; padding: 25px; position: absolute; width: 100%; left: 0; top: 100%; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(15px); }
-        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .nav-link { color: white !important; font-size: 0.95rem; padding: 16px !important; border-radius: 12px; background: rgba(255, 255, 255, 0.04); border: none !important; display: flex; align-items: center; }
-        .nav-link.active { background: rgba(255, 255, 255, 0.18); color: #ffc107 !important; border-left: 4px solid #ffc107 !important; font-weight: 600; }
         .fc-toolbar-title { color: var(--ubu-blue); font-weight: 600; }
         .badge-guide { width: 100px; display: inline-block; text-align: center; padding: 8px 0; border-radius: 6px; }
         #userRoleProfile { font-size: 0.9rem; color: var(--ubu-blue); font-weight: 600; display: block; padding: 5px 15px; }
@@ -36,7 +31,7 @@
         }
     </style>
 </head>
-<body>
+<body data-role="{{ current_role or 'guest' }}">
     {% include 'navbar.html' %}
     <div class="container py-5">
         <div class="row justify-content-center mb-4"><div class="col-lg-11 d-flex justify-content-between align-items-end"><div><h3 class="fw-bold mb-0">ปฏิทินกิจกรรม</h3><p id="currentDateDisplay" class="text-primary fw-bold mb-0 small"></p></div><button id="addEventBtn" class="btn bg-ubu text-white px-4 shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addModal"><i class="bi bi-plus-lg me-2"></i>เพิ่มกิจกรรมใหม่</button></div></div>

@@ -1,6 +1,7 @@
 let calendar;
 let currentEventId = null;
-let userMode = localStorage.getItem('userMode') || 'staff';
+// อ่าน role จาก data-role บน <body> ที่ Flask inject มาให้ (student / club / staff)
+let userMode = document.body.getAttribute('data-role') || 'guest';
 
 document.addEventListener('DOMContentLoaded', function () {
     const today = new Date();
@@ -56,11 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     applyModeSettings();
 });
 
-function changeMode(role) {
-    userMode = role;
-    localStorage.setItem('userMode', role);
-    location.reload();
-}
+// ผู้ใช้ลงชื่อเข้าใช้แล้ว role จะถูกแสดงผ่าน Flask session -- ไม่มี changeMode() อีกต่อไป
 
 function applyModeSettings() {
     const addBtn = document.getElementById('addEventBtn');
@@ -70,13 +67,9 @@ function applyModeSettings() {
     const expandedContainer = document.getElementById('expandedFunctions');
     const megaMenu = document.getElementById('megaMenuContent');
 
-    if (roleProfileText) {
-        if (userMode === 'staff') roleProfileText.innerText = "เจ้าหน้าที่";
-        else if (userMode === 'club') roleProfileText.innerText = "ลงชื่อเข้าใช้";
-        else roleProfileText.innerText = "นักศึกษา";
-    }
-
-    if (modeText) modeText.innerText = "ลงชื่อเข้าใช้";
+    const roleLabels = { staff: 'เจ้าหน้าที่', club: 'นักศึกษาสโมสร', student: 'นักศึกษา', guest: 'ผู้เยี่ยมชม' };
+    if (roleProfileText) roleProfileText.innerText = roleLabels[userMode] || 'ผู้เยี่ยมชม';
+    if (modeText) modeText.innerText = roleLabels[userMode] || 'ลงชื่อเข้าใช้';
     
     if (addBtn) addBtn.style.display = (userMode === 'student') ? 'none' : 'block';
     if (addNewsBtn) addNewsBtn.style.display = (userMode === 'student') ? 'none' : 'block';
