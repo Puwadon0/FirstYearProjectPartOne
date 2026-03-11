@@ -1,7 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}ระบบคณะวิทยาศาสตร์ - ตรวจสอบคำขอ{% endblock %}
-
-{% block content %}
+{% block content_inner %}
 <div class="max-w-7xl mx-auto p-4">
     <div class="flex items-center gap-2 mb-4">
         <div>
@@ -129,7 +127,7 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block scripts_inner %}
 <script>
 function filterStatus(selectedStatus) {
     const rows = document.querySelectorAll('.activity-row');

@@ -1,6 +1,32 @@
 {% extends "layout.html" %}
 {% block title %}ระบบคณะวิทยาศาสตร์{% endblock %}
-{% block content %}
+
+{% block head %}
+<style>
+    .modal-form-label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.3rem;
+        font-size: 0.85rem;
+    }
+    .modal-input {
+        width: 100%;
+        padding: 0.6rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        outline: none;
+        background-color: #f9fafb;
+    }
+    .modal-input:focus {
+        border-color: #1d4ed8;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+    }
+</style>
+{% endblock %}
+{% block content_inner %}
             <div class="max-w-6xl mx-auto p-4">
                 <div class="flex items-center justify-between gap-2 mb-4">
                     <div class="flex items-center gap-2">
@@ -109,19 +135,19 @@
                         <div class="grid grid-cols-2 gap-4 p-4">
                             <div>
                                 <label>ชื่อหน่วยงาน</label>
-                                <input type="text" name="department" id="edit_department" class="w-full border p-2 rounded">
+                                <input type="text" name="department" id="edit_department" class="modal-input">
                             </div>
                             <div>
-                                <label>ปีงบประมาณ</label>
-                                <input type="text" name="fiscalYear" id="edit_fiscalyear" class="w-full border p-2 rounded">
+                                <label class="modal-form-label">ปีงบประมาณ</label>
+                                <input type="text" name="fiscalYear" id="edit_fiscalyear" class="modal-input">
                             </div>
                             <div>
-                                <label>ผู้รับผิดชอบ</label>
-                                <input type="text" name="responsiblePerson" id="edit_createdby" class="w-full border p-2 rounded">
+                                <label class="modal-form-label">ผู้รับผิดชอบ</label>
+                                <input type="text" name="responsiblePerson" id="edit_createdby" class="modal-input">
                             </div>
                             <div>
-                                <label>เบอร์โทร</label>
-                                <input type="text" name="phone" id="edit_phone" class="w-full border p-2 rounded">
+                                <label class="modal-form-label">เบอร์โทร</label>
+                                <input type="text" name="phone" id="edit_phone" class="modal-input">
                             </div>
                         </div>
                     </div>
@@ -130,7 +156,7 @@
                             2. ชื่อกิจกรรม
                         </div>
                         <div class="p-4">
-                            <input type="text" name="activityName" id="edit_name" class="w-full border p-2 rounded">
+                            <input type="text" name="activityName" id="edit_name" class="modal-input">
                         </div>
                     </div>
                     <div class="border rounded-xl overflow-hidden">
@@ -138,7 +164,7 @@
                             3. วันเวลา
                         </div>
                         <div class="p-4">
-                            <input type="text" name="activityDatetime" id="edit_datetime" class="w-full border p-2 rounded">
+                            <input type="text" name="activityDatetime" id="edit_datetime" class="modal-input">
                         </div>
                     </div>
                     <div class="border rounded-xl overflow-hidden">
@@ -146,8 +172,8 @@
                             4. สถานที่
                         </div>
                         <div class="p-4 space-y-3">
-                            <input type="text" name="location" id="edit_location" class="w-full border p-2 rounded">
-                            <input type="text" name="address" id="edit_address" class="w-full border p-2 rounded">
+                            <input type="text" name="location" id="edit_location" class="modal-input">
+                            <input type="text" name="address" id="edit_address" class="modal-input">
                         </div>
                     </div>
                     <div class="border rounded-xl overflow-hidden">
@@ -155,8 +181,8 @@
                             5. จำนวนผู้เข้าร่วม
                         </div>
                         <div class="grid grid-cols-2 gap-4 p-4">
-                            <input type="number" name="participant_std" id="edit_std" class="border p-2 rounded">
-                            <input type="number" name="participant_other" id="edit_other" class="border p-2 rounded">
+                            <input type="number" name="participant_std" id="edit_std" class="modal-input">
+                            <input type="number" name="participant_other" id="edit_other" class="modal-input">
                         </div>
                     </div>
                     <div class="border rounded-xl overflow-hidden">
@@ -164,8 +190,8 @@
                             6. รายละเอียด
                         </div>
                         <div class="p-4 space-y-3">
-                            <textarea name="objective" id="edit_detail" rows="3" class="w-full border p-2 rounded"></textarea>
-                            <textarea name="steps" id="edit_steps" rows="3" class="w-full border p-2 rounded"></textarea>
+                            <textarea name="objective" id="edit_detail" rows="3" class="modal-input"></textarea>
+                            <textarea name="steps" id="edit_steps" rows="3" class="modal-input"></textarea>
                         </div>
                     </div>
                     <div class="border rounded-xl overflow-hidden">
@@ -173,7 +199,7 @@
                             7. งบประมาณ
                         </div>
                         <div class="p-4">
-                            <input type="number" name="cost" id="edit_cost" class="w-full border p-2 rounded">
+                            <input type="number" name="cost" id="edit_cost" class="modal-input">
                         </div>
                     </div>
                     <div class="border rounded-xl overflow-hidden">
@@ -181,8 +207,8 @@
                             8. ไฟล์ / หมายเหตุ
                         </div>
                         <div class="p-4 space-y-3">
-                            <input type="file" name="project_file" class="w-full border p-2 rounded">
-                            <textarea name="notes" id="edit_qa" rows="2" class="w-full border p-2 rounded"></textarea>
+                            <input type="file" name="project_file" class="modal-input">
+                            <textarea name="notes" id="edit_qa" rows="2" class="modal-input"></textarea>
                         </div>
                     </div>
                     <div class="flex justify-end pt-4">
@@ -192,9 +218,10 @@
                     </div>
                 </form>
             </div>
-        </div>
-    {% endblock %}
-{% block scripts %}
+    </div>
+{% endblock %}
+
+{% block scripts_inner %}
 <script>
      document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function () {

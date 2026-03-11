@@ -1,7 +1,55 @@
 {% extends "layout.html" %}
 {% block title %}ระบบคณะวิทยาศาสตร์{% endblock %}
-{% block head %}<style>main { min-height: 0 !important; padding-bottom: 0 !important; }</style>{% endblock %}
-{% block content %}
+
+{% block head %}
+<style>
+    .form-section {
+        background-color: #ffffff;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        border: 1px solid #e5e7eb;
+    }
+    .form-section label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .form-section input[type="text"],
+    .form-section input[type="tel"],
+    .form-section input[type="date"],
+    .form-section input[type="time"],
+    .form-section input[type="number"],
+    .form-section textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        outline: none;
+        background-color: #f9fafb;
+    }
+    .form-section input:focus,
+    .form-section textarea:focus {
+        border-color: #1d4ed8;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+    }
+    .table-input {
+        border: 1px solid #d1d5db !important;
+        background-color: white !important;
+        padding: 0.5rem !important;
+    }
+    .table-input:focus {
+        border-color: #1d4ed8 !important;
+        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content_inner %}
     <div class="container pt-3 pb-4">
         <div class="bg-white rounded-4 shadow-sm p-4 w-100 mx-auto" style="max-width: 900px;">
             <div class="mb-5 text-center">
@@ -155,9 +203,9 @@
         </form>
         </div>
     </div>
-    {% endblock %}
+{% endblock %}
 
-    {% block scripts %}
+{% block scripts_inner %}
     <script>
         function addRow() {
             const body = document.getElementById('budgetBody');
@@ -190,4 +238,4 @@
         }
         window.onload = calculateTotal;
     </script>
-    {% endblock %}
+{% endblock %}
