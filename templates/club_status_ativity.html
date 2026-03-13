@@ -3,116 +3,155 @@
 
 {% block head %}
 <style>
+    .modal-form-section {
+        background-color: #ffffff;
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e5e7eb;
+    }
+    .modal-section-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 2px solid #eff6ff;
+        padding-bottom: 0.5rem;
+    }
     .modal-form-label {
         display: block;
         font-weight: 600;
-        color: #374151;
-        margin-bottom: 0.3rem;
-        font-size: 0.85rem;
+        color: #4b5563;
+        margin-bottom: 0.4rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
     }
     .modal-input {
         width: 100%;
-        padding: 0.6rem;
-        border: 2px solid #e5e7eb;
+        padding: 0.65rem;
+        border: 1px solid #d1d5db;
         border-radius: 0.5rem;
         transition: all 0.2s;
         outline: none;
-        background-color: #f9fafb;
+        background-color: #ffffff;
+        font-size: 0.9rem;
     }
     .modal-input:focus {
-        border-color: #1d4ed8;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         background-color: #ffffff;
-        box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+    }
+    .modal-textarea {
+        min-height: 80px;
+        resize: vertical;
     }
 </style>
 {% endblock %}
 {% block content_inner %}
             <div class="max-w-6xl mx-auto p-4">
-                <div class="flex items-center justify-between gap-2 mb-4">
-                    <div class="flex items-center gap-2">
-                        <span class="text-2xl"></span>
+                <div class="flex items-center justify-between gap-2 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-[#1e3a5f] p-2 rounded-lg text-white">
+                            <i class="bi bi-clipboard-data text-xl"></i>
+                        </div>
                         <div>
-                            <h1 class="text-xl font-bold text-gray-700">สถานะคำขอกิจกรรม (สโมสร)</h1>
-                            <p class="text-sm text-gray-400">ดูสถานะคำขอที่ส่งให้เจ้าหน้าที่ตรวจสอบ</p>
+                            <h1 class="text-2xl font-bold text-gray-800">สถานะคำขอกิจกรรม</h1>
+                            <p class="text-sm text-gray-500">ติดตามสถานะความคืบหน้าของโครงการที่ยื่นเสนอ</p>
                         </div>
                     </div>
                     
-                    <a href="/create-activity" class="bg-white text-[#002d72] px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-100 border border-[#002d72]">
-                        + สร้างกิจกรรมใหม่
+                    <a href="/create-activity" class="bg-[#1e3a5f] text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-blue-900 transition shadow-sm flex items-center gap-2">
+                        <i class="bi bi-plus-lg"></i> สร้างกิจกรรมใหม่
                     </a>
                 </div>
 
-                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
                     <table class="w-full text-sm text-left border-collapse">
-                        <thead class="bg-[#fcd34d] text-center font-bold">
+                        <thead class="bg-[#f8fafc] text-[#1e3a5f] border-b-2 border-gray-100 text-center font-bold">
                             <tr>
-                                <th class="border p-3">ชื่อกิจกรรม</th>
-                                <th class="border p-3">วัน/เวลา</th>
-                                <th class="border p-3">สถานที่</th>
-                                <th class="border p-3">งบประมาณ</th>
-                                <th class="border p-3">ผู้รับผิดชอบ</th>
-                                <th class="border p-3">ไฟล์โครงการ</th>
-                                <th class="border p-3">สถานะคำขอ</th>
-                                <th class="border p-3">จัดการ</th>
+                                <th class="p-4">ชื่อกิจกรรม</th>
+                                <th class="p-4">วัน/เวลา</th>
+                                <th class="p-4">สถานที่</th>
+                                <th class="p-4">งบประมาณ</th>
+                                <th class="p-4">ผู้รับผิดชอบ</th>
+                                <th class="p-4">ไฟล์โครงการ</th>
+                                <th class="p-4">สถานะคำขอ</th>
+                                <th class="p-4">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for act in activities %}
-                            <tr class="text-center border-b hover:bg-gray-50">
-                                <td class="border p-3 text-left font-medium">{{ act['act_name'] }}</td>
-                                <td class="border p-3">{{ act['act_datetime'] }}</td>
-                                <td class="border p-3">{{ act['act_location'] }}</td>
-                                <td class="border p-3">{{ "{:,.0f}".format(act['act_cost'] if act['act_cost'] else 0) }} บาท</td>
-                                <td class="border p-3">{{ act['act_created_by'] or '-' }}</td>
-                                <td class="border p-3">
+                            <tr class="text-center border-b hover:bg-slate-50 transition-colors">
+                                <td class="p-4 text-left font-semibold text-gray-800">{{ act['act_name'] }}</td>
+                                <td class="p-4 text-gray-600">{{ act['act_datetime'] }}</td>
+                                <td class="p-4 text-gray-600">{{ act['act_location'] }}</td>
+                                <td class="p-4 font-bold text-blue-700">{{ "{:,.0f}".format(act['act_cost'] if act['act_cost'] else 0) }}</td>
+                                <td class="p-4 text-gray-600">{{ act['act_created_by'] or '-' }}</td>
+                                <td class="p-4">
                                     {% if act['act_file'] %}
                                         <a href="{{ url_for('static', filename='uploads/' + act['act_file']) }}"
-                                        class="text-blue-600 underline text-xs" target="_blank">📄 {{ act['act_file'] }}</a>
+                                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium" target="_blank">
+                                            <i class="bi bi-file-earmark-pdf"></i> ไฟล์แนบ
+                                        </a>
                                     {% else %}
-                                        <span class="text-gray-400">-</span>
+                                        <span class="text-gray-400 italic">ไม่มีไฟล์</span>
                                     {% endif %}
                                 </td>
-                                <td class="border p-3">
+                                <td class="p-4">
                                     {% if act['act_status'] == 'pending' %}
-                                        <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-700 font-bold">รออนุมัติ</span>
+                                        <span class="px-3 py-1.5 rounded-full text-[11px] bg-yellow-50 text-yellow-700 font-bold border border-yellow-200">รออนุมัติ</span>
                                     {% elif act['act_status'] == 'approved' %}
-                                        <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-bold">อนุมัติแล้ว</span>
+                                        <span class="px-3 py-1.5 rounded-full text-[11px] bg-green-50 text-green-700 font-bold border border-green-200">อนุมัติแล้ว</span>
+                                    {% elif act['act_status'] == 'revision_needed' %}
+                                        <div class="flex flex-col items-center gap-1">
+                                            <span class="px-3 py-1.5 rounded-full text-[11px] bg-red-50 text-red-700 font-bold border border-red-200">ให้แก้ไขเอกสาร</span>
+                                            {% if act['act_comment'] %}
+                                                <span class="text-[10px] text-red-500 bg-red-50 px-2 py-0.5 rounded border border-red-100 max-w-[150px] truncate" title="{{ act['act_comment'] }}">
+                                                    "{{ act['act_comment'] }}"
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    {% elif act['act_status'] == 'resubmitted' %}
+                                        <span class="px-3 py-1.5 rounded-full text-[11px] bg-blue-50 text-blue-700 font-bold border border-blue-200">ส่งแก้ไขแล้ว</span>
                                     {% else %}
-                                        <span class="px-3 py-1 rounded-full text-xs bg-red-100 text-red-700 font-bold"> ไม่อนุมัติ</span>
+                                        <span class="px-3 py-1.5 rounded-full text-[11px] bg-gray-100 text-gray-600 font-bold border border-gray-200">ไม่อนุมัติ</span>
                                     {% endif %}
                                 </td>
-                                <td class="border p-3 text-center">
-                                    {% if act['act_status'] == 'pending' %}
-                                        <button class="edit-btn text-yellow-500 hover:text-yellow-700 font-bold"
-                                    data-id="{{ act['act_id'] }}"
-                                    data-name="{{ act['act_name'] }}"
-                                    data-datetime="{{ act['act_datetime'] }}"
-                                    data-location="{{ act['act_location'] }}"
-                                    data-address="{{ act['act_address'] or '' }}"
-                                    data-cost="{{ act['act_cost'] or 0 }}"
-                                    data-status="{{ act['act_status'] }}"
-                                    data-file="{{ act['act_file'] or '' }}"
-                                    data-detail="{{ act['act_detail'] or '' }}"
-                                    data-steps="{{ act['act_steps'] or '' }}"
-                                    data-qa="{{ act['act_QA'] or '' }}"
-                                    data-createdby="{{ act['act_created_by'] or '' }}"
-                                    data-phone="{{ act['act_phone'] or '' }}"
-                                    data-department="{{ act['act_department'] or '' }}"
-                                    data-fiscalyear="{{ act['act_fiscal_year'] or '' }}"
-                                    data-std="{{ act['act_std'] or 0 }}"
-                                    data-other="{{ act['act_other'] or 0 }}">
-                                        แก้ไข
-                                        </button>
-                                    {% else %}
-                                        <span class="text-gray-300 text-xs">ล็อค</span>
-                                    {% endif %}
-                                    {% if act['act_status'] == 'pending' %}
-                                        <a href="/delete/{{ act['act_id'] }}"
-                                        onclick="return confirm('ยืนยันการลบกิจกรรมนี้?')"
-                                        class="text-red-500 hover:text-red-700 font-bold">ลบ </a>
-                                    {% else %}
-                                        <span class="text-gray-300 text-xs">ล็อค</span>
-                                    {% endif %}
+                                <td class="p-4">
+                                    <div class="flex justify-center gap-3">
+                                        {% if act['act_status'] in ['pending', 'revision_needed', 'resubmitted'] %}
+                                            <button class="edit-btn text-blue-600 hover:text-blue-800 transition-transform hover:scale-110" title="แก้ไข"
+                                                data-id="{{ act['act_id'] }}"
+                                                data-name="{{ act['act_name'] }}"
+                                                data-datetime="{{ act['act_datetime'] }}"
+                                                data-location="{{ act['act_location'] }}"
+                                                data-address="{{ act['act_address'] or '' }}"
+                                                data-cost="{{ act['act_cost'] or 0 }}"
+                                                data-status="{{ act['act_status'] }}"
+                                                data-file="{{ act['act_file'] or '' }}"
+                                                data-detail="{{ act['act_detail'] or '' }}"
+                                                data-steps="{{ act['act_steps'] or '' }}"
+                                                data-qa="{{ act['act_QA'] or '' }}"
+                                                data-createdby="{{ act['act_created_by'] or '' }}"
+                                                data-phone="{{ act['act_phone'] or '' }}"
+                                                data-department="{{ act['act_department'] or '' }}"
+                                                data-fiscalyear="{{ act['act_fiscal_year'] or '' }}"
+                                                data-std="{{ act['act_std'] or 0 }}"
+                                                data-other="{{ act['act_other'] or 0 }}">
+                                                <i class="bi bi-pencil-square text-lg"></i>
+                                            </button>
+                                            <a href="/delete/{{ act['act_id'] }}" onclick="return confirm('ยืนยันการลบกิจกรรมนี้?')"
+                                                class="text-red-500 hover:text-red-700 transition-transform hover:scale-110" title="ลบ">
+                                                <i class="bi bi-trash text-lg"></i>
+                                            </a>
+                                        {% else %}
+                                            <i class="bi bi-lock-fill text-gray-300 text-lg"></i>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -120,103 +159,146 @@
                     </table>
                 </div>
             </div>
-           <div id="editModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                <div class="bg-[#1e3a5f] text-white px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
-                    <h2 class="font-bold text-lg">✏ แก้ไขข้อมูลกิจกรรม</h2>
-                    <button onclick="closeEditModal()" class="text-white text-2xl">&times;</button>
-                </div>
-                <form id="editForm" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
-                    <input type="hidden" id="edit_act_id">
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            1. ข้อมูลทั่วไป
+
+            <!-- Enhanced Edit Modal -->
+            <div id="editModal" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+                    <div class="bg-[#1e3a5f] text-white px-8 py-5 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <i class="bi bi-pencil-square text-xl text-yellow-400"></i>
+                            <h2 class="font-bold text-xl tracking-wide">แก้ไขข้อมูลกิจกรรม</h2>
                         </div>
-                        <div class="grid grid-cols-2 gap-4 p-4">
-                            <div>
-                                <label>ชื่อหน่วยงาน</label>
-                                <input type="text" name="department" id="edit_department" class="modal-input">
-                            </div>
-                            <div>
-                                <label class="modal-form-label">ปีงบประมาณ</label>
-                                <input type="text" name="fiscalYear" id="edit_fiscalyear" class="modal-input">
-                            </div>
-                            <div>
-                                <label class="modal-form-label">ผู้รับผิดชอบ</label>
-                                <input type="text" name="responsiblePerson" id="edit_createdby" class="modal-input">
-                            </div>
-                            <div>
-                                <label class="modal-form-label">เบอร์โทร</label>
-                                <input type="text" name="phone" id="edit_phone" class="modal-input">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            2. ชื่อกิจกรรม
-                        </div>
-                        <div class="p-4">
-                            <input type="text" name="activityName" id="edit_name" class="modal-input">
-                        </div>
-                    </div>
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            3. วันเวลา
-                        </div>
-                        <div class="p-4">
-                            <input type="text" name="activityDatetime" id="edit_datetime" class="modal-input">
-                        </div>
-                    </div>
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            4. สถานที่
-                        </div>
-                        <div class="p-4 space-y-3">
-                            <input type="text" name="location" id="edit_location" class="modal-input">
-                            <input type="text" name="address" id="edit_address" class="modal-input">
-                        </div>
-                    </div>
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            5. จำนวนผู้เข้าร่วม
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 p-4">
-                            <input type="number" name="participant_std" id="edit_std" class="modal-input">
-                            <input type="number" name="participant_other" id="edit_other" class="modal-input">
-                        </div>
-                    </div>
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            6. รายละเอียด
-                        </div>
-                        <div class="p-4 space-y-3">
-                            <textarea name="objective" id="edit_detail" rows="3" class="modal-input"></textarea>
-                            <textarea name="steps" id="edit_steps" rows="3" class="modal-input"></textarea>
-                        </div>
-                    </div>
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            7. งบประมาณ
-                        </div>
-                        <div class="p-4">
-                            <input type="number" name="cost" id="edit_cost" class="modal-input">
-                        </div>
-                    </div>
-                    <div class="border rounded-xl overflow-hidden">
-                        <div class="bg-blue-800 text-white px-4 py-2 font-bold text-sm">
-                            8. ไฟล์ / หมายเหตุ
-                        </div>
-                        <div class="p-4 space-y-3">
-                            <input type="file" name="project_file" class="modal-input">
-                            <textarea name="notes" id="edit_qa" rows="2" class="modal-input"></textarea>
-                        </div>
-                    </div>
-                    <div class="flex justify-end pt-4">
-                        <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded font-bold">
-                            บันทึกการแก้ไข
+                        <button onclick="closeEditModal()" class="text-white hover:text-yellow-400 transition-colors">
+                            <i class="bi bi-x-lg text-xl"></i>
                         </button>
                     </div>
-                </form>
+
+                    <form id="editForm" method="POST" enctype="multipart/form-data" class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                        <input type="hidden" id="edit_act_id">
+                        
+                        <!-- Section 1 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-info-circle"></i> ข้อมูลทั่วไป
+                            </div>
+                            <div class="grid grid-cols-2 gap-5">
+                                <div>
+                                    <label class="modal-form-label">ชื่อหน่วยงาน</label>
+                                    <input type="text" name="department" id="edit_department" class="modal-input" placeholder="ระบุหน่วยงาน">
+                                </div>
+                                <div>
+                                    <label class="modal-form-label">ปีงบประมาณ</label>
+                                    <input type="text" name="fiscalYear" id="edit_fiscalyear" class="modal-input" placeholder="เช่น 2567">
+                                </div>
+                                <div>
+                                    <label class="modal-form-label">ผู้รับผิดชอบ</label>
+                                    <input type="text" name="responsiblePerson" id="edit_createdby" class="modal-input" placeholder="ชื่อ-นามสกุล">
+                                </div>
+                                <div>
+                                    <label class="modal-form-label">เบอร์โทรติดต่อ</label>
+                                    <input type="text" name="phone" id="edit_phone" class="modal-input" placeholder="ระบุเบอร์โทร">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-card-text"></i> ชื่อโครงการ
+                            </div>
+                            <input type="text" name="activityName" id="edit_name" class="modal-input" placeholder="ระบุชื่อกิจกรรม">
+                        </div>
+
+                        <!-- Section 3 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-calendar-event"></i> วันที่และเวลาที่จัดกิจกรรม
+                            </div>
+                            <input type="text" name="activityDatetime" id="edit_datetime" class="modal-input" placeholder="เช่น 20/03/2567 09:00 - 16:30">
+                        </div>
+
+                        <!-- Section 4 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-geo-alt"></i> สถานที่จัดกิจกรรม
+                            </div>
+                            <div class="space-y-4">
+                                <input type="text" name="location" id="edit_location" class="modal-input" placeholder="ระบุชื่อสถานที่ (เช่น ห้องประชุม 1)">
+                                <textarea name="address" id="edit_address" rows="2" class="modal-input modal-textarea" placeholder="ที่อยู่ / แผนที่โดยสังเขป"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Section 5 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-people"></i> จำนวนผู้เข้าร่วมเป้าหมาย
+                            </div>
+                            <div class="grid grid-cols-2 gap-5">
+                                <div>
+                                    <label class="modal-form-label">นักศึกษา (คน)</label>
+                                    <input type="number" name="participant_std" id="edit_std" class="modal-input">
+                                </div>
+                                <div>
+                                    <label class="modal-form-label">บุคคลทั่วไป (คน)</label>
+                                    <input type="number" name="participant_other" id="edit_other" class="modal-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 6 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-list-check"></i> รายละเอียดกิจกรรม
+                            </div>
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="modal-form-label">วัตถุประสงค์</label>
+                                    <textarea name="objective" id="edit_detail" rows="3" class="modal-input modal-textarea" placeholder="ระบุวัตถุประสงค์..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="modal-form-label">ขั้นตอนการดำเนินงาน</label>
+                                    <textarea name="steps" id="edit_steps" rows="3" class="modal-input modal-textarea" placeholder="ขั้นตอน 1, 2, 3..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 7 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-currency-dollar"></i> งบประมาณโครงการ (บาท)
+                            </div>
+                            <input type="number" name="cost" id="edit_cost" class="modal-input" placeholder="ระบุงบประมาณรวม">
+                        </div>
+
+                        <!-- Section 8 -->
+                        <div class="modal-form-section">
+                            <div class="modal-section-title">
+                                <i class="bi bi-cloud-arrow-up"></i> เอกสารโครงการ / หมายเหตุ
+                            </div>
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="modal-form-label">อัปโหลดไฟล์ใหม่ (PDF เท่านั้น)</label>
+                                    <div class="relative group">
+                                        <input type="file" name="project_file" class="modal-input file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="modal-form-label">หมายเหตุเพิ่มเติม</label>
+                                    <textarea name="notes" id="edit_qa" rows="2" class="modal-input modal-textarea" placeholder="ระบุหมายเหตุหากมี"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="p-6 bg-slate-50 flex justify-end gap-3 border-t">
+                        <button onclick="closeEditModal()" type="button" class="px-6 py-2.5 rounded-lg font-bold text-gray-500 hover:bg-gray-100 transition-colors">
+                            ยกเลิก
+                        </button>
+                        <button type="submit" form="editForm" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-lg font-bold shadow-lg shadow-blue-200 transition-all flex items-center gap-2">
+                            <i class="bi bi-check2-circle"></i> บันทึกการแก้ไข
+                        </button>
+                    </div>
+                </div>
             </div>
     </div>
 {% endblock %}

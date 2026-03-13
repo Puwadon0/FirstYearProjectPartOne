@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}ตรวจสอบเอกสาร{% endblock %}
+{% block content_inner %}
+<div class="max-w-7xl mx-auto p-4">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h1 class="text-xl font-bold text-gray-700">ตรวจสอบเอกสารโครงการ</h1>
+            <p class="text-sm text-gray-400">โครงการ: {{ act['act_name'] }}</p>
+        </div>
+        <a href="/officer" class="text-gray-500 hover:text-gray-700 underline">กลับไปหน้าจัดการ</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="md:col-span-2 bg-white shadow-md rounded-lg h-[80vh] overflow-hidden border">
+            {% if act['act_file'] %}
+                {% if act['act_file'].lower().endswith('.pdf') %}
+                    <embed src="{{ url_for('static', filename='uploads/' + act['act_file']) }}" type="application/pdf" class="w-full h-full" />
+                {% else %}
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400 space-y-4">
+                        <p>ไฟล์นี้ไม่รองรับการแสดงตัวอย่าง (ต้องเป็น PDF)</p>
+                        <a href="{{ url_for('static', filename='uploads/' + act['act_file']) }}" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold">
+                            ดาวน์โหลดไฟล์เพื่อตรวจสอบ
+                        </a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="flex items-center justify-center h-full text-gray-400">
+                    ไม่พบไฟล์แนบของโครงการนี้
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6 border h-fit">
+            <h2 class="text-lg font-bold text-red-600 mb-4">แจ้งแก้ไขเอกสาร</h2>
+            <form action="/request_revision/{{ act['act_id'] }}" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ระบุจุดที่ต้องแก้ไข</label>
+                    <textarea name="comment" rows="6" class="w-full border p-2 rounded-lg focus:ring focus:ring-red-200" placeholder="เช่น แก้ไขงบประมาณหน้า 2, เปลี่ยนแปลงวันที่จัดกิจกรรม..." required></textarea>
+                </div>
+                <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-bold">
+                    ส่งแจ้งแก้ไข (Return to Club)
+                </button>
+            </form>
+            <hr class="my-4">
+            <a href="/approve/{{ act['act_id'] }}" class="block text-center w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-bold mb-2">
+                เอกสารผ่าน (อนุมัติ)
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

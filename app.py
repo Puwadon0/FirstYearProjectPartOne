@@ -60,13 +60,15 @@ def init_activity_db():
                 act_department  TEXT,
                 act_fiscal_year TEXT,
                 act_std         INTEGER,
-                act_other       INTEGER
+                act_other       INTEGER,
+                act_comment     TEXT
             )
         ''')
         new_columns = [
             ("act_address", "TEXT"), ("act_steps", "TEXT"), ("act_phone", "TEXT"),
             ("act_department", "TEXT"), ("act_fiscal_year", "TEXT"),
             ("act_std", "INTEGER"), ("act_other", "INTEGER"),
+            ("act_comment", "TEXT"),
         ]
         for col_name, col_type in new_columns:
             try:
@@ -214,11 +216,39 @@ def officer_status_activity():
             SELECT * FROM activities
             ORDER BY
                 CASE act_status
-                    WHEN 'pending' THEN 1 WHEN 'approved' THEN 2
-                    WHEN 'finished' THEN 3 WHEN 'rejected' THEN 4 ELSE 5
+                    WHEN 'resubmitted' THEN 1
+                    WHEN 'pending' THEN 2
+                    WHEN 'revision_needed' THEN 3
+                    WHEN 'approved' THEN 4
+                    WHEN 'finished' THEN 5
+                    WHEN 'rejected' THEN 6
+                    ELSE 7
                 END, act_id DESC
         ''').fetchall()
     return render_template('officer_status_activity.html', activities=activities)
+
+@app.route('/finish/<act_id>')
+def finish_activity(act_id):
+    with get_activity_db() as conn:
+        conn.execute('UPDATE activities SET act_status = "finished" WHERE act_id = ?', (act_id,))
+    return redirect(url_for('officer_status_activity'))
+
+@app.route('/doc/<act_id>')
+def view_doc(act_id):
+    with get_activity_db() as conn:
+        act = conn.execute('SELECT * FROM activities WHERE act_id = ?', (act_id,)).fetchone()
+    return render_template('doc.html', act=act)
+
+@app.route('/request_revision/<act_id>', methods=['POST'])
+def request_revision(act_id):
+    comment = request.form.get('comment')
+    with get_activity_db() as conn:
+        conn.execute('''
+            UPDATE activities 
+            SET act_status = 'revision_needed', act_comment = ? 
+            WHERE act_id = ?
+        ''', (comment, act_id))
+    return redirect(url_for('officer_status_activity'))
 
 
 # ===== ACTIVITY REGISTER ROUTES (ระบบลงทะเบียนกิจกรรม) =====
@@ -508,7 +538,8 @@ def edit_activity(act_id):
                     act_name=?, act_datetime=?, act_location=?, act_address=?,
                     act_cost=?, act_detail=?, act_steps=?, act_QA=?,
                     act_created_by=?, act_phone=?, act_department=?,
-                    act_fiscal_year=?, act_std=?, act_other=?, act_file=?
+                    act_fiscal_year=?, act_std=?, act_other=?, act_file=?,
+                    act_status='resubmitted', act_comment=NULL
                 WHERE act_id=?
             ''', (
                 request.form.get('activityName'), request.form.get('activityDatetime'),
@@ -528,7 +559,8 @@ def edit_activity(act_id):
                     act_name=?, act_datetime=?, act_location=?, act_address=?,
                     act_cost=?, act_detail=?, act_steps=?, act_QA=?,
                     act_created_by=?, act_phone=?, act_department=?,
-                    act_fiscal_year=?, act_std=?, act_other=?
+                    act_fiscal_year=?, act_std=?, act_other=?,
+                    act_status='resubmitted', act_comment=NULL
                 WHERE act_id=?
             ''', (
                 request.form.get('activityName'), request.form.get('activityDatetime'),

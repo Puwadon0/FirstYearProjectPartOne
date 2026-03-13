@@ -32,7 +32,8 @@
             <select id="statusFilter" onchange="filterStatus(this.value)" 
                     class="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 shadow-sm outline-none">
                 <option value="all">แสดงทั้งหมด ({{ activities | length }})</option>
-                <option value="pending">รออนุมัติ ({{ activities | selectattr('act_status', 'equalto', 'pending') | list | length }})</option>
+                <option value="pending">รออนุมัติ/ส่งใหม่ ({{ activities | selectattr('act_status', 'in', ['pending', 'resubmitted']) | list | length }})</option>
+                <option value="revision_needed">แจ้งแก้ไขแล้ว ({{ activities | selectattr('act_status', 'equalto', 'revision_needed') | list | length }})</option>
                 <option value="approved">อนุมัติแล้ว ({{ activities | selectattr('act_status', 'equalto', 'approved') | list | length }})</option>
                 <option value="rejected">ปฏิเสธ ({{ activities | selectattr('act_status', 'equalto', 'rejected') | list | length }})</option>
             </select>
@@ -66,6 +67,10 @@
                     <td class="p-3">
                         {% if act['act_status'] == 'pending' %}
                             <span class="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-700 font-bold border border-yellow-200">รออนุมัติ</span>
+                        {% elif act['act_status'] == 'resubmitted' %}
+                            <span class="px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700 font-bold border border-blue-200">ส่งใหม่แล้ว</span>
+                        {% elif act['act_status'] == 'revision_needed' %}
+                            <span class="px-3 py-1 rounded-full text-xs bg-orange-100 text-orange-700 font-bold border border-orange-200">แจ้งแก้ไขแล้ว</span>
                         {% elif act['act_status'] == 'approved' %}
                             <span class="px-3 py-1 rounded-full text-xs bg-green-100 text-green-700 font-bold border border-green-200">อนุมัติแล้ว</span>
                         {% else %}
@@ -80,19 +85,24 @@
                             data-location="{{ act['act_location'] }}"
                             data-cost="{{ act['act_cost'] or 0 }}"
                             data-file="{{ act['act_file'] or '' }}">
-                            👁 ดูเพิ่ม
+                            ดูเพิ่ม
                         </button>
                     </td>
                     <td class="p-3 text-center">
-                        {% if act['act_status'] == 'pending' %}
-                            <div class="flex gap-2 justify-center">
-                                <a href="/approve/{{ act['act_id'] }}" onclick="return confirm('อนุมัติกิจกรรมนี้?')"
-                                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold transition shadow-sm">
-                                    ✔ อนุมัติ
-                                </a>
-                                <a href="/reject/{{ act['act_id'] }}" onclick="return confirm('ปฏิเสธกิจกรรมนี้?')"
-                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold transition shadow-sm">
-                                    ✖ ปฏิเสธ
+                        {% if act['act_status'] in ['pending', 'resubmitted'] %}
+                            <div class="flex flex-col gap-1 items-center">
+                                <div class="flex gap-2 justify-center">
+                                    <a href="/approve/{{ act['act_id'] }}" onclick="return confirm('อนุมัติกิจกรรมนี้?')"
+                                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold transition shadow-sm">
+                                        อนุมัติ
+                                    </a>
+                                    <a href="/reject/{{ act['act_id'] }}" onclick="return confirm('ปฏิเสธกิจกรรมนี้?')"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold transition shadow-sm">
+                                        ปฏิเสธ
+                                    </a>
+                                </div>
+                                <a href="/doc/{{ act['act_id'] }}" class="text-[10px] text-blue-600 underline font-bold mt-1">
+                                    ตรวจเอกสาร / แจ้งแก้ไข
                                 </a>
                             </div>
                         {% else %}
