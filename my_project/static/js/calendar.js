@@ -20,7 +20,63 @@ document.addEventListener('DOMContentLoaded', function () {
                 center: 'title', 
                 right: 'dayGridMonth,listMonth' 
             },
-            events: '/api/get_events',
+            events: function(fetchInfo, successCallback, failureCallback) {
+    fetch('/api/get_events')
+        .then(response => response.json())
+        .then(data => {
+
+            const events = data
+.filter(ev => {
+
+    if (userMode === 'student') {
+
+        // ซ่อนประชุม
+        if (ev.type === "ประชุม") return false;
+
+        // ซ่อนกำหนดส่ง
+        if (ev.type === "กำหนดส่ง") return false;
+
+        // ซ่อนกิจกรรมที่ยังไม่อนุมัติ
+        if (ev.status !== "อนุมัติแล้ว") return false;
+
+    }
+
+    return true;
+
+})
+.map(ev => {
+                
+                
+                let color = "#3788d8";
+
+                if (ev.type === "กิจกรรม") {
+                    color = "#28a745";
+                }
+                else if (ev.type === "ประชุม") {
+                    color = "#ffc107";
+                }
+                else if (ev.type === "กำหนดส่ง") {
+                    color = "#dc3545";
+                }
+
+                return {
+                    id: ev.id,
+                    title: ev.title,
+                    start: ev.start,
+                    end: ev.end,
+                    backgroundColor: color,
+                    borderColor: color,
+                    extendedProps: {
+                        type: ev.type,
+                        location: ev.location,
+                        status: ev.status
+                    }
+                };
+            });
+
+            successCallback(events);
+        });
+},
             eventClick: function (info) {
                 currentEventId = info.event.id;
                 document.getElementById('viewTitle').innerText = info.event.title;
@@ -40,11 +96,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
 
-                document.getElementById('viewLocation').innerText = info.event.extendedProps.location || '-';
-                document.getElementById('viewDesc').innerText = info.event.extendedProps.description || '-';
-                
+                document.getElementById('viewLocation').innerText =
+"สถานที่: " + (info.event.extendedProps.location || "-");
+
+if (userMode === 'student') {
+
+document.getElementById('viewDesc').innerText =
+"ประเภท: " + (info.event.extendedProps.type || "-");
+
+} else {
+
+document.getElementById('viewDesc').innerText =
+"ประเภท: " + (info.event.extendedProps.type || "-") +
+" | สถานะ: " + (info.event.extendedProps.status || "-");
+
+}
                 const delBtn = document.getElementById('delBtn');
                 if (delBtn) delBtn.style.display = (userMode === 'student') ? 'none' : 'block';
+                const approveBtn = document.getElementById('approveBtn');
+
+                if (approveBtn) approveBtn.style.display = (userMode === 'staff') ? 'block' : 'none';
                 
                 new bootstrap.Modal(document.getElementById('eventDetailModal')).show();
             }
@@ -140,14 +211,34 @@ function executeDelete() {
 
 function saveEventData() {
     const data = {
-        title: document.getElementById('eventTitleInput').value,
-        start_date: document.getElementById('eventStartInput').value,
-        end_date: document.getElementById('eventEndInput').value,
-        type: document.getElementById('eventTypeInput').value,
-        location: document.getElementById('eventLocationInput').value,
-        description: document.getElementById('eventDescInput').value
-    };
-    if (!data.title || !data.start_date) return alert('กรุณาระบุชื่อและวันที่');
-    fetch('/api/save_event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-    .then(res => res.json()).then(result => { if (result.status === 'success') location.reload(); });
+    event_title: document.getElementById('eventTitleInput').value,
+    start_date: document.getElementById('eventStartInput').value,
+    end_date: document.getElementById('eventEndInput').value,
+    event_type: document.getElementById('eventTypeInput').value,
+    location: document.getElementById('eventLocationInput').value
+};
+    if (!data.event_title || !data.start_date) return alert('กรุณาระบุชื่อและวันที่');
+    fetch('/api/save_event', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => response.json())
+.then(result => {
+    location.reload();
+});
+}
+
+function approveEvent() {
+
+fetch(`/api/approve_event/${currentEventId}`, {
+    method: 'POST'
+})
+.then(res => res.json())
+.then(data => {
+    location.reload();
+});
+
 }

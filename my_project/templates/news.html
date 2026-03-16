@@ -56,7 +56,62 @@
         <div class="news-container px-4"><div id="newsList" class="row justify-content-center"></div></div>
     </div>
 
-    <div class="modal fade" id="addNewsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 p-4 shadow-lg rounded-4"><h5 class="fw-bold mb-4" style="color: var(--ubu-blue);"><i class="bi bi-megaphone-fill me-2"></i>จัดการข่าวประชาสัมพันธ์</h5><form id="newsForm"><div class="mb-3"><label class="small fw-bold">หัวข้อข่าว</label><input type="text" id="newsTitleInput" class="form-control" required></div><div class="mb-3"><label class="small fw-bold">แนบรูปภาพ</label><input type="file" id="newsImageInput" class="form-control" accept="image/*"></div><div class="mb-3"><label class="small fw-bold">เนื้อหา</label><textarea id="newsContentInput" class="form-control" rows="4" required></textarea></div><div class="d-flex gap-2"><button type="button" class="btn btn-light w-100 fw-bold" data-bs-dismiss="modal">ยกเลิก</button><button type="button" id="submitNewsBtn" class="btn bg-ubu text-white w-100 fw-bold" onclick="saveNewsData()">บันทึกข้อมูล</button></div></form></div></div></div>
+    <div class="modal fade" id="addNewsModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 p-4 shadow-lg rounded-4"><h5 class="fw-bold mb-4" style="color: var(--ubu-blue);"><i class="bi bi-megaphone-fill me-2"></i>จัดการข่าวประชาสัมพันธ์</h5><form id="newsForm">
+
+<div class="mb-3">
+<label class="small fw-bold">หัวข้อข่าว</label>
+<input type="text" id="newsTitleInput" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label class="small fw-bold">หมวดหมู่ข่าว</label>
+<select id="newsCategoryInput" class="form-control">
+<option value="กิจกรรม">กิจกรรม</option>
+<option value="ข่าวทั่วไป">ข่าวทั่วไป</option>
+<option value="ประชาสัมพันธ์">ประชาสัมพันธ์</option>
+</select>
+</div>
+
+<div class="mb-3">
+<label class="small fw-bold">แนบรูปภาพ</label>
+<input type="file" id="newsImageInput" class="form-control" accept="image/*">
+</div>
+
+<div class="mb-3">
+<label class="small fw-bold">เนื้อหาข่าว</label>
+<textarea id="newsContentInput" class="form-control" rows="4" required></textarea>
+</div>
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label class="small fw-bold">วันที่ประกาศ</label>
+<input type="date" id="announcementDateInput" class="form-control">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="small fw-bold">วันหมดอายุข่าว</label>
+<input type="date" id="expiryDateInput" class="form-control">
+</div>
+
+</div>
+
+<div class="mb-3">
+<label class="small fw-bold">ผู้โพสต์ข่าว</label>
+<input type="text" id="postedByInput" class="form-control">
+</div>
+
+<div class="mb-3 form-check">
+<input type="checkbox" class="form-check-input" id="priorityInput">
+<label class="form-check-label">ปักหมุดข่าวสำคัญ</label>
+</div>
+
+<div class="d-flex gap-2">
+<button type="button" class="btn btn-light w-100 fw-bold" data-bs-dismiss="modal">ยกเลิก</button>
+<button type="button" class="btn bg-ubu text-white w-100 fw-bold" onclick="saveNewsData()">บันทึกข้อมูล</button>
+</div>
+
+</form></div></div></div>
     <div class="modal fade" id="deleteNewsConfirmModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered text-center"><div class="modal-content border-0 p-4 shadow-lg rounded-4"><div class="text-danger mb-3"><i class="bi bi-exclamation-triangle-fill" style="font-size: 3.5rem;"></i></div><h5 class="fw-bold">ยืนยันการลบ?</h5><p class="text-muted small mb-4">ข่าวประชาสัมพันธ์นี้จะถูกลบออกอย่างถาวร</p><div class="d-flex gap-2"><button class="btn btn-light w-100 py-2 rounded-3" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-danger w-100 py-2 fw-bold rounded-3 shadow-sm" onclick="confirmDeleteNews()">ตกลง</button></div></div></div></div>
 
     <div class="fixed-bottom p-4" style="width: fit-content; z-index: 2100;"><div class="dropup"><button class="btn bg-dark text-white rounded-pill px-4 py-2 shadow-lg d-flex align-items-center" data-bs-toggle="dropdown"><i class="bi bi-person-badge me-2"></i> <span id="currentModeText">Staff Mode</span></button><ul class="dropdown-menu shadow border-0 mb-2 p-2" style="min-width: 230px; border-radius: 12px;"><li><a class="dropdown-item py-2 rounded-3" onclick="changeMode('staff')">เจ้าหน้าที่</a></li><li><a class="dropdown-item py-2 rounded-3" onclick="changeMode('club')">นักศึกษาสโมสร</a></li><li><a class="dropdown-item py-2 rounded-3" onclick="changeMode('student')">นักศึกษา</a></li></ul></div></div>
@@ -93,7 +148,7 @@
                     <div class="carousel-item ${i===0?'active':''}">
                         ${userMode !== 'student' ? 
                         `<button class="btn btn-warning btn-sm btn-unpin-banner"
-                            onclick="togglePin(${n.id})">
+                            onclick="togglePin('${n.id}')">
                             <i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด
                         </button>` : ''}
 
@@ -143,11 +198,11 @@
                     ${isPrivileged ? `
                     <div class="position-absolute top-0 end-0 p-2 d-flex gap-2">
                         <button class="btn btn-sm btn-light shadow-sm"
-                            onclick="togglePin(${news.id})">
+                            onclick="togglePin('${news.id}')">
                             <i class="bi bi-pin-angle"></i>
                         </button>
                         <button class="btn btn-sm btn-danger shadow-sm"
-                            onclick="deleteNewsItem(${news.id})">
+                            onclick="deleteNewsItem('${news.id}')">
                             <i class="bi bi-trash3"></i>
                         </button>
                     </div>` : ''}
@@ -183,15 +238,66 @@
         applyModeSettings();
     });
 }
-        async function togglePin(id) { await fetch(`/api/toggle_pin/${id}`, { method: 'POST' }); fetchNews(); }
-        async function saveNewsData() {
-            const formData = new FormData();
-            formData.append('title', document.getElementById('newsTitleInput').value);
-            formData.append('content', document.getElementById('newsContentInput').value);
-            const file = document.getElementById('newsImageInput').files[0];
-            if(file) formData.append('image', file);
-            try { await fetch('/api/save_news', { method: 'POST', body: formData }); location.reload(); } catch (e) { console.error(e); }
-        }
+        async function togglePin(id){
+
+const res = await fetch(`/api/toggle_pin/${id}`,{
+method:"POST"
+})
+
+const data = await res.json()
+
+if(data.status==="success"){
+fetchNews()
+}else{
+alert("toggle pin ไม่สำเร็จ")
+}
+
+}
+        async function saveNewsData(){
+
+const title = document.getElementById("newsTitleInput").value
+const content = document.getElementById("newsContentInput").value
+const category = document.getElementById("newsCategoryInput").value
+const announcement_date = document.getElementById("announcementDateInput").value
+const expiry_date = document.getElementById("expiryDateInput").value
+const posted_by = document.getElementById("postedByInput").value
+const is_priority = document.getElementById("priorityInput").checked
+
+const imageFile = document.getElementById("newsImageInput").files[0]
+
+const formData = new FormData()
+
+formData.append("news_title",title)
+formData.append("news_content",content)
+formData.append("news_category",category)
+formData.append("announcement_date",announcement_date)
+formData.append("expiry_date",expiry_date)
+formData.append("posted_by",posted_by)
+formData.append("is_priority",is_priority)
+
+if(imageFile){
+formData.append("cover_image",imageFile)
+}
+
+fetch("/api/save_news",{
+method:"POST",
+body:formData
+})
+.then(res=>res.json())
+.then(data=>{
+
+alert("บันทึกข่าวสำเร็จ")
+
+location.reload()
+
+})
+.catch(err=>{
+console.error(err)
+alert("เกิดข้อผิดพลาด")
+})
+
+}
+
         function deleteNewsItem(id) { newsIdToDelete = id; new bootstrap.Modal(document.getElementById('deleteNewsConfirmModal')).show(); }
         function confirmDeleteNews() { fetch('/api/delete_news/'+newsIdToDelete, { method: 'DELETE' }).then(() => { bootstrap.Modal.getInstance(document.getElementById('deleteNewsConfirmModal')).hide(); fetchNews(); }); }
     </script>
