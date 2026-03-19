@@ -15,11 +15,13 @@
                 <p class="text-sm text-gray-500">บันทึกและติดตามการใช้จ่ายงบประมาณโครงการ</p>
             </div>
         </div>
+        {% if current_role != 'officer' %}
         <a href="{{ url_for('expense_create') }}">
             <button class="bg-[#1e3a5f] hover:bg-blue-900 text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-md hover:-translate-y-0.5 flex items-center gap-2">
                 <i class="bi bi-plus-lg"></i> เพิ่มรายการใหม่
             </button>
         </a>
+        {% endif %}
     </div>
 
     <!-- ===== สรุปงบประมาณแยกตามกิจกรรม ===== -->
