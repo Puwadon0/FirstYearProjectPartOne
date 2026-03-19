@@ -83,9 +83,7 @@ function applyModeSettings() {
     let roleLinks = "";
     if (userMode === 'officer') {
         roleLinks = `
-            <a class="dropdown-item" href="#"><i class="bi bi-file-earmark-check me-2"></i>ตรวจทานเอกสาร</a>
             <a class="dropdown-item" href="/club_status_activity"><i class="bi bi-clipboard-check me-2"></i>ตรวจโครงการ</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-people me-2"></i>รายชื่อผู้เข้าร่วมจิตอาสา</a>
             <a class="dropdown-item" href="/officer"><i class="bi bi-journal-plus me-2"></i>คำขอสร้างกิจกรรม</a>
             <a class="dropdown-item" href="/activity/list"><i class="bi bi-person-lines-fill me-2"></i>รายชื่อผู้ลงทะเบียน</a>
             <a class="dropdown-item" href="/expense/list"><i class="bi bi-receipt me-2"></i>สรุปรายจ่าย</a>
@@ -102,11 +100,15 @@ function applyModeSettings() {
             <a class="dropdown-item" href="/resources/manage"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
             <a class="dropdown-item" href="/qa/answer"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
         `;
+    } else if (userMode === 'guest') {
+        roleLinks = `
+            <a class="dropdown-item" href="/auth/login"><i class="bi bi-person-plus me-2"></i>ลงทะเบียนกิจกรรม</a>
+            <a class="dropdown-item" href="/auth/login"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a>
+            <a class="dropdown-item" href="/auth/login"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>
+        `;
     } else {
         roleLinks = `
             <a class="dropdown-item" href="/activity/register"><i class="bi bi-person-plus me-2"></i>ลงทะเบียนกิจกรรม</a>
-            <a class="dropdown-item" href="/activity/list"><i class="bi bi-list-ul me-2"></i>รายชื่อผู้ลงทะเบียน</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-images me-2"></i>ภาพกิจกรรม</a>
             <a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a>
             <a class="dropdown-item" href="/qa/questions"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>
         `;

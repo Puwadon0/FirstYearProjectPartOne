@@ -30,7 +30,15 @@
     {% include 'navbar.html' %}
 
     <div class="container py-5">
-        <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold mb-0" style="color: var(--ubu-blue);">ประชาสัมพันธ์กิจกรรม</h3><button id="addNewsBtn" class="btn bg-ubu text-white px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addNewsModal"><i class="bi bi-plus-lg me-2"></i>เพิ่มข่าวใหม่</button></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="color: var(--ubu-blue);">ประชาสัมพันธ์กิจกรรม</h3>
+            {% if current_role %}
+            <button id="addNewsBtn" class="btn bg-ubu text-white px-4 py-2 rounded-pill shadow-sm fw-bold"
+                data-bs-toggle="modal" data-bs-target="#addNewsModal">
+                <i class="bi bi-plus-lg me-2"></i>เพิ่มข่าวใหม่
+            </button>
+            {% endif %}
+        </div>
         <div id="newsCarousel" class="carousel slide main-slider d-none" data-bs-ride="carousel">
             <div class="carousel-indicators" id="carouselIndicators"></div>
             <div class="carousel-inner" id="carouselInner"></div>
@@ -61,14 +69,14 @@
                 if (pinnedItems.length > 0) {
                     carouselArea.classList.remove('d-none');
                     carouselInner.innerHTML = pinnedItems.map((n, i) => {
-                        const unpinBtn = (userMode !== 'student') ? `<button class="btn btn-warning btn-sm btn-unpin-banner" onclick="togglePin(${n.id})"><i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด</button>` : '';
+                        const unpinBtn = (userMode === 'officer' || userMode === 'club') ? `<button class="btn btn-warning btn-sm btn-unpin-banner" onclick="togglePin(${n.id})"><i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด</button>` : '';
                         return `<div class="carousel-item ${i===0?'active':''}"> ${unpinBtn} <img src="${n.image_url}" class="carousel-img"> <div class="carousel-caption-custom"> <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span> <h2 class="fw-bold display-6">${n.title}</h2> <p class="lead text-truncate" style="max-width: 90%">${n.content}</p> </div> </div>`;
                     }).join('');
                     new bootstrap.Carousel(carouselArea, { interval: 5000, ride: 'carousel' });
                 } else { carouselArea.classList.add('d-none'); }
 
                 list.innerHTML = regularItems.map(news => {
-                    const isPrivileged = (userMode !== 'student');
+                    const isPrivileged = (userMode === 'officer' || userMode === 'club');
                     return `<div class="col-md-4 mb-4"> <div class="news-card position-relative"> ${isPrivileged ? `<div class="position-absolute top-0 end-0 p-2 d-flex gap-2"> <button class="btn btn-sm btn-light shadow-sm" onclick="togglePin(${news.id})"><i class="bi bi-pin-angle"></i></button> <button class="btn btn-sm btn-danger shadow-sm" onclick="deleteNewsItem(${news.id})"><i class="bi bi-trash3"></i></button> </div>` : ''} <img src="${news.image_url}" class="news-img" onerror="this.src='https://placehold.co/600x400?text=No+Image'"> <div class="card-body"> <h5 class="fw-bold mb-2" style="color:var(--ubu-blue)">${news.title}</h5> <p class="small text-muted mb-3" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${news.content}</p> <div class="text-primary small fw-bold mt-auto"><i class="bi bi-calendar-event me-1"></i>${news.date}</div> </div> </div> </div>`;
                 }).join('');
                 applyModeSettings();

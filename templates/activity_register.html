@@ -72,6 +72,7 @@
                 >
                     บันทึกข้อมูล
                 </button>
+                {% if current_role != 'student' %}
                 <a href="{{ url_for('activity_list') }}" class="w-full sm:w-auto">
                     <button
                         type="button"
@@ -80,6 +81,7 @@
                         ดูรายชื่อผู้สมัคร
                     </button>
                 </a>
+                {% endif %}
             </div>
 
         </form>

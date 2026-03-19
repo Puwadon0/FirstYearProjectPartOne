@@ -96,9 +96,11 @@
                         style="width:250px; border-radius: 18px">
 
                     <!-- Add -->
+                    {% if current_role != 'officer' %}
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
                         <i class="bi bi-plus-lg"></i> เพิ่มคำถาม
                     </button>
+                    {% endif %}
                 </div>
 
             </div>
