@@ -13,53 +13,144 @@
         :root { --ubu-blue: #112592; }
         body { font-family: 'Prompt', sans-serif; background-color: #f8f9fa; }
         .bg-ubu { background-color: var(--ubu-blue) !important; }
+        
+        /* Navbar & Menu - ยึดจากชุดแรก */
         .fc-toolbar-title { color: var(--ubu-blue); font-weight: 600; }
         .badge-guide { width: 100px; display: inline-block; text-align: center; padding: 8px 0; border-radius: 6px; }
         #userRoleProfile { font-size: 0.9rem; color: var(--ubu-blue); font-weight: 600; display: block; padding: 5px 15px; }
 
         /* Custom Calendar Styles */
         .fc .fc-day-today {
-            background-color: rgba(255, 193, 7, 0.3) !important; /* พื้นหลังสีเหลืองเข้มขึ้นสำหรับวันนี้ */
+            background-color: rgba(255, 193, 7, 0.3) !important;
             font-weight: bold;
         }
         .fc .fc-day-today .fc-daygrid-day-number {
-            color: var(--ubu-blue) !important; /* ตัวเลขวันที่สีน้ำเงินเข้มสำหรับวันนี้ */
+            color: var(--ubu-blue) !important;
             font-size: 1.1em;
         }
         .fc .fc-day-other .fc-daygrid-day-number {
-            color: #adb5bd !important; /* ตัวเลขวันที่สีเทาอ่อนสำหรับเดือนอื่น */
+            color: #adb5bd !important;
+
         }
+
+        .fc .fc-day-today {
+        background-color: rgba(255, 193, 7, 0.3) !important; /* พื้นหลังสีเหลืองเข้มขึ้นสำหรับวันนี้ */
+        font-weight: bold;
+      }
+      .fc .fc-day-today .fc-daygrid-day-number {
+        color: var(--ubu-blue) !important; /* ตัวเลขวันที่สีน้ำเงินเข้มสำหรับวันนี้ */
+        font-size: 1.1em;
+      }
+      .fc .fc-day-other .fc-daygrid-day-number {
+        color: #adb5bd !important; /* ตัวเลขวันที่สีเทาอ่อนสำหรับเดือนอื่น */
+      }
     </style>
 </head>
 <body data-role="{{ current_role or 'guest' }}">
     {% include 'navbar.html' %}
-    <div class="container py-5">
-        <div class="row justify-content-center mb-4">
-            <div class="col-lg-11 d-flex justify-content-between align-items-end">
-                <div>
-                    <h3 class="fw-bold mb-0">ปฏิทินกิจกรรม</h3>
-                    <p id="currentDateDisplay" class="text-primary fw-bold mb-0 small"></p>
-                </div>
-                {% if current_role %}
-                <button id="addEventBtn" class="btn bg-ubu text-white px-4 shadow-sm fw-bold" data-bs-toggle="modal"
-                    data-bs-target="#addModal">
-                    <i class="bi bi-plus-lg me-2"></i>เพิ่มกิจกรรมใหม่
-                </button>
-                {% endif %}
-            </div>
+
+      <div class="container py-5">
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-11 d-flex justify-content-between align-items-end">
+          <div>
+            <h3 class="fw-bold mb-0">ปฏิทินกิจกรรม</h3><p id="currentDateDisplay" class="text-primary fw-bold mb-0 small"></p>
+          </div><button id="addEventBtn" class="btn bg-ubu text-white px-4 shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addModal"><i class="bi bi-plus-lg me-2"></i>เพิ่มกิจกรรมใหม่</button>
         </div>
-        <div class="row g-4 justify-content-center"><div class="col-lg-8"><div class="card border-0 shadow-sm p-4 rounded-4"><div id="calendar"></div></div></div><div class="col-lg-3"><div class="card border-0 shadow-sm p-4 mb-4 rounded-4"><h6 class="fw-bold mb-3 border-bottom pb-2">คำอธิบายสี</h6><div class="d-flex align-items-center mb-3"><span class="badge bg-success badge-guide me-3">กิจกรรม</span><small class="text-muted">โครงการทั่วไป</small></div><div class="d-flex align-items-center mb-3"><span class="badge bg-warning text-dark badge-guide me-3">ประชุม</span><small class="text-muted">นัดหมาย</small></div><div class="d-flex align-items-center"><span class="badge bg-danger badge-guide me-3">กำหนดส่ง</span><small class="text-muted">เดดไลน์</small></div></div><div class="card border-0 shadow-sm p-4 rounded-4"><h6 class="fw-bold mb-3 border-bottom pb-2">ภาพรวมกิจกรรม</h6><div id="eventOverviewList" class="small"></div></div></div></div>
+      </div>
+      <div class="row g-4 justify-content-center">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm p-4 rounded-4">
+            <div id="calendar"></div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card border-0 shadow-sm p-4 mb-4 rounded-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2">คำอธิบายสี</h6><div class="d-flex align-items-center mb-3">
+              <span class="badge bg-success badge-guide me-3">กิจกรรม</span><small class="text-muted">โครงการทั่วไป</small>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <span class="badge bg-warning text-dark badge-guide me-3">ประชุม</span><small class="text-muted">นัดหมาย</small>
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="badge bg-danger badge-guide me-3">กำหนดส่ง</span><small class="text-muted">เดดไลน์</small>
+            </div>
+          </div>
+          <div class="card border-0 shadow-sm p-4 rounded-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2">ภาพรวมกิจกรรม</h6><div id="eventOverviewList" class="small"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="modal fade" id="addModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 p-4 shadow-lg rounded-4"><h5 class="fw-bold mb-4 text-center" style="color: var(--ubu-blue);">เพิ่มกิจกรรมใหม่</h5><form id="eventForm"><div class="mb-3"><label class="small fw-bold">ชื่อกิจกรรม</label><input type="text" id="eventTitleInput" class="form-control" required></div><div class="row"><div class="col-6 mb-3"><label class="small fw-bold">เริ่ม</label><input type="text" id="eventStartInput" class="form-control datepicker" required></div><div class="col-6 mb-3"><label class="small fw-bold">สิ้นสุด</label><input type="text" id="eventEndInput" class="form-control datepicker"></div></div><div class="mb-3"><label class="small fw-bold">ประเภท</label><select id="eventTypeInput" class="form-select"><option>กิจกรรม</option><option>ประชุม</option><option>กำหนดส่ง</option></select></div><div class="mb-3"><label class="small fw-bold">สถานที่</label><input type="text" id="eventLocationInput" class="form-control"></div><div class="mb-3"><label class="small fw-bold">รายละเอียด</label><textarea id="eventDescInput" class="form-control" rows="3"></textarea></div><button type="button" class="btn bg-ubu text-white w-100 fw-bold py-2 mt-2" onclick="saveEventData()">บันทึกข้อมูล</button></form></div></div></div>
-    <div class="modal fade" id="eventDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow rounded-4 overflow-hidden"><div class="modal-header bg-ubu text-white border-0"><h5 class="modal-title fw-bold">รายละเอียดกิจกรรม</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"><h4 id="viewTitle" class="fw-bold text-dark mb-3"></h4><p><i class="bi bi-calendar3 me-2 text-primary"></i> <span id="viewStart"></span> - <span id="viewEnd"></span></p><p><i class="bi bi-geo-alt me-2 text-primary"></i> <span id="viewLocation"></span></p><hr><p id="viewDesc" class="text-muted mb-0"></p></div><div class="modal-footer border-0 d-flex justify-content-between px-4 pb-4"><button id="delBtn" class="btn btn-outline-danger px-4 fw-bold" onclick="deleteEvent()"><i class="bi bi-trash3 me-1"></i> ลบกิจกรรม</button><button class="btn btn-secondary px-4" data-bs-dismiss="modal">ปิด</button></div></div></div></div>
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered text-center"><div class="modal-content border-0 p-4 shadow-lg rounded-4"><i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i><h5 class="fw-bold mt-3">ยืนยันการลบ?</h5><div class="d-flex gap-2 mt-4"><button class="btn btn-light w-100" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-danger w-100 py-2 fw-bold" onclick="executeDelete()">ตกลง</button></div></div></div></div>
+    <div class="modal fade" id="addModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 p-4 shadow-lg rounded-4">
+          <h5 class="fw-bold mb-4 text-center" style="color: var(--ubu-blue);">เพิ่มกิจกรรมใหม่</h5><form id="eventForm">
+            <div class="mb-3">
+              <label class="small fw-bold">ชื่อกิจกรรม</label><input type="text" id="eventTitleInput" name="event_title" class="form-control" required />
+            </div>
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label class="small fw-bold">เริ่ม</label><input type="date" id="eventStartInput" name="start_date" class="form-control datepicker" required />
+              </div>
+              <div class="col-6 mb-3">
+                <label class="small fw-bold">สิ้นสุด</label><input type="date" id="eventEndInput" name="end_date" class="form-control datepicker" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="small fw-bold">ประเภท</label><select id="eventTypeInput" name="event_type" class="form-select">
+                <option>กิจกรรม</option>
+                <option>ประชุม</option>
+                <option>กำหนดส่ง</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="small fw-bold">สถานที่</label><input type="text" id="eventLocationInput" name="location" class="form-control" />
+            </div>
+            <div class="mb-3"></div><button type="button" class="btn bg-ubu text-white w-100 fw-bold py-2 mt-2" onclick="saveEventData()">บันทึกข้อมูล</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="eventDetailModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+          <div class="modal-header bg-ubu text-white border-0">
+            <h5 class="modal-title fw-bold">รายละเอียดกิจกรรม</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4">
+            <h4 id="viewTitle" class="fw-bold text-dark mb-3"></h4><p>
+              <i class="bi bi-calendar3 me-2 text-primary"></i> <span id="viewStart"></span> - <span id="viewEnd"></span>
+            </p>
+            <p>
+              <i class="bi bi-geo-alt me-2 text-primary"></i> <span id="viewLocation"></span>
+            </p>
+            <hr />
+            <p id="viewDesc" class="text-muted mb-0"></p>
+          </div>
+          <div class="modal-footer border-0 d-flex justify-content-between px-4 pb-4">
+            <button id="approveBtn" class="btn btn-success px-4 fw-bold" onclick="approveEvent()"><i class="bi bi-check-circle me-1"></i> อนุมัติ</button><button id="delBtn" class="btn btn-outline-danger px-4 fw-bold" onclick="deleteEvent()"><i class="bi bi-trash3 me-1"></i> ลบกิจกรรม</button><button class="btn btn-secondary px-4" data-bs-dismiss="modal">ปิด</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+      <div class="modal-dialog modal-sm modal-dialog-centered text-center">
+        <div class="modal-content border-0 p-4 shadow-lg rounded-4">
+          <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i><h5 class="fw-bold mt-3">ยืนยันการลบ?</h5><div class="d-flex gap-2 mt-4">
+            <button class="btn btn-light w-100" data-bs-dismiss="modal">ยกเลิก</button><button class="btn btn-danger w-100 py-2 fw-bold" onclick="executeDelete()">ตกลง</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
-    <script>flatpickr('.datepicker', { dateFormat: 'd/m/Y' });</script>
-</body>
+    <script>
+      flatpickr('.datepicker', { dateFormat: 'd/m/Y' })
+    </script>
+  </body>
 </html>

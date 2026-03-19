@@ -183,22 +183,25 @@ def init_main_db():
 
 
 class Event(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
+    event_id = db.Column(db.String(20), primary_key=True)
+    event_title = db.Column(db.String(200), nullable=False)
     start_date = db.Column(db.String(10), nullable=False)
     end_date = db.Column(db.String(10), nullable=False)
     event_type = db.Column(db.String(50))
     location = db.Column(db.String(200))
-    description = db.Column(db.Text)
-
+    event_status = db.Column(db.String(50))
 
 class News(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    image_filename = db.Column(db.String(255), default="default_news.png")
-    is_pinned = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    news_id = db.Column(db.String(20), primary_key=True)
+    news_title = db.Column(db.String(255), nullable=False)
+    news_content = db.Column(db.Text, nullable=False)
+    news_category = db.Column(db.String(100))
+    cover_image_url = db.Column(db.String(255))
+    announcement_date = db.Column(db.String(10))
+    expiry_date = db.Column(db.String(10))
+    posted_by = db.Column(db.String(100))
+    is_priority = db.Column(db.Boolean, default=False)
 
 
 # สร้างตารางทั้งหมดตอนเริ่มโปรแกรม
@@ -525,17 +528,13 @@ def get_events():
             continue
         event_list.append(
             {
-                "id": e.id,
-                "title": e.title,
+                "id": e.event_id,
+                "title": e.event_title,
                 "start": f_start,
                 "end": f_end,
-                "backgroundColor": color,
-                "borderColor": color,
-                "extendedProps": {
-                    "location": e.location,
-                    "description": e.description,
-                    "type": e.event_type,
-                },
+                "type": e.event_type,
+                "location": e.location,
+                "status": e.event_status,
             }
         )
     return jsonify(event_list)
@@ -544,14 +543,33 @@ def get_events():
 @app.route("/api/save_event", methods=["POST"])
 def save_event():
     data = request.json
+
+    from datetime import datetime
+
+    year = datetime.now().year
+
+    cursor = db.session.connection().connection.cursor()
+    cursor.execute(
+        "SELECT COUNT(*) FROM event WHERE event_id LIKE ?", (f"CAL-{year}-%",)
+    )
+    count = cursor.fetchone()[0] + 1
+
+    event_id = f"CAL-{year}-{count:03d}"
+
     new_event = Event(
-        title=data["title"],
+        event_id=event_id,
+        event_title=data["event_title"],
         start_date=data["start_date"],
         end_date=data["end_date"] if data.get("end_date") else data["start_date"],
-        event_type=data["type"],
+        event_type=data["event_type"],
         location=data["location"],
-        description=data["description"],
+        event_status="รออนุมัติ",
     )
+
+    db.session.add(new_event)
+    db.session.commit()
+
+    return jsonify({"message": "Event saved"})
     db.session.add(new_event)
     db.session.commit()
     return jsonify({"status": "success"})
@@ -559,52 +577,103 @@ def save_event():
 
 @app.route("/api/save_news", methods=["POST"])
 def save_news():
-    title = request.form.get("title")
-    content = request.form.get("content")
-    file = request.files.get("image")
-    filename = "default_news.png"
-    if file and file.filename != "":
-        filename = secure_filename(
-            f"news_{datetime.now().strftime('%Y%m%d%H%M%S')}_{file.filename}"
-        )
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-    new_news = News(title=title, content=content, image_filename=filename)
+
+    news_title = request.form.get("news_title")
+    news_content = request.form.get("news_content")
+    news_category = request.form.get("news_category")
+    announcement_date = request.form.get("announcement_date")
+    expiry_date = request.form.get("expiry_date")
+    posted_by = request.form.get("posted_by")
+    is_priority = request.form.get("is_priority") == "true"
+
+    image = request.files.get("cover_image")
+
+    year = datetime.now().year
+
+    last_news = (
+        News.query.filter(News.news_id.like(f"NEWS-{year}-%"))
+        .order_by(News.news_id.desc())
+        .first()
+    )
+
+    if last_news:
+        last_number = int(last_news.news_id.split("-")[-1])
+        new_number = last_number + 1
+    else:
+        new_number = 1
+
+    news_id = f"NEWS-{year}-{new_number:03d}"
+
+    image_path = ""
+
+    if image:
+        filename = secure_filename(image.filename)
+        save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        image.save(save_path)
+        image_path = f"uploads/{filename}"
+
+    new_news = News(
+        news_id=news_id,
+        news_title=news_title,
+        news_content=news_content,
+        news_category=news_category,
+        cover_image_url=image_path,
+        announcement_date=announcement_date,
+        expiry_date=expiry_date,
+        posted_by=posted_by,
+        is_priority=is_priority,
+    )
+
     db.session.add(new_news)
     db.session.commit()
+
     return jsonify({"status": "success"})
 
 
 @app.route("/api/get_news")
 def get_news():
-    news_items = News.query.order_by(News.created_at.desc()).all()
-    return jsonify(
-        [
+
+    news_items = News.query.order_by(News.announcement_date.desc()).all()
+
+    news_list = []
+
+    for n in news_items:
+
+        news_list.append(
             {
-                "id": n.id,
-                "title": n.title,
-                "content": n.content,
-                "image_url": url_for("static", filename="uploads/" + n.image_filename),
-                "is_pinned": n.is_pinned,
-                "date": n.created_at.strftime("%d/%m/%Y"),
+                "id": n.news_id,
+                "title": n.news_title,
+                "content": n.news_content,
+                "category": n.news_category,
+                "image_url": (
+                    "/static/" + n.cover_image_url if n.cover_image_url else ""
+                ),
+                "date": n.announcement_date,
+                "expiry": n.expiry_date,
+                "posted_by": n.posted_by,
+                "is_pinned": bool(n.is_priority),
             }
-            for n in news_items
-        ]
-    )
+        )
 
+    return jsonify(news_list)
 
-@app.route("/api/toggle_pin/<int:id>", methods=["POST"])
+@app.route("/api/toggle_pin/<string:id>", methods=["POST"])
 def toggle_pin(id):
-    news = News.query.get(id)
+
+    news = News.query.filter_by(news_id=id).first()
+
     if not news:
         return jsonify({"status": "error"}), 404
-    news.is_pinned = not news.is_pinned
+
+    news.is_priority = not news.is_priority
     db.session.commit()
+
     return jsonify({"status": "success"})
 
 
-@app.route("/api/delete_news/<int:id>", methods=["DELETE"])
+@app.route("/api/delete_news/<string:id>", methods=["DELETE"])
 def delete_news(id):
-    item = News.query.get(id)
+    item = News.query.filter_by(news_id=id).first()
     if item:
         db.session.delete(item)
         db.session.commit()
@@ -612,7 +681,7 @@ def delete_news(id):
     return jsonify({"status": "error"}), 404
 
 
-@app.route("/api/delete_event_json/<int:id>", methods=["DELETE"])
+@app.route("/api/delete_event_json/<string:id>", methods=["DELETE"])
 def delete_event_json(id):
     event = Event.query.get(id)
     if event:

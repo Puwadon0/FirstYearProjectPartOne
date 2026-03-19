@@ -1,6 +1,6 @@
 let calendar;
 let currentEventId = null;
-// อ่าน role จาก data-role บน <body> ที่ Flask inject มาให้ (student / club / staff)
+// ยึดโครงสร้างชุดแรก: อ่าน role จาก data-role บน <body> ที่ Flask inject มาให้
 let userMode = document.body.getAttribute('data-role') || 'guest';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         dateDisplay.innerText = "วันนี้: " + today.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     }
 
-    // โหลดปฏิทินทันทีที่มี element #calendar (รองรับทั้ง Dashboard และหน้าปฏิทินหลัก)
+    // โหลดปฏิทิน
     var calendarEl = document.getElementById('calendar');
     if (calendarEl) {
         calendar = new FullCalendar.Calendar(calendarEl, {
@@ -21,12 +21,49 @@ document.addEventListener('DOMContentLoaded', function () {
                 center: 'title',
                 right: 'dayGridMonth,listMonth'
             },
-            events: '/api/get_events',
+            // ใช้ Logic การ Fetch และ Filter จากชุดที่สอง
+            events: function(fetchInfo, successCallback, failureCallback) {
+                fetch('/api/get_events')
+                    .then(response => response.json())
+                    .then(data => {
+                        const events = data.filter(ev => {
+                            // Logic กรองกิจกรรมสำหรับนักศึกษา
+                            if (userMode === 'student') {
+                                if (ev.type === "ประชุม") return false;
+                                if (ev.type === "กำหนดส่ง") return false;
+                                if (ev.status !== "อนุมัติแล้ว") return false;
+                            }
+                            return true;
+                        }).map(ev => {
+                            // กำหนดสีตามประเภทกิจกรรมจากชุดที่สอง
+                            let color = "#3788d8";
+                            if (ev.type === "กิจกรรม") color = "#28a745";
+                            else if (ev.type === "ประชุม") color = "#ffc107";
+                            else if (ev.type === "กำหนดส่ง") color = "#dc3545";
+
+                            return {
+                                id: ev.id,
+                                title: ev.title,
+                                start: ev.start,
+                                end: ev.end,
+                                backgroundColor: color,
+                                borderColor: color,
+                                extendedProps: {
+                                    type: ev.type,
+                                    location: ev.location,
+                                    status: ev.status,
+                                    description: ev.description
+                                }
+                            };
+                        });
+                        successCallback(events);
+                    });
+            },
             eventClick: function (info) {
                 currentEventId = info.event.id;
                 document.getElementById('viewTitle').innerText = info.event.title;
 
-                // จัดการแสดงผลวันเริ่มและวันจบให้ถูกต้อง
+                // แสดงวันที่เริ่ม-จบ
                 document.getElementById('viewStart').innerText = info.event.start.toLocaleDateString('th-TH');
                 const viewEndEl = document.getElementById('viewEnd');
                 if (viewEndEl) {
@@ -41,11 +78,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
 
-                document.getElementById('viewLocation').innerText = info.event.extendedProps.location || '-';
-                document.getElementById('viewDesc').innerText = info.event.extendedProps.description || '-';
+                document.getElementById('viewLocation').innerText = "สถานที่: " + (info.event.extendedProps.location || "-");
+                
+                // แสดงรายละเอียดตามสิทธิ์ (ชุดที่สอง)
+                if (userMode === 'student') {
+                    document.getElementById('viewDesc').innerText = "ประเภท: " + (info.event.extendedProps.type || "-");
+                } else {
+                    document.getElementById('viewDesc').innerText = 
+                        "ประเภท: " + (info.event.extendedProps.type || "-") + 
+                        " | สถานะ: " + (info.event.extendedProps.status || "-") +
+                        "\nคำอธิบาย: " + (info.event.extendedProps.description || "-");
+                }
 
+                // การแสดงผลปุ่ม ลบ และ อนุมัติ
                 const delBtn = document.getElementById('delBtn');
                 if (delBtn) delBtn.style.display = (userMode === 'student') ? 'none' : 'block';
+
+                const approveBtn = document.getElementById('approveBtn');
+                if (approveBtn) approveBtn.style.display = (userMode === 'staff' || userMode === 'officer') ? 'block' : 'none';
 
                 new bootstrap.Modal(document.getElementById('eventDetailModal')).show();
             }
@@ -57,8 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
     applyModeSettings();
 });
 
-// ผู้ใช้ลงชื่อเข้าใช้แล้ว role จะถูกแสดงผ่าน Flask session -- ไม่มี changeMode() อีกต่อไป
-
 function applyModeSettings() {
     const addBtn = document.getElementById('addEventBtn');
     const addNewsBtn = document.getElementById('addNewsBtn');
@@ -67,12 +115,12 @@ function applyModeSettings() {
     const expandedContainer = document.getElementById('expandedFunctions');
     const megaMenu = document.getElementById('megaMenuContent');
 
-    const roleLabels = { staff: 'เจ้าหน้าที่', club: 'นักศึกษาสโมสร', student: 'นักศึกษา', guest: 'ผู้เยี่ยมชม' };
+    const roleLabels = { staff: 'เจ้าหน้าที่', officer: 'เจ้าหน้าที่', club: 'นักศึกษาสโมสร', student: 'นักศึกษา', guest: 'ผู้เยี่ยมชม' };
     if (roleProfileText) roleProfileText.innerText = roleLabels[userMode] || 'ผู้เยี่ยมชม';
     if (modeText) modeText.innerText = roleLabels[userMode] || 'ลงชื่อเข้าใช้';
 
-    if (addBtn) addBtn.style.display = (userMode === 'student') ? 'none' : 'block';
-    if (addNewsBtn) addNewsBtn.style.display = (userMode === 'student') ? 'none' : 'block';
+    if (addBtn) addBtn.style.display = (userMode === 'student' || userMode === 'guest') ? 'none' : 'block';
+    if (addNewsBtn) addNewsBtn.style.display = (userMode === 'student' || userMode === 'guest') ? 'none' : 'block';
 
     const path = window.location.pathname;
     let commonLinks = `
@@ -81,7 +129,7 @@ function applyModeSettings() {
     `;
 
     let roleLinks = "";
-    if (userMode === 'officer') {
+    if (userMode === 'staff' || userMode === 'officer') {
         roleLinks = `
             <a class="dropdown-item" href="/club_status_activity"><i class="bi bi-clipboard-check me-2"></i>ตรวจโครงการ</a>
             <a class="dropdown-item" href="/officer"><i class="bi bi-journal-plus me-2"></i>คำขอสร้างกิจกรรม</a>
@@ -94,17 +142,8 @@ function applyModeSettings() {
             <a class="dropdown-item" href="/create-activity"><i class="bi bi-plus-circle me-2"></i>สร้างกิจกรรม</a>
             <a class="dropdown-item" href="/club_status_activity"><i class="bi bi-clipboard-check me-2"></i>สถานะคำขอของฉัน</a>
             <a class="dropdown-item" href="/expense/create"><i class="bi bi-cash-stack me-2"></i>บันทึกค่าใช้จ่าย</a>
-            <a class="dropdown-item" href="/expense/list"><i class="bi bi-receipt me-2"></i>รายการรายจ่าย</a>
             <a class="dropdown-item" href="/activity/register"><i class="bi bi-person-plus me-2"></i>ลงทะเบียนกิจกรรม</a>
-            <a class="dropdown-item" href="/activity/list"><i class="bi bi-people me-2"></i>รายชื่อผู้ลงทะเบียน</a>
-            <a class="dropdown-item" href="/resources/manage"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
             <a class="dropdown-item" href="/qa/answer"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
-        `;
-    } else if (userMode === 'guest') {
-        roleLinks = `
-            <a class="dropdown-item" href="/auth/login"><i class="bi bi-person-plus me-2"></i>ลงทะเบียนกิจกรรม</a>
-            <a class="dropdown-item" href="/auth/login"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a>
-            <a class="dropdown-item" href="/auth/login"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>
         `;
     } else {
         roleLinks = `
@@ -123,7 +162,21 @@ function updateSidebarList() {
     if (!list) return;
     fetch('/api/get_events').then(res => res.json()).then(events => {
         events.sort((a, b) => new Date(a.start) - new Date(b.start));
-        list.innerHTML = events.slice(0, 5).map(ev => `<div class="d-flex align-items-center mb-3 border-bottom pb-2"><div style="width: 4px; height: 32px; background:${ev.backgroundColor}; border-radius:10px" class="me-3"></div><div><div class="fw-bold" style="font-size:0.9rem">${ev.title}</div><small class="text-muted">${new Date(ev.start).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</small></div></div>`).join('');
+        list.innerHTML = events.slice(0, 5).map(ev => {
+            // ใช้สีเดียวกับปฏิทินใน Sidebar
+            let color = "#3788d8";
+            if (ev.type === "กิจกรรม") color = "#28a745";
+            else if (ev.type === "ประชุม") color = "#ffc107";
+            else if (ev.type === "กำหนดส่ง") color = "#dc3545";
+            
+            return `<div class="d-flex align-items-center mb-3 border-bottom pb-2">
+                <div style="width: 4px; height: 32px; background:${color}; border-radius:10px" class="me-3"></div>
+                <div>
+                    <div class="fw-bold" style="font-size:0.9rem">${ev.title}</div>
+                    <small class="text-muted">${new Date(ev.start).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</small>
+                </div>
+            </div>`;
+        }).join('');
     });
 }
 
@@ -138,14 +191,27 @@ function executeDelete() {
 
 function saveEventData() {
     const data = {
-        title: document.getElementById('eventTitleInput').value,
-        start_date: document.getElementById('eventStartInput').value,
-        end_date: document.getElementById('eventEndInput').value,
-        type: document.getElementById('eventTypeInput').value,
-        location: document.getElementById('eventLocationInput').value,
-        description: document.getElementById('eventDescInput').value
-    };
-    if (!data.title || !data.start_date) return alert('กรุณาระบุชื่อและวันที่');
-    fetch('/api/save_event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-        .then(res => res.json()).then(result => { if (result.status === 'success') location.reload(); });
+    event_title: document.getElementById('eventTitleInput').value,
+    start_date: document.getElementById('eventStartInput').value,
+    end_date: document.getElementById('eventEndInput').value,
+    event_type: document.getElementById('eventTypeInput').value,
+    location: document.getElementById('eventLocationInput').value
+};
+    if (!data.event_title || !data.start_date) return alert('กรุณาระบุชื่อและวันที่');
+    fetch('/api/save_event', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => response.json())
+.then(result => {
+    location.reload();
+});
+}
+
+function approveEvent() {
+    fetch(`/api/approve_event/${currentEventId}`, { method: 'POST' })
+        .then(res => res.json()).then(() => location.reload());
 }
