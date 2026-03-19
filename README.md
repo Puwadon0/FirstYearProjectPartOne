@@ -1,198 +1,267 @@
 # UBU Science Engage System
 
-## Project Description
-UBU Science Engage System is a web-based activity and volunteer management system.
+## คำอธิบายโครงงาน
 
-The system consists of a Backend API developed with Flask and a Frontend developed using HTML, CSS, and JavaScript with Tailwind CSS and Bootstrap frameworks.
+ระบบนี้ถูกออกแบบและพัฒนาขึ้นเพื่อลดระยะเวลาในการดำเนินงานด้านเอกสารและขั้นตอนต่าง ๆ ที่เกี่ยวข้องกับกิจกรรมของสโมสรนักศึกษา
 
-The system includes:
-- Authentication
-- Activity management
-- Document review
-- Volunteer registration
-- Finance tracking
-- Reporting system
-- Dashboard overview
-- Q&A system
+เนื่องจากสโมสรนักศึกษามีการเปลี่ยนผ่านตำแหน่งคณะกรรมการในทุกปี ส่งผลให้การดำเนินงานของสโมสรนักศึกษารุ่นถัดไปอาจเกิดความไม่ถูกต้องหรือไม่เป็นไปตามขั้นตอนที่กำหนดทั้งหมด โดยเฉพาะในส่วนของเอกสารและกระบวนการขออนุมัติโครงการ
 
-Each team member maintains at least 2 routes as required.
+ที่ผ่านมา เจ้าหน้าที่จึงจำเป็นต้องให้คำแนะนำและชี้แนะแนวทางการดำเนินงานอย่างใกล้ชิดอยู่เสมอ อย่างไรก็ตาม ในบางช่วงเวลาเจ้าหน้าที่อาจติดภาระงานอื่น ทำให้ไม่สามารถให้คำแนะนำได้ทันที ส่งผลให้กระบวนการดำเนินงานเกิดความล่าช้า
+
+ดังนั้น จึงได้มีการหารือร่วมกันระหว่างผู้เกี่ยวข้อง และมีมติในการพัฒนาระบบนี้ขึ้นมา เพื่อให้เป็นเครื่องมือกลางในการสนับสนุนการดำเนินงานของสโมสรนักศึกษา ช่วยให้ขั้นตอนต่าง ๆ เป็นระบบมากขึ้น ลดความผิดพลาด และเพิ่มประสิทธิภาพในการประสานงานระหว่างสโมสรนักศึกษาและเจ้าหน้าที่
 
 ---
 
-# Tech Stack
+## 🛠 เทคโนโลยีที่ใช้ (Tech Stack)
 
-## Frontend
-- HTML5
-- CSS3
-- JavaScript (Vanilla JS)
-- Tailwind CSS
-- Bootstrap 5
-
-## Backend
-- Language: Python
-- Framework: Flask
-- Database: SQLite, SQLAlchemy (ORM)
-- Version Control: Git & GitHub
+| หมวดหมู่           | เทคโนโลยี                                          |
+| ------------------ | -------------------------------------------------- |
+| 🌐 Frontend        | HTML5, CSS3, JavaScript, Tailwind CSS, Bootstrap 5 |
+| ⚙️ Backend         | Python, Flask (Web Framework)                      |
+| 🗄 Database        | SQLite, SQLAlchemy (ORM)                           |
+| 🔧 Version Control | Git, GitHub                                        |
 
 ---
 
-# Installation Guide
+# คู่มือการติดตั้ง (Installation Guide)
 
-## Clone Repository
+## 1. Clone Repository
+
 ```bash
-git clone https://github.com/your-username/ubu-engage.git
-cd ubu-engage
+git clone https://github.com/Puwadon0/FirstYearProjectPartOne.git
+cd FirstYearProjectPartOne
 ```
 
 ---
 
-## Backend Setup
+## 2. การตั้งค่า Backend
 
-### Create Virtual Environment
+### สร้าง Virtual Environment
+
 ```bash
 python -m venv venv
 ```
 
-### Activate Environment
+> ⚠️ แนะนำให้ใช้ Python เวอร์ชัน 3.9 ขึ้นไป
+
+### เปิดใช้งาน Virtual Environment
 
 Windows:
+
 ```bash
 venv\Scripts\activate
 ```
 
 Mac / Linux:
+
 ```bash
 source venv/bin/activate
 ```
 
-### Install Dependencies
+### ติดตั้ง Dependency
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### Run Backend Server
+หากไม่มีไฟล์ requirements.txt สามารถติดตั้งด้วยคำสั่ง:
+
+```bash
+pip install flask flask-sqlalchemy flask-bcrypt
+```
+
+### รันเซิร์ฟเวอร์
+
 ```bash
 python app.py
 ```
 
-Backend runs at:
+ระบบจะทำงานที่:
+
 ```
 http://127.0.0.1:5000/
 ```
 
 ---
 
-## Frontend Setup
+# โครงสร้างการกำหนดเส้นทางของระบบ (System Routing Structure)
 
-Frontend is static-based.
-
-Just open:
-```
-frontend/index.html
-```
-
-Or use Live Server (VS Code recommended).
+ระบบแบ่งหน้าที่การพัฒนาออกตามความรับผิดชอบของสมาชิกแต่ละคน โดยมีรายละเอียดดังนี้
 
 ---
 
-# Project Structure
+## 1️. ระบบสมาชิก (Authentication System)
 
-```
-ubu_sci_engage/
-│
-├── app.py
-├── routes/
-│   ├── auth_routes.py
-│   ├── activity_routes.py
-│   ├── document_routes.py
-│   ├── volunteer_routes.py
-│   ├── finance_routes.py
-│   ├── upload_routes.py
-│   ├── dashboard_routes.py
-│   ├── report_routes.py
-│   ├── resource_routes.py
-│   ├── pr_routes.py
-│   ├── calendar_routes.py
-│   ├── qa_routes.py
-│
-├── frontend/
-│   ├── index.html
-│   ├── login.html
-│   ├── dashboard.html
-│   ├── css/
-│   ├── js/
-│
-├── models/
-├── requirements.txt
-└── README.md
-```
+**ผู้รับผิดชอบ: นายเขษมศักดิ์ แก่นทน**
+
+ใช้สำหรับจัดการบัญชีผู้ใช้งาน เช่น สมัครสมาชิก เข้าสู่ระบบ และออกจากระบบ
+
+| เส้นทาง          | Method    | รายละเอียด                  |
+| ---------------- | --------- | --------------------------- |
+| `/auth/register` | GET, POST | สมัครสมาชิกใหม่เข้าสู่ระบบ  |
+| `/auth/login`    | GET, POST | เข้าสู่ระบบและสร้าง Session |
+| `/auth/logout`   | POST      | ออกจากระบบและลบ Session     |
 
 ---
 
-# API Routes & Maintainers
+## 2️. ระบบจัดการกิจกรรม (Activities Management)
 
-| No | Route | Method | Description | Maintainer |
-|----|--------|--------|------------|------------|
-| 1 | /login | POST | User login | นาย A |
-| 2 | /register | POST | User register | นาย A |
-| 3 | /activities | POST | Create activity | นาย B |
-| 4 | /activities/check | GET | Check activity | นาย B |
-| 5 | /documents | POST | Manage documents | นาย C |
-| 6 | /documents/review | PUT | Review documents | นาย C |
-| 7 | /volunteer/apply | POST | Volunteer registration | นาย D |
-| 8 | /activities/register | POST | Register activity (attach evaluation link) | นาย D |
-| 9 | /finance | POST | Record expense | นาย E |
-| 10 | /upload | POST | Upload files | นาย E |
-| 11 | /dashboard | GET | Dashboard overview | นาย F |
-| 12 | /reports/upload | POST | Upload project report | นาย F |
-| 13 | /resources | GET | Location & equipment aggregation | นาย G |
-| 14 | /announcements | POST | Public relations | นาย G |
-| 15 | /calendar | GET | Activity calendar | นาย H |
-| 16 | /qa | GET/POST | Q&A club & students | นาย H |
+**ผู้รับผิดชอบ: นางสาวสราวดี บุญภูมิ**
 
-> Each team member is responsible for at least 2 routes.
+ใช้สำหรับสร้าง แก้ไข และอนุมัติกิจกรรมภายในระบบ
+
+| เส้นทาง                    | Method | รายละเอียด               |
+| -------------------------- | ------ | ------------------------ |
+| `/activities`              | GET    | แสดงรายการกิจกรรมทั้งหมด |
+| `/activities`              | POST   | เพิ่มกิจกรรมใหม่         |
+| `/activities/<id>`         | GET    | แสดงรายละเอียดกิจกรรม    |
+| `/activities/<id>`         | PUT    | แก้ไขข้อมูลกิจกรรม       |
+| `/activities/<id>/approve` | PATCH  | อนุมัติกิจกรรม           |
 
 ---
 
-# Frontend Pages Overview
+## 3️. ระบบจัดการเอกสาร (Documents Management)
 
-| Page | Description |
-|------|------------|
-| login.html | Login / Register |
-| dashboard.html | Dashboard overview |
-| activity.html | Create & check activity |
-| document.html | Document management |
-| volunteer.html | Volunteer registration |
-| finance.html | Expense recording |
-| calendar.html | Activity calendar |
-| qa.html | Q&A page |
+**ผู้รับผิดชอบ: นางสาวธวัลรัตน์ โชติบุญ**
 
----
+ใช้สำหรับจัดการเอกสารโครงการและการอนุมัติเอกสาร
 
-# Example Flask Route (Standard Blueprint)
-
-```python
-from flask import Blueprint, request
-
-auth_bp = Blueprint('auth', __name__)
-
-@auth_bp.route('/login', methods=['POST'])
-def login():
-    data = request.json
-    return {"message": "Login successful"}
-```
+| เส้นทาง                   | Method | รายละเอียด              |
+| ------------------------- | ------ | ----------------------- |
+| `/documents`              | GET    | แสดงรายการเอกสารทั้งหมด |
+| `/documents`              | POST   | สร้างเอกสารใหม่         |
+| `/documents/<id>`         | GET    | ดูรายละเอียดเอกสาร      |
+| `/documents/<id>/approve` | PATCH  | อนุมัติเอกสาร           |
 
 ---
 
-# Notes
+## 4️. ระบบรับสมัครจิตอาสา (Volunteer Registration)
 
-- Backend follows Flask Blueprint routing standard.
-- Frontend uses Tailwind CSS for utility styling and Bootstrap for components.
-- RESTful API structure.
-- All routes are separated inside the `/routes` folder.
-- Developed for academic purposes.
+**ผู้รับผิดชอบ: นายปรมินทร์ ศักดิ์สยาม**
+
+ใช้สำหรับเปิดรับสมัครนักศึกษาที่ต้องการเข้าร่วมเป็นจิตอาสาในกิจกรรมต่าง ๆ และจัดเก็บข้อมูลผู้สมัครเข้าสู่ระบบ เพื่อให้ผู้ดูแลสามารถตรวจสอบรายชื่อและบริหารจัดการผู้เข้าร่วมได้อย่างเป็นระบบ
+
+| เส้นทาง       | Method | รายละเอียด                 |
+| ------------- | ------ | -------------------------- |
+| `/volunteers` | GET    | แสดงรายชื่อผู้สมัครจิตอาสา |
+| `/volunteers` | POST   | สมัครเป็นจิตอาสา           |
 
 ---
 
-# License
-Educational Project – Science Faculty
+## 5️. ระบบลงทะเบียนเข้าร่วมกิจกรรม (Activity Registration)
+
+**ผู้รับผิดชอบ: นายสหรัถ สะเดาว์**
+
+ใช้สำหรับให้นักศึกษาลงทะเบียนเข้าร่วมกิจกรรมที่เปิดรับสมัคร และบันทึกข้อมูลการลงทะเบียนเพื่อใช้ในการติดตามจำนวนผู้เข้าร่วมและการจัดการรายชื่อ
+
+| เส้นทาง               | Method | รายละเอียด               |
+| --------------------- | ------ | ------------------------ |
+| `/registrations`      | POST   | ลงทะเบียนเข้าร่วมกิจกรรม |
+| `/registrations/<id>` | GET    | ดูรายละเอียดการลงทะเบียน |
+
+---
+
+## 6️. ระบบบันทึกค่าใช้จ่าย (Expense Management)
+
+**ผู้รับผิดชอบ: นายสหรัถ สะเดาว์**
+
+ใช้สำหรับบันทึกรายการค่าใช้จ่ายที่เกิดขึ้นภายในโครงการหรือกิจกรรมต่าง ๆ เพื่อให้สามารถตรวจสอบงบประมาณและสรุปค่าใช้จ่ายได้อย่างถูกต้อง
+
+| เส้นทาง     | Method | รายละเอียด                  |
+| ----------- | ------ | --------------------------- |
+| `/expenses` | POST   | เพิ่มรายการค่าใช้จ่าย       |
+| `/expenses` | GET    | แสดงรายการค่าใช้จ่ายทั้งหมด |
+
+---
+
+## 7️. ระบบอัปโหลดไฟล์ (File Upload System)
+
+**ผู้รับผิดชอบ: นายปรมินทร์ ศักดิ์สยาม**
+
+ใช้สำหรับอัปโหลดไฟล์เอกสารหรือหลักฐานที่เกี่ยวข้องกับกิจกรรมเข้าสู่ระบบ เช่น เอกสารโครงการ รูปภาพ หรือไฟล์รายงาน เพื่อจัดเก็บและเรียกใช้งานภายหลัง
+
+| เส้นทาง    | Method | รายละเอียด             |
+| ---------- | ------ | ---------------------- |
+| `/uploads` | POST   | อัปโหลดไฟล์เข้าสู่ระบบ |
+
+---
+
+## 8️. ระบบแดชบอร์ด (Dashboard System)
+
+**ผู้รับผิดชอบ: สมาชิกทุกคน**
+
+ใช้สำหรับแสดงภาพรวมข้อมูลสำคัญของระบบ เช่น จำนวนกิจกรรม จำนวนผู้ลงทะเบียน หรือสถิติอื่น ๆ เพื่อช่วยให้ผู้ดูแลสามารถติดตามสถานะการดำเนินงานได้อย่างรวดเร็ว
+
+| เส้นทาง      | Method | รายละเอียด                   |
+| ------------ | ------ | ---------------------------- |
+| `/dashboard` | GET    | แสดงภาพรวมข้อมูลสถิติของระบบ |
+
+---
+
+## 9️. ระบบอัปโหลดรายงานโครงการ (Project Report System)
+
+**ผู้รับผิดชอบ: นายเขษมศักดิ์ แก่นทน**
+
+ใช้สำหรับอัปโหลดและจัดเก็บรายงานผลการดำเนินโครงการหลังจากกิจกรรมสิ้นสุดลง เพื่อใช้เป็นหลักฐานและข้อมูลอ้างอิงในอนาคต
+
+| เส้นทาง         | Method    | รายละเอียด           |
+| --------------- | --------- | -------------------- |
+| `/reports`      | GET, POST | อัปโหลดรายงานโครงการ |
+| `/reports/<id>` | GET       | ดูรายละเอียดรายงาน   |
+
+---
+
+## 10. ระบบจัดการสถานที่และอุปกรณ์ (Resources Management)
+
+**ผู้รับผิดชอบ: นายณัฐดนัย ทองสรรค์**
+
+ใช้สำหรับจัดเก็บและบริหารข้อมูลสถานที่และอุปกรณ์ที่ใช้ในกิจกรรม เช่น ห้องประชุม อุปกรณ์โสตทัศนูปกรณ์ หรือทรัพยากรอื่น ๆ เพื่อป้องกันการใช้งานซ้ำซ้อน
+
+| เส้นทาง      | Method | รายละเอียด                    |
+| ------------ | ------ | ----------------------------- |
+| `/resources` | GET    | แสดงรายการสถานที่และอุปกรณ์   |
+| `/resources` | POST   | เพิ่มข้อมูลสถานที่หรืออุปกรณ์ |
+
+---
+
+## 11. ระบบประชาสัมพันธ์ (Announcements System)
+
+**ผู้รับผิดชอบ: นายภูวดล จันทร์ดี**
+
+ใช้สำหรับสร้างและเผยแพร่ประกาศหรือข่าวสารที่เกี่ยวข้องกับกิจกรรมหรือการดำเนินงานของสโมสร เพื่อแจ้งข้อมูลให้สมาชิกและผู้ใช้งานรับทราบ
+
+| เส้นทาง          | Method | รายละเอียด        |
+| ---------------- | ------ | ----------------- |
+| `/announcements` | GET    | แสดงประกาศทั้งหมด |
+| `/announcements` | POST   | สร้างประกาศใหม่   |
+
+---
+
+## 12. ระบบปฏิทินกิจกรรม (Calendar System)
+
+**ผู้รับผิดชอบ: นายภูวดล จันทร์ดี**
+
+ใช้สำหรับแสดงกำหนดการกิจกรรมทั้งหมดในรูปแบบปฏิทิน และเพิ่มกิจกรรมใหม่ลงในระบบ เพื่อช่วยวางแผนและป้องกันการจัดกิจกรรมซ้อนกัน
+
+| เส้นทาง            | Method | รายละเอียด           |
+| ------------------ | ------ | -------------------- |
+| `/calendar`        | GET    | แสดงปฏิทินกิจกรรม    |
+| `/calendar/events` | POST   | เพิ่มกิจกรรมลงปฏิทิน |
+
+---
+
+## 13. ระบบถาม-ตอบ (Q&A System)
+
+**ผู้รับผิดชอบ: นายณัฐดนัย ทองสรรค์**
+
+ใช้สำหรับเปิดพื้นที่ให้ผู้ใช้งานสามารถตั้งคำถามเกี่ยวกับกิจกรรมหรือขั้นตอนต่าง ๆ และให้ผู้ดูแลระบบหรือผู้เกี่ยวข้องเข้ามาตอบคำถามภายในระบบ
+
+| เส้นทาง                     | Method | รายละเอียด       |
+| --------------------------- | ------ | ---------------- |
+| `/qa/questions`             | GET    | แสดงคำถามทั้งหมด |
+| `/qa/questions`             | POST   | สร้างคำถามใหม่   |
+| `/qa/questions/<id>/answer` | POST   | ตอบคำถาม         |
+
+> สมาชิกแต่ละคนในทีมรับผิดชอบพัฒนาอย่างน้อย 2 เส้นทางการทำงานของระบบ ตามที่ได้รับมอบหมาย
+
+---

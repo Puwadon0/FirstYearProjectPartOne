@@ -230,7 +230,8 @@
                     {% if current_role %}
                     <li><span class="dropdown-item-text fw-bold text-dark small">{{ current_user }}</span></li>
                     <li><span class="dropdown-item-text text-muted small">{{
-                            {'staff':'เจ้าหน้าที่','club':'นักศึกษาสโมสร','student':'นักศึกษา'}[current_role] }}</span>
+                            {'officer':'เจ้าหน้าที่','club':'นักศึกษาสโมสร','student':'นักศึกษา'}[current_role]
+                            }}</span>
                     </li>
                     <li>
                         <hr class="dropdown-divider my-1">

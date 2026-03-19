@@ -16,16 +16,16 @@ document.addEventListener('DOMContentLoaded', function () {
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'th',
-            headerToolbar: { 
-                left: 'prev,next today', 
-                center: 'title', 
-                right: 'dayGridMonth,listMonth' 
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listMonth'
             },
             events: '/api/get_events',
             eventClick: function (info) {
                 currentEventId = info.event.id;
                 document.getElementById('viewTitle').innerText = info.event.title;
-                
+
                 // จัดการแสดงผลวันเริ่มและวันจบให้ถูกต้อง
                 document.getElementById('viewStart').innerText = info.event.start.toLocaleDateString('th-TH');
                 const viewEndEl = document.getElementById('viewEnd');
@@ -43,16 +43,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 document.getElementById('viewLocation').innerText = info.event.extendedProps.location || '-';
                 document.getElementById('viewDesc').innerText = info.event.extendedProps.description || '-';
-                
+
                 const delBtn = document.getElementById('delBtn');
                 if (delBtn) delBtn.style.display = (userMode === 'student') ? 'none' : 'block';
-                
+
                 new bootstrap.Modal(document.getElementById('eventDetailModal')).show();
             }
         });
         calendar.render();
     }
-    
+
     updateSidebarList();
     applyModeSettings();
 });
@@ -70,18 +70,18 @@ function applyModeSettings() {
     const roleLabels = { staff: 'เจ้าหน้าที่', club: 'นักศึกษาสโมสร', student: 'นักศึกษา', guest: 'ผู้เยี่ยมชม' };
     if (roleProfileText) roleProfileText.innerText = roleLabels[userMode] || 'ผู้เยี่ยมชม';
     if (modeText) modeText.innerText = roleLabels[userMode] || 'ลงชื่อเข้าใช้';
-    
+
     if (addBtn) addBtn.style.display = (userMode === 'student') ? 'none' : 'block';
     if (addNewsBtn) addNewsBtn.style.display = (userMode === 'student') ? 'none' : 'block';
 
     const path = window.location.pathname;
     let commonLinks = `
-        <a class="nav-link ${path==='/news'?'active':''}" href="/news"><i class="bi bi-megaphone me-2"></i>ข่าวประชาสัมพันธ์</a>
-        <a class="nav-link ${path==='/calendar'?'active':''}" href="/calendar"><i class="bi bi-calendar3 me-2"></i>ปฏิทินกิจกรรม</a>
+        <a class="nav-link ${path === '/news' ? 'active' : ''}" href="/news"><i class="bi bi-megaphone me-2"></i>ข่าวประชาสัมพันธ์</a>
+        <a class="nav-link ${path === '/calendar' ? 'active' : ''}" href="/calendar"><i class="bi bi-calendar3 me-2"></i>ปฏิทินกิจกรรม</a>
     `;
 
     let roleLinks = "";
-    if (userMode === 'staff') {
+    if (userMode === 'officer') {
         roleLinks = `
             <a class="dropdown-item" href="#"><i class="bi bi-file-earmark-check me-2"></i>ตรวจทานเอกสาร</a>
             <a class="dropdown-item" href="/club_status_activity"><i class="bi bi-clipboard-check me-2"></i>ตรวจโครงการ</a>
@@ -89,7 +89,7 @@ function applyModeSettings() {
             <a class="dropdown-item" href="/officer"><i class="bi bi-journal-plus me-2"></i>คำขอสร้างกิจกรรม</a>
             <a class="dropdown-item" href="/activity/list"><i class="bi bi-person-lines-fill me-2"></i>รายชื่อผู้ลงทะเบียน</a>
             <a class="dropdown-item" href="/expense/list"><i class="bi bi-receipt me-2"></i>สรุปรายจ่าย</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
+            <a class="dropdown-item" href="/qa/answer"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
         `;
     } else if (userMode === 'club') {
         roleLinks = `
@@ -99,8 +99,8 @@ function applyModeSettings() {
             <a class="dropdown-item" href="/expense/list"><i class="bi bi-receipt me-2"></i>รายการรายจ่าย</a>
             <a class="dropdown-item" href="/activity/register"><i class="bi bi-person-plus me-2"></i>ลงทะเบียนกิจกรรม</a>
             <a class="dropdown-item" href="/activity/list"><i class="bi bi-people me-2"></i>รายชื่อผู้ลงทะเบียน</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
+            <a class="dropdown-item" href="/resources/manage"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
+            <a class="dropdown-item" href="/qa/answer"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
         `;
     } else {
         roleLinks = `
@@ -108,7 +108,7 @@ function applyModeSettings() {
             <a class="dropdown-item" href="/activity/list"><i class="bi bi-list-ul me-2"></i>รายชื่อผู้ลงทะเบียน</a>
             <a class="dropdown-item" href="#"><i class="bi bi-images me-2"></i>ภาพกิจกรรม</a>
             <a class="dropdown-item" href="#"><i class="bi bi-star me-2"></i>ประเมินกิจกรรม</a>
-            <a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>
+            <a class="dropdown-item" href="/qa/questions"><i class="bi bi-question-circle me-2"></i>Q&A เจ้าหน้าที่</a>
         `;
     }
 
@@ -121,17 +121,17 @@ function updateSidebarList() {
     if (!list) return;
     fetch('/api/get_events').then(res => res.json()).then(events => {
         events.sort((a, b) => new Date(a.start) - new Date(b.start));
-        list.innerHTML = events.slice(0, 5).map(ev => `<div class="d-flex align-items-center mb-3 border-bottom pb-2"><div style="width: 4px; height: 32px; background:${ev.backgroundColor}; border-radius:10px" class="me-3"></div><div><div class="fw-bold" style="font-size:0.9rem">${ev.title}</div><small class="text-muted">${new Date(ev.start).toLocaleDateString('th-TH', {day:'numeric', month:'short'})}</small></div></div>`).join('');
+        list.innerHTML = events.slice(0, 5).map(ev => `<div class="d-flex align-items-center mb-3 border-bottom pb-2"><div style="width: 4px; height: 32px; background:${ev.backgroundColor}; border-radius:10px" class="me-3"></div><div><div class="fw-bold" style="font-size:0.9rem">${ev.title}</div><small class="text-muted">${new Date(ev.start).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</small></div></div>`).join('');
     });
 }
 
-function deleteEvent() { 
-    bootstrap.Modal.getInstance(document.getElementById('eventDetailModal')).hide(); 
-    new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show(); 
+function deleteEvent() {
+    bootstrap.Modal.getInstance(document.getElementById('eventDetailModal')).hide();
+    new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
 }
 
-function executeDelete() { 
-    fetch(`/api/delete_event_json/${currentEventId}`, { method: 'DELETE' }).then(() => location.reload()); 
+function executeDelete() {
+    fetch(`/api/delete_event_json/${currentEventId}`, { method: 'DELETE' }).then(() => location.reload());
 }
 
 function saveEventData() {
@@ -145,5 +145,5 @@ function saveEventData() {
     };
     if (!data.title || !data.start_date) return alert('กรุณาระบุชื่อและวันที่');
     fetch('/api/save_event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-    .then(res => res.json()).then(result => { if (result.status === 'success') location.reload(); });
+        .then(res => res.json()).then(result => { if (result.status === 'success') location.reload(); });
 }

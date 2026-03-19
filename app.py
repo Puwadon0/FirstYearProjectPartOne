@@ -22,6 +22,13 @@ from routes.clubs import clubs_bp
 from models.user import Student
 from models.officer import Officer
 from models.admin import Admin
+from models.equipment import Equipment
+from models.place import Place
+from models.place_equipment import PlaceEquipment
+from models.qa_question import Question
+from routes.resources_manager import register_resources_routes
+from routes.resources_review import resources_bp
+from routes.qa import qa_bp
 
 
 app = Flask(__name__)
@@ -36,8 +43,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # SQLAlchemy สำหรับ Event และ News
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ubu_engage.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db.init_app(app)
-# db = SQLAlchemy(app)
 
 # SQLite3 สำหรับ activities (สร้างกิจกรรม)
 DB_PATH_ACTIVITY = "create_activity.db"
@@ -45,9 +50,26 @@ DB_PATH_ACTIVITY = "create_activity.db"
 # SQLite3 สำหรับ expenses และ registrations (ระบบภูวดล)
 DB_PATH_MAIN = "database.db"
 
+# SQLite3 สำหรับ Q&A แลt ข้อมูลสถานที่และอุปกรณ์
+app.config["SQLALCHEMY_BINDS"] = {
+    "resources": "sqlite:///resources.db",
+    "qa": "sqlite:///qa.db",
+}
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+
+db.init_app(app)
+
+os.makedirs(app.instance_path, exist_ok=True)
+
 app.register_blueprint(admin_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(clubs_bp)
+
+# Q&A and Resources
+register_resources_routes(app)
+app.register_blueprint(resources_bp)
+app.register_blueprint(qa_bp)
 
 
 # ===== DATABASE HELPERS =====
@@ -220,7 +242,7 @@ def create_activity_page():
     return render_template("create_activity.html")
 
 
-"""
+""" ไม่ใช้แล้ว ใช้ใน models/auth.py แทน
 @app.route("/login", methods=["GET", "POST"])
 def login_page():
     if session.get("role"):
