@@ -30,7 +30,6 @@ from routes.resources_manager import register_resources_routes
 from routes.resources_review import resources_bp
 from routes.qa import qa_bp
 
-
 app = Flask(__name__)
 
 # ===== CONFIGURATION =====
