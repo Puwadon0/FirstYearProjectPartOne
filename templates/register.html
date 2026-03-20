@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก | ระบบงานกิจกรรมพัฒนานักศึกษา</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css')}}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='sci_atomic.png') }}">
+</head>
+
+<body class="bg-light">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+
+                <div class="card shadow-sm rounded-4 register-card">
+                    <div class="card-body p-4 p-md-4">
+
+                        <h4 class="text-center fw-semibold mb-1 title">
+                            ลงทะเบียนเข้าใช้งานระบบ
+                        </h4>
+
+                        <p class="text-center text-muted mb-4">
+                            ระบบงานกิจกรรมพัฒนานักศึกษาคณะวิทยาศาสตร์
+                        </p>
+
+                        <form method="POST" action="{{ url_for('auth.register') }}">
+                            <h6 class="fw-semibold mb-3 section-title">ข้อมูลพื้นฐาน</h6>
+
+                            <div class="row g-3">
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">ชื่อ - นามสกุล</label>
+                                    <input type="text" name="first_name" class="form-control"
+                                        placeholder="เช่น สมชาย ใจดี" required>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">อีเมล์</label>
+                                    <input type="email" name="email" class="form-control"
+                                        placeholder="somchai.65@ubu.ac.th" required>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">เบอร์โทรศัพท์</label>
+                                    <input type="tel" name="phone" class="form-control" placeholder="08xxxxxxxx"
+                                        required>
+                                </div>
+
+                                <div class="w-100 mt-0"></div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">ตั้งรหัสผ่าน</label>
+                                    <div class="position-relative">
+                                        <input type="password" name="password" id="password" class="form-control pe-5"
+                                            placeholder="อย่างน้อย 8 ตัวอักษร" required>
+
+                                        <i class="bi bi-eye-slash position-absolute"
+                                            style="top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer; font-size: 14px; color: #6c757d;"
+                                            onclick="togglePassword('password', this)">
+                                        </i>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">ยืนยันรหัสผ่าน</label>
+                                    <div class="position-relative">
+                                        <input type="password" name="confirmPassword" id="confirmPassword"
+                                            class="form-control pe-5" placeholder="พิมพ์รหัสผ่านอีกครั้ง" required>
+
+                                        <i class="bi bi-eye-slash position-absolute"
+                                            style="top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer; font-size: 14px; color: #6c757d;"
+                                            onclick="togglePassword('confirmPassword', this)">
+                                        </i>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <!-- เลือกบทบาท -->
+                            <h6 class="fw-semibold mt-5 mb-3 section-title">บทบาทผู้ใช้งาน</h6>
+
+                            <select name="role" id="role" class="form-select mb-4" onchange="changeRole()" required>
+                                <option value="">เลือกบทบาท</option>
+                                <option value="student">นักศึกษา</option>
+                            </select>
+
+                            <!-- student -->
+                            <div id="studentForm" style="display: none;">
+                                <h6 class="fw-semibold mb-3 mt-4 section-title">ข้อมูลนักศึกษา</h6>
+
+                                <div class="row g-3">
+                                    <div class="col-12 col-md-6">
+                                        <input class="form-control" name="student_id" placeholder="รหัสนักศึกษา"
+                                            required>
+                                    </div>
+
+                                    <div class="col-12 col-md-6">
+                                        <select class="form-select" name="faculty">
+                                            <option value="">เลือกคณะ</option>
+                                            <option value="วิทยาศาสตร์">คณะวิทยาศาสตร์</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 col-md-6">
+                                        <input class="form-control" name="major" placeholder="สาขาวิชา" required>
+                                    </div>
+
+                                    <div class="col-12 col-md-6">
+                                        <select class="form-select" name="year">
+                                            <option value="">เลือกชั้นปี</option>
+                                            <option value="1">ปี 1</option>
+                                            <option value="2">ปี 2</option>
+                                            <option value="3">ปี 3</option>
+                                            <option value="4">ปี 4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 mt-4">
+                                ยืนยันการลงทะเบียน
+                            </button>
+
+                        </form>
+
+                        <div id="msg" class="mt-3"></div>
+
+                        <p class="text-center mt-4 mb-0">
+                            มีบัญชีผู้ใช้งานแล้ว?
+                            <a href="{{ url_for('auth.login') }}" class="text-decoration-none">
+                                เข้าสู่ระบบ
+                            </a>
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center rounded-4 p-3">
+
+                <div class="modal-body">
+                    <h4 class="text-success mb-3">สมัครสมาชิกสำเร็จ 🎉</h4>
+                    <p class="text-muted">กำลังพาไปหน้าเข้าสู่ระบบ...</p>
+
+                    <div class="mt-3">
+                        <div class="spinner-border text-success"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+
+    {% if success %}
+    <script>
+        const modal = new bootstrap.Modal(document.getElementById('successModal'));
+        modal.show();
+
+        setTimeout(function () {
+            window.location.href = "{{ url_for('auth.login') }}";
+        }, 2000);
+    </script>
+    {% endif %}
+</body>
+
+</html>

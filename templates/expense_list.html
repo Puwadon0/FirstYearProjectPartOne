@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}รายการรายจ่ายทั้งหมด - UBU Science Engage{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+
+    <!-- Header Section -->
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-4">
+            <div class="bg-[#1e3a5f] p-3 rounded-2xl text-white shadow-lg shadow-blue-100">
+                <i class="bi bi-wallet2 text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 tracking-tight">รายการรายจ่ายทั้งหมด</h1>
+                <p class="text-sm text-gray-500">บันทึกและติดตามการใช้จ่ายงบประมาณโครงการ</p>
+            </div>
+        </div>
+        {% if current_role != 'officer' %}
+        <a href="{{ url_for('expense_create') }}">
+            <button class="bg-[#1e3a5f] hover:bg-blue-900 text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-md hover:-translate-y-0.5 flex items-center gap-2">
+                <i class="bi bi-plus-lg"></i> เพิ่มรายการใหม่
+            </button>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- ===== สรุปงบประมาณแยกตามกิจกรรม ===== -->
+    {% if summary %}
+    <div class="mb-10">
+        <div class="flex items-center gap-2 mb-4">
+            <h2 class="text-lg font-bold text-gray-700 tracking-wide uppercase text-xs opacity-60">สรุปงบประมาณแยกตามโครงการ</h2>
+            <div class="h-[1px] bg-gray-200 flex-1"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-6">
+            {% for s in summary %}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg">{{ s.act_name }}</h3>
+                            <p class="text-xs text-gray-400 font-mono tracking-tighter uppercase">{{ s.act_id }}</p>
+                        </div>
+                        {% if s.remaining >= 0 %}
+                            <span class="px-3 py-1.5 rounded-full text-[10px] bg-green-50 text-green-700 font-bold border border-green-100 uppercase tracking-wider">
+                                ภายในวงเงิน
+                            </span>
+                        {% else %}
+                            <span class="px-3 py-1.5 rounded-full text-[10px] bg-red-50 text-red-700 font-bold border border-red-100 uppercase tracking-wider animate-pulse">
+                                เกินงบประมาณ!
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Enhanced Progress Section -->
+                    {% set percent = [((s.used / s.budget * 100) if s.budget > 0 else 0), 100] | min %}
+                    <div class="mb-6">
+                        <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-tight">
+                            <span>การใช้จ่ายปัจจุบัน</span>
+                            <span class="{{ 'text-red-500' if percent >= 100 else 'text-blue-600' }}">{{ "{:.1f}%".format((s.used / s.budget * 100) if s.budget > 0 else 0) }}</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-1000 ease-out {{ 'bg-red-500' if s.remaining < 0 else 'bg-gradient-to-r from-blue-500 to-indigo-600' }}"
+                                 style="width: {{ percent }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Figures Grid -->
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="text-center p-4 rounded-xl bg-slate-50 border border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">งบประมาณอนุมัติ</p>
+                            <p class="font-bold text-slate-700 text-xl">{{ "{:,.2f}".format(s.budget) }}</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">THB</p>
+                        </div>
+                        <div class="text-center p-4 rounded-xl bg-indigo-50 border border-indigo-100">
+                            <p class="text-[10px] font-bold text-indigo-400 uppercase mb-1">ใช้จ่ายจริง</p>
+                            <p class="font-bold text-indigo-700 text-xl">{{ "{:,.2f}".format(s.used) }}</p>
+                            <p class="text-[10px] text-indigo-400 mt-0.5">THB</p>
+                        </div>
+                        <div class="text-center p-4 rounded-xl {% if s.remaining < 0 %}bg-red-50 border-red-100{% else %}bg-emerald-50 border-emerald-100{% endif %}">
+                            <p class="text-[10px] font-bold {% if s.remaining < 0 %}text-red-400{% else %}text-emerald-400{% endif %} uppercase mb-1">คงเหลือ</p>
+                            <p class="font-bold {% if s.remaining < 0 %}text-red-600{% else %}text-emerald-600{% endif %} text-xl">{{ "{:,.2f}".format(s.remaining) }}</p>
+                            <p class="text-[10px] {% if s.remaining < 0 %}text-red-400{% else %}text-emerald-400{% endif %} mt-0.5">THB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ===== ยอดรวมยอดใหญ่ ===== -->
+    <div class="bg-[#1e3a5f] rounded-3xl p-8 mb-10 text-white shadow-2xl relative overflow-hidden flex items-center justify-between">
+        <div class="relative z-10">
+            <p class="text-blue-200 font-bold text-xs uppercase tracking-widest mb-2 opacity-80">รวมภาระค่าใช้จ่ายทั้งหมดในระบบ</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-4xl font-extrabold">{{ "{:,.2f}".format(total_all) }}</span>
+                <span class="text-xl text-blue-300 font-medium">THB</span>
+            </div>
+        </div>
+        <div class="opacity-10 absolute -right-4 -bottom-4">
+            <i class="bi bi-wallet2 text-9xl"></i>
+        </div>
+        <div class="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10 text-xs font-bold uppercase tracking-tight">
+            สรุปยอดแบบ Real-time
+        </div>
+    </div>
+
+    <!-- ===== รายการตารางข่าว ===== -->
+    <div class="flex items-center gap-2 mb-4">
+        <h2 class="text-lg font-bold text-gray-700 tracking-wide uppercase text-xs opacity-60">รายละเอียดรายการจ่ายทั้งหมด</h2>
+        <div class="h-[1px] bg-gray-200 flex-1"></div>
+    </div>
+    
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+        <table class="w-full text-sm text-left border-collapse">
+            <thead class="bg-[#f8fafc] text-[#1e3a5f] border-b-2 border-gray-100 font-bold">
+                <tr>
+                    <th class="p-4 text-center w-16">#</th>
+                    <th class="p-4">โครงการที่เกี่ยวข้อง</th>
+                    <th class="p-4">รายการจ่าย / รายละเอียด</th>
+                    <th class="p-4 text-right">จำนวนเงิน</th>
+                    <th class="p-4 text-center">หลักฐานการจ่าย</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                    <td class="p-4 text-center text-gray-400 font-mono">{{ expense.id }}</td>
+                    <td class="p-4">
+                        <p class="font-bold text-gray-800">{{ act_map.get(expense.act_ref_id, {}).get('name', 'ไม่ระบุกิจกรรม') if expense.act_ref_id else 'ไม่ระบุกิจกรรม' }}</p>
+                        <p class="text-[10px] text-gray-400 font-mono uppercase">{{ expense.act_ref_id or '-' }}</p>
+                    </td>
+                    <td class="p-4 font-semibold text-gray-700">{{ expense.item }}</td>
+                    <td class="p-4 text-right">
+                        <span class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg font-bold border border-blue-100">
+                            {{ "{:,.2f}".format(expense.amount) }}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        {% if expense.filename %}
+                            <a href="{{ url_for('static', filename='uploads/' + expense.filename) }}" target="_blank" class="block group">
+                                <div class="relative w-16 h-16 mx-auto overflow-hidden rounded-xl border border-gray-200 shadow-sm transition-all group-hover:shadow-md group-hover:scale-105">
+                                    <img
+                                        src="{{ url_for('static', filename='uploads/' + expense.filename) }}"
+                                        class="w-full h-full object-cover"
+                                        onerror="this.src='https://placehold.co/100x100?text=File'"
+                                    >
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs">
+                                        <i class="bi bi-eye"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        {% else %}
+                            <div class="text-center italic text-gray-300 text-xs">ไม่มีหลักฐาน</div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center p-8 text-gray-400">ยังไม่มีรายการบันทึก</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

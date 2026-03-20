@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>จัดการข้อมูลสถานที่และอุปกรณ์ | UBU Engage</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="icon" href="{{ url_for('static', filename='sci_atomic.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/resources_manager.css') }}">
+
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header-left">
+
+            <a href="/" class="logo-link text-decoration-none text-white">
+                <img src="{{ url_for('static', filename='sci_atomic.png') }}" width="55">
+                <div class="header-logo-text">
+                    <span class="thai">คณะวิทยาศาสตร์</span>
+                    <span class="eng">Faculty of Science</span>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="col-2 col-md-1 text-end d-flex justify-content-end align-items-center gap-3">
+            <!-- Hamburger -->
+            <div class="dropdown position-static">
+                <a class="text-white fs-3 d-inline-block hamburger-btn" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-list"></i>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end border-0 custom-dropdown">
+                    <li>
+                        <a class="dropdown-item text-white" href="/resources">
+                            ดูข้อมูลสถานที่และอุปกรณ์
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-white" href="/resources/manage">
+                            จัดการข้อมูลสถานที่และอุปกรณ์
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+            <!-- Profile -->
+            <div class="dropdown">
+                <button class="btn2 text-white p-0" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle" style="font-size: 1.8rem;"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="min-width:200px">
+                    {% if current_role %}
+                    <li><span class="dropdown-item-text fw-bold text-dark small">{{ current_user }}</span></li>
+                    <li><span class="dropdown-item-text text-muted small">{{
+                            {'officer':'เจ้าหน้าที่','club':'นักศึกษาสโมสร','student':'นักศึกษา'}[current_role]
+                            }}</span>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider my-1">
+                    </li>
+                    <li>
+                        <form action="{{ url_for('auth.logout') }}" method="POST" style="display:inline;">
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="bi bi-box-arrow-right me-2"></i>ออกจากระบบ
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li><a class="dropdown-item fw-bold" href="/auth/login"><i
+                                class="bi bi-box-arrow-in-right me-2"></i>ลงชื่อเข้าใช้</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="top-bar">
+            <div class="title-text">
+                จัดการข้อมูลสถานที่และอุปกรณ์
+            </div>
+
+            <!-- ช่องค้นหา -->
+            <div class="mt-2 mb-3">
+                <input type="text" id="searchInput" class="search-input" placeholder="ค้นหาห้อง..."
+                    onkeyup="searchRoom()" style="width: 550px;">
+            </div>
+
+            <!-- ปุ่ม -->
+            <div class="d-flex gap-2">
+
+                <button class="btn btn-success " data-bs-toggle="modal" data-bs-target="#addPlaceModal">
+                    <i class="bi bi-plus-circle"></i>
+                    เพิ่มสถานที่
+                </button>
+
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEquipmentModal">
+                    <i class="bi bi-tools"></i>
+                    เพิ่มอุปกรณ์
+                </button>
+
+            </div>
+        </div>
+
+        <!-- เพิ่มข้อมูลสถานที่ -->
+        <div class="modal fade" id="addPlaceModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="{{ url_for('add_place') }}" enctype="multipart/form-data">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">เพิ่มสถานที่</h5>
+                            <button class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">ชื่อสถานที่</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="form-label">รายละเอียดสถานที่</label>
+                                <textarea class="form-control" name="description"></textarea>
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="form-label">ชื่อผู้ดูแล</label>
+                                <input type="text" class="form-control" name="officer_name">
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="form-label">เบอร์โทร</label>
+                                <input type="text" class="form-control" name="officer_phone">
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="form-label">รูปภาพ</label>
+                                <input type="file" name="image" class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">อุปกรณ์ในห้อง</label>
+
+                                {% for eq in equipments %}
+
+                                <div class="d-flex align-items-center gap-2 mb-2 equipment-row">
+
+                                    <!-- checkbox -->
+                                    <input class="form-check-input equipment-check" type="checkbox" name="equipments[]"
+                                        value="{{ eq.id }}">
+
+                                    <!-- ชื่อ -->
+                                    <label style="width:180px">
+                                        {{ eq.name }}
+                                    </label>
+
+                                    <!-- stock -->
+                                    <span class="badge bg-secondary stock-badge"
+                                        data-stock="{{ eq.available_quantity }}">
+                                        เหลือ {{ eq.available_quantity }}
+                                    </span>
+
+                                    <!-- qty -->
+                                    <input type="number" name="qty_{{ eq.id }}" class="form-control qty-input"
+                                        style="width:80px" min="0" max="{{ eq.available_quantity }}" value="0">
+
+                                </div>
+
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">สถานะ</label>
+                                <select class="form-control" name="status">
+                                    <option value="1">เปิดใช้งาน</option>
+                                    <option value="0">ปิดใช้งาน</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">
+                                ยกเลิก
+                            </button>
+
+                            <button class="btn btn-primary" type="submit">
+                                บันทึก
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="placeContainer">
+
+            <!-- โชว์สถานที่ -->
+            {% for place in places %}
+
+            <div class="card mb-1 shadow-sm p-3">
+                <div class="d-flex gap-4">
+
+                    <div>
+                        <img src="{{ place.image if place.image else 'https://via.placeholder.com/200x170' }}"
+                            loading="lazy" style="width:200px;height:170px;object-fit:cover;border-radius:10px;">
+                    </div>
+
+                    <div style="flex:1">
+
+                        <h5>{{ place.name }}</h5>
+
+
+                        <p>
+                            <i class="bi bi-info-circle"></i>
+                            <span class="detail-title">รายละเอียด:</span>
+                            {{ place.description }}
+                        </p>
+
+                        <p>
+                            <i class="bi bi-person"></i>
+                            <span class="detail-title">ผู้ดูแล:</span>
+                            {{ place.officer_name }}
+                            ({{ place.officer_phone }})
+                        </p>
+
+                        <div>
+                            <i class="bi bi-tools"></i>
+                            <span class="detail-title">อุปกรณ์:</span>
+
+                            {% if place.equipments %}
+
+                            {% for pe in place.equipments %}
+                            {% if pe.equipment %}
+                            <span class="badge bg-primary">
+                                {{ pe.equipment.name }} x{{ pe.quantity }}
+                            </span>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% else %}
+                            <span class="text-muted">
+                                ไม่มีอุปกรณ์
+                            </span>
+                            {% endif %}
+
+                        </div>
+
+                        <i class="bi bi-check-circle"></i>
+                        <span class="detail-title">สถานะ:</span>
+
+                        {% if place.status %}
+                        <span class="badge bg-success mt-2">
+                            เปิดใช้งาน
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger mt-2">
+                            ปิดใช้งาน
+                        </span>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-end gap-2 mt-2">
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#editPlaceModal{{ place.id }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#deletePlaceModal{{ place.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ยืนยันการลบสถานที่ -->
+            <div class="modal fade" id="deletePlaceModal{{ place.id }}" tabindex="-1">
+
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                ยืนยันการลบ
+                            </h5>
+
+                            <button class="btn-close" data-bs-dismiss="modal">
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            ต้องการลบสถานที่
+                            <strong>ห้อง {{ place.name }}</strong>
+                            ใช่หรือไม่ ?
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">
+                                ยกเลิก
+                            </button>
+
+                            <form method="POST" action="/places/delete/{{ place.id }}">
+
+                                <button type="submit" class="btn btn-danger">
+
+                                    ยืนยันการลบ
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+
+        <!-- Render อุปกรณ์ -->
+        <div id="equipmentContainer" class="d-flex flex-column gap-1">
+
+            {% for eq in equipments %}
+            {% set percent = (eq.available_quantity / eq.total_quantity * 100) if eq.total_quantity else 0 %}
+
+            {% if percent <= 30 %} {% set color="bg-danger" %} {% elif percent <=70 %} {% set color="bg-warning" %} {%
+                else %} {% set color="bg-success" %} {% endif %} <div class="card shadow-sm p-3 mb-2">
+
+                <div>
+                    <h5>{{ eq.name }}</h5>
+
+                    <p class="text-muted">
+                        รหัสอุปกรณ์ : {{ eq.code }}
+                    </p>
+
+                    <p>
+                        หมวดหมู่ : {{ eq.category }}
+                    </p>
+
+                    <p>
+                        จำนวนทั้งหมด : {{ eq.total_quantity }}
+                    </p>
+
+                    <p>
+                        จำนวนที่ว่าง : {{ eq.available_quantity }} / {{ eq.total_quantity }}
+                    </p>
+
+                    <div class="progress mb-2" style="height: 10px; width: 300px">
+                        <div class="progress-bar {{ color }}" role="progressbar" style="width: {{ percent }}%;">
+                        </div>
+                    </div>
+
+                    <p>
+                        หน่วยงานที่รับผิดชอบ : {{ eq.department }}
+                    </p>
+                </div>
+
+                <div class="d-flex justify-content-end" style="margin-top:-30px;">
+
+                    <!-- ปุ่มแก้ไข -->
+                    <button class="btn btn-warning btn-sm me-2" data-bs-toggle="modal"
+                        data-bs-target="#editEquipmentModal{{ eq.id }}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <!-- ปุ่มลบ -->
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#deleteEquipmentModal{{ eq.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+
+                </div>
+        </div>
+
+        {% endfor %}
+        </div>
+
+
+        <br>
+
+        <!-- แก้ไขสถานที่ -->
+        {% for place in places %}
+        <div class="modal fade" id="editPlaceModal{{ place.id }}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <form method="POST" action="/places/update/{{ place.id }}" enctype="multipart/form-data">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                แก้ไขสถานที่ {{ place.name }}
+                            </h5>
+
+                            <button type="button" class="btn-close" data-bs-dismiss="modal">
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <!-- ชื่อสถานที่ -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">ชื่อสถานที่</label>
+
+                                <input type="text" class="form-control" name="name" value="{{ place.name }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold d-block">รูปภาพสถานที่</label>
+
+                                <img src="{{ place.image if place.image else 'https://via.placeholder.com/400x250' }}"
+                                    class="img-fluid rounded mb-2" style="max-height:200px">
+
+                                <input type="file" class="form-control" name="image" accept="image/*">
+                            </div>
+
+                            <!-- รายละเอียดสถานที่ -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">รายละเอียดสถานที่</label>
+
+                                <textarea class="form-control" name="description" rows="3"
+                                    placeholder="รายละเอียดสถานที่">{{ place.description }}</textarea>
+                            </div>
+
+                            <!-- ผู้ดูแล -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">ชื่อผู้ดูแล</label>
+
+                                <input type="text" class="form-control" name="officer_name"
+                                    value="{{ place.officer_name }}" required>
+                            </div>
+
+                            <!-- เบอร์โทร -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">เบอร์โทร</label>
+
+                                <input type="tel" class="form-control" name="officer_phone"
+                                    value="{{ place.officer_phone }}" pattern="[0-9]{10}" placeholder="0812345678"
+                                    required>
+                            </div>
+
+                            <!-- อุปกรณ์ -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">อุปกรณ์</label>
+
+                                {% for eq in equipments %}
+
+                                {% set ns = namespace(used=0) %}
+
+                                {% for pe in place.equipments %}
+                                {% if pe.equipment_id == eq.id %}
+                                {% set ns.used = pe.quantity %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <div class="d-flex align-items-center gap-2 mb-2 equipment-row">
+
+                                    <!-- checkbox -->
+                                    <input class="form-check-input equipment-check" type="checkbox" name="equipments[]"
+                                        value="{{ eq.id }}" {% if ns.used> 0 %}checked{% endif %}>
+
+                                    <!-- ชื่อ -->
+                                    <label style="width:180px">
+                                        {{ eq.name }}
+                                    </label>
+
+                                    <!-- stock -->
+                                    <span class="badge bg-secondary stock-badge"
+                                        data-stock="{{ eq.available_quantity }}">
+                                        เหลือ {{ eq.available_quantity }}
+                                    </span>
+
+                                    <!-- qty -->
+                                    <input type="number" name="qty_{{ eq.id }}" class="form-control qty-input"
+                                        style="width:80px" min="0" max="{{ eq.available_quantity + ns.used }}"
+                                        value="{{ ns.used }}">
+
+                                </div>
+
+                                {% endfor %}
+                            </div>
+
+                            <!-- สถานะ -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">สถานะ</label>
+
+                                <select class="form-control" name="status">
+
+                                    <option value="1" {% if place.status %}selected{% endif %}>
+                                        เปิดใช้งาน
+                                    </option>
+
+                                    <option value="0" {% if not place.status %}selected{% endif %}>
+                                        ปิดใช้งาน
+                                    </option>
+
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                ยกเลิก
+                            </button>
+
+                            <button type="submit" class="btn btn-primary">
+                                บันทึก
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- เพิ่มอุปกรณ์ -->
+        <div class="modal fade" id="addEquipmentModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <form method="POST" action="/equipment/add">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">เพิ่มอุปกรณ์</h5>
+                            <button class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="form-label">รหัสอุปกรณ์</label>
+                                <input type="text" class="form-control" name="code" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">ชื่ออุปกรณ์</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">หมวดหมู่</label>
+                                <input type="text" class="form-control" name="category">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">จำนวนทั้งหมด</label>
+                                <input type="number" class="form-control" name="total_quantity" min="0" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">จำนวนที่ว่าง</label>
+                                <input type="number" class="form-control" name="available_quantity" min="0" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">หน่วยงานที่รับผิดชอบ</label>
+                                <input type="text" class="form-control" name="department" value="คณะวิทยาศาสตร์">
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">
+                                ยกเลิก
+                            </button>
+
+                            <button class="btn btn-primary" type="submit">
+                                บันทึก
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- แก้ไขอุปกรณ์ -->
+        {% for eq in equipments %}
+        <div class="modal fade" id="editEquipmentModal{{ eq.id }}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <form method="POST" action="/equipment/update/{{ eq.id }}">
+
+                        <div class="modal-header">
+
+                            <h5 class="modal-title">
+                                แก้ไขอุปกรณ์ {{ eq.name }}
+                            </h5>
+
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label class="form-label">รหัสอุปกรณ์</label>
+                                <input type="text" class="form-control" name="code" value="{{ eq.code }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">ชื่ออุปกรณ์</label>
+                                <input type="text" class="form-control" name="name" value="{{ eq.name }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">หมวดหมู่</label>
+                                <input type="text" class="form-control" name="category" value="{{ eq.category }}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">จำนวนทั้งหมด</label>
+                                <input type="number" class="form-control" name="total_quantity"
+                                    value="{{ eq.total_quantity }}" min="0" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">จำนวนที่ว่าง</label>
+                                <input type="number" class="form-control" name="available_quantity"
+                                    value="{{ eq.available_quantity }}" min="0" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">หน่วยงานที่รับผิดชอบ</label>
+                                <input type="text" class="form-control" name="department" value="{{ eq.department }}">
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                ยกเลิก
+                            </button>
+
+                            <button class="btn btn-primary">
+                                บันทึก
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+        <!-- ลบอุปกรณ์ -->
+        {% for eq in equipments %}
+
+        <div class="modal fade" id="deleteEquipmentModal{{ eq.id }}" tabindex="-1">
+
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            ยืนยันการลบ
+                        </h5>
+
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        ต้องการลบอุปกรณ์
+                        <strong>{{ eq.name }}</strong>
+                        ใช่หรือไม่ ?
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">
+                            ยกเลิก
+                        </button>
+
+                        <form method="POST" action="/equipment/delete/{{ eq.id }}">
+
+                            <button type="submit" class="btn btn-danger">
+                                ยืนยันการลบ
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/resources_manager.js')}}"></script>
+
+</body>
+
+</html>

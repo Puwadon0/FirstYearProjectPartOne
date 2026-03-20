@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ประชาสัมพันธ์กิจกรรม - UBU Science Engage</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='sci_atomic.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <style>
+        :root { --ubu-blue: #112592; --ubu-yellow: #fff9c4; }
+        body { font-family: 'Prompt', sans-serif; background-color: #f8f9fa; }
+        .bg-ubu { background-color: var(--ubu-blue) !important; }
+        
+       /* Navbar & Menu - ยึดจากชุดแรก */
+        .fc-toolbar-title { color: var(--ubu-blue); font-weight: 600; }
+        .badge-guide { width: 100px; display: inline-block; text-align: center; padding: 8px 0; border-radius: 6px; }
+        #userRoleProfile { font-size: 0.9rem; color: var(--ubu-blue); font-weight: 600; display: block; padding: 5px 15px; }
+
+        /* Custom Calendar Styles */
+        .fc .fc-day-today {
+            background-color: rgba(255, 193, 7, 0.3) !important;
+            font-weight: bold;
+        }
+        .fc .fc-day-today .fc-daygrid-day-number {
+            color: var(--ubu-blue) !important;
+            font-size: 1.1em;
+        }
+        .fc .fc-day-other .fc-daygrid-day-number {
+            color: #adb5bd !important;
+        }/* News UI */
+        .news-container { background-color: var(--ubu-yellow); padding: 50px 0; border-radius: 40px; min-height: 400px; }
+        .main-slider { height: 450px; border-radius: 30px; overflow: hidden; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); position: relative; }
+        .carousel-img { width: 100%; height: 450px; object-fit: cover; }
+        .carousel-caption-custom { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: white; padding: 40px 60px; text-align: left; }
+        .news-card { border: none; border-radius: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); overflow: hidden; height: 100%; display: flex; flex-direction: column; background: white; transition: 0.3s; }
+        .news-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid #f0f0f0; }
+        .btn-unpin-banner { position: absolute; top: 20px; right: 20px; z-index: 100; border-radius: 50px; padding: 8px 20px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        
+        #userRoleProfile { font-size: 0.9rem; color: var(--ubu-blue); font-weight: 600; display: block; padding: 5px 15px; }
+    </style>
+</head>
+<body data-role="{{ current_role or 'student' }}">
+
+    {% include 'navbar.html' %}
+
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="color: var(--ubu-blue);">ประชาสัมพันธ์กิจกรรม</h3>
+            {% if current_role != 'student' %}
+            <button id="addNewsBtn" class="btn bg-ubu text-white px-4 py-2 rounded-pill shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addNewsModal">
+                <i class="bi bi-plus-lg me-2"></i>เพิ่มข่าวใหม่
+            </button>
+            {% endif %}
+        </div>
+
+        <div id="newsCarousel" class="carousel slide main-slider d-none" data-bs-ride="carousel">
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+            <div class="carousel-inner" id="carouselInner"></div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+        </div>
+
+        <div class="news-container px-4"><div id="newsList" class="row justify-content-center"></div></div>
+    </div>
+
+    <div class="modal fade" id="addNewsModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 p-4 shadow-lg rounded-4">
+                <h5 class="fw-bold mb-4" style="color: var(--ubu-blue);"><i class="bi bi-megaphone-fill me-2"></i>จัดการข่าวประชาสัมพันธ์</h5>
+                <form id="newsForm">
+                    <div class="mb-3">
+                        <label class="small fw-bold">หัวข้อข่าว</label>
+                        <input type="text" id="newsTitleInput" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">หมวดหมู่ข่าว</label>
+                        <select id="newsCategoryInput" class="form-control">
+                            <option value="กิจกรรม">กิจกรรม</option>
+                            <option value="ข่าวทั่วไป">ข่าวทั่วไป</option>
+                            <option value="ประชาสัมพันธ์">ประชาสัมพันธ์</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">แนบรูปภาพ</label>
+                        <input type="file" id="newsImageInput" class="form-control" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">เนื้อหาข่าว</label>
+                        <textarea id="newsContentInput" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="small fw-bold">วันที่ประกาศ</label>
+                            <input type="date" id="announcementDateInput" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="small fw-bold">วันหมดอายุข่าว</label>
+                            <input type="date" id="expiryDateInput" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold">ผู้โพสต์ข่าว</label>
+                        <input type="text" id="postedByInput" class="form-control">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="priorityInput">
+                        <label class="form-check-label">ปักหมุดข่าวสำคัญ</label>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-light w-100 fw-bold" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button type="button" class="btn bg-ubu text-white w-100 fw-bold" onclick="saveNewsData()">บันทึกข้อมูล</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteNewsConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered text-center">
+            <div class="modal-content border-0 p-4 shadow-lg rounded-4">
+                <div class="text-danger mb-3"><i class="bi bi-exclamation-triangle-fill" style="font-size: 3.5rem;"></i></div>
+                <h5 class="fw-bold">ยืนยันการลบ?</h5>
+                <p class="text-muted small mb-4">ข่าวประชาสัมพันธ์นี้จะถูกลบออกอย่างถาวร</p>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-light w-100 py-2 rounded-3" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button class="btn btn-danger w-100 py-2 fw-bold rounded-3 shadow-sm" onclick="confirmDeleteNews()">ตกลง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+    <script>
+        // ... โค้ด JavaScript สำหรับ fetchNews, saveNewsData, togglePin เหมือนเดิม ...
+        let newsIdToDelete = null;
+        document.addEventListener('DOMContentLoaded', fetchNews);
+
+        function fetchNews() {
+            fetch('/api/get_news').then(res => res.json()).then(data => {
+                const carouselArea = document.getElementById('newsCarousel');
+                const carouselInner = document.getElementById('carouselInner');
+                const indicators = document.getElementById('carouselIndicators');
+                const list = document.getElementById('newsList');
+
+                const pinnedItems = data.filter(n => n.is_pinned);
+                const regularItems = data.filter(n => !n.is_pinned);
+
+                if (pinnedItems.length > 0) {
+                    carouselArea.classList.remove('d-none');
+                    carouselInner.innerHTML = pinnedItems.map((n, i) => `
+                        <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                            ${userMode !== 'student' ? `<button class="btn btn-warning btn-sm btn-unpin-banner" onclick="togglePin('${n.id}')"><i class="bi bi-pin-angle-fill me-1"></i>เลิกปักหมุด</button>` : ''}
+                            <img src="${n.image_url}" class="carousel-img">
+                            <div class="carousel-caption-custom">
+                                <span class="badge bg-warning text-dark mb-2">ข่าวเด่นแนะนำ</span>
+                                <h2 class="fw-bold display-6">${n.title}</h2>
+                                <p class="lead text-truncate" style="max-width: 90%">${n.content}</p>
+                            </div>
+                        </div>`).join('');
+                    
+                    indicators.innerHTML = pinnedItems.map((_, i) => `<button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></button>`).join('');
+                    new bootstrap.Carousel(carouselArea, { interval: 4000, ride: 'carousel' });
+                } else { carouselArea.classList.add('d-none'); }
+
+                list.innerHTML = regularItems.map(news => `
+                    <div class="col-md-4 mb-4">
+                        <div class="news-card position-relative">
+                            ${userMode !== 'student' ? `
+                            <div class="position-absolute top-0 end-0 p-2 d-flex gap-2">
+                                <button class="btn btn-sm btn-light shadow-sm" onclick="togglePin('${news.id}')"><i class="bi bi-pin-angle"></i></button>
+                                <button class="btn btn-sm btn-danger shadow-sm" onclick="deleteNewsItem('${news.id}')"><i class="bi bi-trash3"></i></button>
+                            </div>` : ''}
+                            <img src="${news.image_url}" class="news-img" onerror="this.src='https://placehold.co/600x400?text=No+Image'">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-2" style="color:var(--ubu-blue)">${news.title}</h5>
+                                <p class="small text-muted mb-3" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${news.content}</p>
+                                <div class="text-primary small fw-bold mt-auto"><i class="bi bi-calendar-event me-1"></i>${news.date}</div>
+                            </div>
+                        </div>
+                    </div>`).join('');
+            });
+        }
+
+        async function saveNewsData() {
+            const formData = new FormData();
+            formData.append("news_title", document.getElementById("newsTitleInput").value);
+            formData.append("news_content", document.getElementById("newsContentInput").value);
+            formData.append("news_category", document.getElementById("newsCategoryInput").value);
+            formData.append("announcement_date", document.getElementById("announcementDateInput").value);
+            formData.append("expiry_date", document.getElementById("expiryDateInput").value);
+            formData.append("posted_by", document.getElementById("postedByInput").value);
+            formData.append("is_priority", document.getElementById("priorityInput").checked);
+
+            const imageFile = document.getElementById("newsImageInput").files[0];
+            if(imageFile) formData.append("cover_image", imageFile);
+
+            try {
+                await fetch("/api/save_news", { method: "POST", body: formData });
+                alert("บันทึกข่าวสำเร็จ");
+                location.reload();
+            } catch (err) { alert("เกิดข้อผิดพลาด"); }
+        }
+
+        async function togglePin(id) { await fetch(`/api/toggle_pin/${id}`, { method: "POST" }); fetchNews(); }
+        function deleteNewsItem(id) { newsIdToDelete = id; new bootstrap.Modal(document.getElementById('deleteNewsConfirmModal')).show(); }
+        function confirmDeleteNews() { fetch('/api/delete_news/' + newsIdToDelete, { method: 'DELETE' }).then(() => { bootstrap.Modal.getInstance(document.getElementById('deleteNewsConfirmModal')).hide(); fetchNews(); }); }
+    </script>
+</body>
+</html>

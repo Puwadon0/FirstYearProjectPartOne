@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ super() }}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}
+
+{% block content %}
+    <div>
+        {% block content_inner %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {% block scripts_inner %}{% endblock %}
+{% endblock %}

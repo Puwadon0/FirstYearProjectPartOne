@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:'Prompt', sans-serif;
+    background:#e5e5e5;
+}
+
+/* ===== HEADER ===== */
+.header{
+    background:#1e2f97;
+    color:white;
+    padding:14px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.header-title{
+    line-height:1.2;
+}
+
+.header-title .th{
+    font-size:20px;
+    font-weight:500;
+}
+
+.header-title .en{
+    font-size:16px;
+    font-weight:400;
+}
+
+.menu{
+    width:26px;
+}
+
+.menu div{
+    height:3px;
+    background:white;
+    margin:5px 0;
+}
+
+/* ===== MAIN AREA ===== */
+
+.main{
+    background:#dcdcdc;
+    padding:40px;
+    margin:40px;
+}
+
+.title{
+    text-align:center;
+    font-size:26px;
+    font-weight:500;
+    margin-bottom:30px;
+}
+
+/* ===== CARD ===== */
+
+.card{
+    background:#efefef;
+    padding:20px;
+    margin:20px auto;
+    width:600px;
+    border-radius:8px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.2);
+}
+
+.card-title{
+    border-left:4px solid #f0b400;
+    padding-left:10px;
+    margin-bottom:12px;
+    font-weight:500;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+    font-size:14px;
+}
+
+input, textarea{
+    width:100%;
+    padding:8px;
+    border-radius:6px;
+    border:1px solid #999;
+    font-family:'Prompt', sans-serif;
+}
+
+textarea{
+    height:80px;
+}
+
+.row{
+    display:flex;
+    gap:20px;
+}
+
+.row div{
+    flex:1;
+}
+
+/* ===== BUTTON ===== */
+
+.btn{
+    margin-top:15px;
+    background:#1e2f97;
+    color:white;
+    border:none;
+    padding:8px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    float:right;
+}
+
+.btn:hover{
+    background:#16237a;
+}
+
+.total{
+    margin-top:10px;
+}
