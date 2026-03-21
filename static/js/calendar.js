@@ -135,14 +135,16 @@ function applyModeSettings() {
             <a class="dropdown-item" href="/officer"><i class="bi bi-journal-plus me-2"></i>คำขอสร้างกิจกรรม</a>
             <a class="dropdown-item" href="/activity/list"><i class="bi bi-person-lines-fill me-2"></i>รายชื่อผู้ลงทะเบียน</a>
             <a class="dropdown-item" href="/expense/list"><i class="bi bi-receipt me-2"></i>สรุปรายจ่าย</a>
+            <a class="dropdown-item" href="/resources/manage"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
             <a class="dropdown-item" href="/qa/answer"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
-        `;
+        `;  
     } else if (userMode === 'club') {
         roleLinks = `
             <a class="dropdown-item" href="/create-activity"><i class="bi bi-plus-circle me-2"></i>สร้างกิจกรรม</a>
             <a class="dropdown-item" href="/club_status_activity"><i class="bi bi-clipboard-check me-2"></i>สถานะคำขอของฉัน</a>
             <a class="dropdown-item" href="/expense/create"><i class="bi bi-cash-stack me-2"></i>บันทึกค่าใช้จ่าย</a>
             <a class="dropdown-item" href="/activity/register"><i class="bi bi-person-plus me-2"></i>ลงทะเบียนกิจกรรม</a>
+            <a class="dropdown-item" href="/resources/manage"><i class="bi bi-geo-alt me-2"></i>ข้อมูลสถานที่</a>
             <a class="dropdown-item" href="/qa/answer"><i class="bi bi-chat-dots me-2"></i>Q&A เจ้าหน้าที่</a>
         `;
     } else {

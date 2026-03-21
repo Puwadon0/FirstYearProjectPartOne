@@ -7,6 +7,7 @@ from flask import (
     redirect,
     send_from_directory,
     session,
+    flash,
 )
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -300,13 +301,6 @@ def logout():
     return redirect("/")"""
 
 
-@app.route("/club_status_activity")
-def club_status_activity():
-    with get_activity_db() as conn:
-        activities = conn.execute(
-            "SELECT * FROM activities ORDER BY act_id DESC"
-        ).fetchall()
-    return render_template("club_status_ativity.html", activities=activities)
 
 
 @app.route("/officer")
@@ -380,6 +374,7 @@ def activity_register():
             (fullname, student_id, act_id),
         )
         conn.commit()
+        flash("ลงทะเบียนสำเร็จ", "success")
 
     result = conn.execute("SELECT COUNT(*) as count FROM registrations").fetchone()
     conn.close()
@@ -513,7 +508,18 @@ def uploaded_file(filename):
 
 @app.route("/api/get_events")
 def get_events():
-    events = Event.query.all()
+    role = session.get("role")
+    
+    if role == "student" or not role:
+        # นักศึกษาและบุคคลทั่วไป เห็นเฉพาะกิจกรรมที่อนุมัติแล้ว และไม่ใช่ประชุม/กำหนดส่ง
+        events = Event.query.filter(
+            Event.event_status == "อนุมัติแล้ว",
+            ~Event.event_type.in_(["ประชุม", "กำหนดส่ง"])
+        ).all()
+    else:
+        # บทบาทอื่น (Admin, Officer, Club) เห็นทั้งหมด
+        events = Event.query.all()
+        
     event_list = []
     for e in events:
         color = "#28a745"
@@ -523,7 +529,11 @@ def get_events():
             color = "#dc3545"
         try:
             f_start = datetime.strptime(e.start_date, "%d/%m/%Y").strftime("%Y-%m-%d")
-            f_end = datetime.strptime(e.end_date, "%d/%m/%Y").strftime("%Y-%m-%d")
+            f_end = (
+                datetime.strptime(e.end_date, "%d/%m/%Y").strftime("%Y-%m-%d")
+                if e.end_date
+                else f_start
+            )
         except:
             continue
         event_list.append(
@@ -535,6 +545,12 @@ def get_events():
                 "type": e.event_type,
                 "location": e.location,
                 "status": e.event_status,
+                "extendedProps": {
+                    "location": e.location,
+                    "description": e.event_title, # ใช้ title เป็น desc ชั่วคราวถ้าไม่มี field อื่น
+                    "type": e.event_type,
+                    "status": e.event_status
+                }
             }
         )
     return jsonify(event_list)
@@ -761,6 +777,15 @@ def reject_activity(act_id):
             'UPDATE activities SET act_status = "rejected" WHERE act_id = ?', (act_id,)
         )
     return redirect(url_for("officer_status_activity"))
+
+
+@app.route("/club_status_activity")
+def club_status_activity():
+    with get_activity_db() as conn:
+        activities = conn.execute(
+            "SELECT * FROM activities ORDER BY act_id DESC"
+        ).fetchall()
+    return render_template("club_status_ativity.html", activities=activities)
 
 
 @app.route("/edit/<act_id>", methods=["POST"])

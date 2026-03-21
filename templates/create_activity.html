@@ -10,6 +10,7 @@
         margin-bottom: 2rem;
         border: 1px solid #e5e7eb;
     }
+
     .form-section label {
         display: block;
         font-weight: 600;
@@ -17,6 +18,7 @@
         margin-bottom: 0.5rem;
         font-size: 0.9rem;
     }
+
     .form-section input[type="text"],
     .form-section input[type="tel"],
     .form-section input[type="date"],
@@ -31,17 +33,20 @@
         outline: none;
         background-color: #f9fafb;
     }
+
     .form-section input:focus,
     .form-section textarea:focus {
         border-color: #1d4ed8;
         background-color: #ffffff;
         box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
     }
+
     .table-input {
         border: 1px solid #d1d5db !important;
         background-color: white !important;
         padding: 0.5rem !important;
     }
+
     .table-input:focus {
         border-color: #1d4ed8 !important;
         box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1) !important;
@@ -50,21 +55,24 @@
 {% endblock %}
 
 {% block content_inner %}
-    <div class="container pt-3 pb-4">
-        <div class="bg-white rounded-4 shadow-sm p-4 w-100 mx-auto" style="max-width: 900px;">
-            <div class="mb-5 text-center">
-                <h1 class="text-2xl font-bold text-gray-800 italic underline decoration-blue-500 decoration-4">แบบฟอร์มขอสร้างกิจกรรม</h1>
-                <p class="text-gray-500 mt-2">กรุณากรอกรายละเอียดให้ครบถ้วนเพื่อดำเนินการขออนุมัติ</p>
-            </div>
+<div class="container pt-3 pb-4">
+    <div class="bg-white rounded-4 shadow-sm p-4 w-100 mx-auto" style="max-width: 900px;">
+        <div class="mb-5 text-center">
+            <h1 class="text-2xl font-bold text-gray-800 italic underline decoration-blue-500 decoration-4">
+                แบบฟอร์มขอสร้างกิจกรรม</h1>
+            <p class="text-gray-500 mt-2">กรุณากรอกรายละเอียดให้ครบถ้วนเพื่อดำเนินการขออนุมัติ</p>
+        </div>
 
-            <form action="/api/save-activity" method="POST" enctype="multipart/form-data">
-            
+        <form action="/api/save-activity" method="POST" enctype="multipart/form-data">
+
             <div class="form-section">
-                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">1</span> ข้อมูลทั่วไป</h3>
+                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span
+                        class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">1</span>
+                    ข้อมูลทั่วไป</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label>ชื่อหน่วยงาน / โครงการ</label>
-                        <input type="text" name="department" placeholder="ระบุชื่อหน่วยงาน / โครงการ" required>
+                        <label>ชื่อโครงการ</label>
+                        <input type="text" name="department" placeholder="ระบุชื่อโครงการ" required>
                     </div>
                     <div>
                         <label>ปีงบประมาณ</label>
@@ -82,12 +90,16 @@
             </div>
 
             <div class="form-section">
-                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">2</span> ชื่อกิจกรรม</h3>
+                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span
+                        class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">2</span>
+                    ชื่อกิจกรรม</h3>
                 <input type="text" name="activityName" placeholder="ระบุชื่อกิจกรรมที่จัด" value="" required>
             </div>
 
             <div class="form-section">
-                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">3</span> วัน เวลา ที่จัดกิจกรรม</h3>
+                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span
+                        class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">3</span>
+                    วัน เวลา ที่จัดกิจกรรม</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div><label>วันที่จัดกิจกรรม</label><input type="date" name="activityDate" required></div>
                     <div><label>เวลา (เริ่ม)</label><input type="time" name="startTime" required></div>
@@ -96,7 +108,9 @@
             </div>
 
             <div class="form-section">
-                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">4</span> สถานที่จัดกิจกรรม</h3>
+                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span
+                        class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">4</span>
+                    สถานที่จัดกิจกรรม</h3>
                 <div class="space-y-4">
                     <div>
                         <label>ชื่อสถานที่</label>
@@ -110,7 +124,9 @@
             </div>
 
             <div class="form-section">
-                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">5</span> จำนวนผู้เข้าร่วม (แยกประเภท)</h3>
+                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span
+                        class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">5</span>
+                    จำนวนผู้เข้าร่วม (แยกประเภท)</h3>
                 <table class="w-full border-collapse border border-gray-200 rounded-lg overflow-hidden">
                     <thead class="bg-gray-100">
                         <tr>
@@ -121,22 +137,27 @@
                     <tbody>
                         <tr>
                             <td class="border p-2 px-4">นักศึกษา</td>
-                            <td class="border p-2"><input type="number" name="participant_std" class="text-center table-input"></td>
+                            <td class="border p-2"><input type="number" name="participant_std"
+                                    class="text-center table-input"></td>
                         </tr>
                         <tr>
                             <td class="border p-2 px-4">บุคลากร / อื่นๆ</td>
-                            <td class="border p-2"><input type="number" name="participant_other" class="text-center table-input"></td>
+                            <td class="border p-2"><input type="number" name="participant_other"
+                                    class="text-center table-input"></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="form-section">
-                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">6</span> วัตถุประสงค์ / รายละเอียด</h3>
+                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span
+                        class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">6</span>
+                    วัตถุประสงค์ / รายละเอียด</h3>
                 <div class="space-y-4">
                     <div>
                         <label>วัตถุประสงค์ของกิจกรรม</label>
-                        <textarea name="objective" rows="3" placeholder="ระบุสิ่งที่ต้องการให้เกิดขึ้น เช่น เพื่อเสริมสร้างความสามัคคี..."></textarea>
+                        <textarea name="objective" rows="3"
+                            placeholder="ระบุสิ่งที่ต้องการให้เกิดขึ้น เช่น เพื่อเสริมสร้างความสามัคคี..."></textarea>
                     </div>
                     <div>
                         <label>ขั้นตอนการจัดกิจกรรม (โดยสังเขป)</label>
@@ -147,8 +168,11 @@
 
             <div class="form-section">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-blue-800 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">7</span> งบประมาณ</h3>
-                    <button type="button" onclick="addRow()" class="bg-green-600 text-white px-4 py-1.5 rounded-full text-sm hover:bg-green-700 transition flex items-center">
+                    <h3 class="font-bold text-blue-800 flex items-center"><span
+                            class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">7</span>
+                        งบประมาณ</h3>
+                    <button type="button" onclick="addRow()"
+                        class="bg-green-600 text-white px-4 py-1.5 rounded-full text-sm hover:bg-green-700 transition flex items-center">
                         <span class="mr-1 text-lg">+</span> เพิ่มรายการ
                     </button>
                 </div>
@@ -164,9 +188,12 @@
                         </thead>
                         <tbody id="budgetBody">
                             <tr>
-                                <td class="border p-2"><input type="text" name="budget_category[]"  class="table-input"></td>
-                                <td class="border p-2"><input type="text" name="budget_detail[]"  class="table-input"></td>
-                                <td class="border p-2"><input type="number" name="budget_amount[]"  class="table-input text-right amount-input" oninput="calculateTotal()"></td>
+                                <td class="border p-2"><input type="text" name="budget_category[]" class="table-input">
+                                </td>
+                                <td class="border p-2"><input type="text" name="budget_detail[]" class="table-input">
+                                </td>
+                                <td class="border p-2"><input type="number" name="budget_amount[]"
+                                        class="table-input text-right amount-input" oninput="calculateTotal()"></td>
                                 <td class="border p-2 text-center text-red-400">---</td>
                             </tr>
                         </tbody>
@@ -182,11 +209,14 @@
             </div>
 
             <div class="form-section">
-                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">8</span> แนบไฟล์โครงการฉบับจริง</h3>
+                <h3 class="font-bold text-blue-800 mb-4 flex items-center"><span
+                        class="bg-blue-800 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-2 text-xs">8</span>
+                    แนบไฟล์โครงการฉบับจริง</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label>แบบไฟล์โครงการ (PDF, Word, Excel, ฯลฯ)</label>
-                        <input type="file" name="project_file" class="bg-white border-dashed border-2 p-4 cursor-pointer hover:bg-gray-50" required>
+                        <input type="file" name="project_file"
+                            class="bg-white border-dashed border-2 p-4 cursor-pointer hover:bg-gray-50" required>
                     </div>
                     <div>
                         <label>หมายเหตุเพิ่มเติม</label>
@@ -196,22 +226,23 @@
             </div>
 
             <div class="pb-6">
-                <button type="submit" class="w-full bg-blue-700 text-white font-bold py-4 rounded-xl hover:bg-blue-800 transition-all shadow-xl hover:-translate-y-1">
+                <button type="submit"
+                    class="w-full bg-blue-700 text-white font-bold py-4 rounded-xl hover:bg-blue-800 transition-all shadow-xl hover:-translate-y-1">
                     ส่งแบบฟอร์มข้อมูลกิจกรรม
                 </button>
             </div>
         </form>
-        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block scripts_inner %}
-    <script>
-        function addRow() {
-            const body = document.getElementById('budgetBody');
-            const row = document.createElement('tr');
-            row.className = "bg-white hover:bg-gray-50 transition";
-            row.innerHTML = `
+<script>
+    function addRow() {
+        const body = document.getElementById('budgetBody');
+        const row = document.createElement('tr');
+        row.className = "bg-white hover:bg-gray-50 transition";
+        row.innerHTML = `
                 <td class="border p-2"><input type="text" name="budget_category[]" placeholder="ระบุหมวด..." class="table-input"></td>
                 <td class="border p-2"><input type="text" name="budget_detail[]" placeholder="ระบุรายละเอียด..." class="table-input"></td>
                 <td class="border p-2"><input type="number" name="budget_amount[]" value="0" class="table-input text-right amount-input" oninput="calculateTotal()"></td>
@@ -219,23 +250,23 @@
                     <button type="button" onclick="removeRow(this)" class="text-red-500 hover:text-red-700 font-bold">✕</button>
                 </td>
             `;
-            body.appendChild(row);
-            calculateTotal();
-        }
-        function removeRow(btn) {
-            const row = btn.closest('tr');
-            row.remove();
-            calculateTotal();
-        }
+        body.appendChild(row);
+        calculateTotal();
+    }
+    function removeRow(btn) {
+        const row = btn.closest('tr');
+        row.remove();
+        calculateTotal();
+    }
 
-        function calculateTotal() {
-            let total = 0;
-            const inputs = document.querySelectorAll('.amount-input');
-            inputs.forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            document.getElementById('totalAmount').innerText = total.toLocaleString('th-TH');
-        }
-        window.onload = calculateTotal;
-    </script>
+    function calculateTotal() {
+        let total = 0;
+        const inputs = document.querySelectorAll('.amount-input');
+        inputs.forEach(input => {
+            total += parseFloat(input.value) || 0;
+        });
+        document.getElementById('totalAmount').innerText = total.toLocaleString('th-TH');
+    }
+    window.onload = calculateTotal;
+</script>
 {% endblock %}

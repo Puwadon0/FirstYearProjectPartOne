@@ -19,10 +19,30 @@
     </div>
 
     <!-- สถิติ -->
+    {% if current_role == 'officer' or current_role == 'club' %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <!-- ยอดรวมทั้งหมด -->
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-green-500 overflow-hidden">
+            <div class="text-[10px] text-gray-400 font-bold uppercase mb-1">ผู้ลงทะเบียนทั้งหมด</div>
+            <div class="text-3xl font-bold text-green-600">{{ registrations | length }} <span class="text-sm font-normal text-gray-400">รายการ</span></div>
+        </div>
+        
+        <!-- รายโครงการ (เฉพาะกิจกรรมที่มีคนสมัคร) -->
+        {% for group in registrations | groupby('activity_name') %}
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-blue-500 overflow-hidden">
+            <div class="text-[10px] text-gray-500 font-bold uppercase mb-1 truncate" title="{{ group.grouper }}">
+                {{ group.grouper }}
+            </div>
+            <div class="text-3xl font-bold text-blue-600">{{ group.list | length }} <span class="text-sm font-normal text-gray-400">คน</span></div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
     <div class="bg-white rounded-xl shadow p-4 mb-6 border-l-4 border-green-500 flex items-center gap-4">
         <div class="text-3xl font-bold text-green-600">{{ registrations | length }}</div>
         <div class="text-gray-500 text-sm">รายการทั้งหมด</div>
     </div>
+    {% endif %}
 
     <!-- ตาราง -->
     <div class="bg-white shadow-md rounded-xl overflow-hidden">
